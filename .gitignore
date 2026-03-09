@@ -42,4 +42,35 @@ Thumbs.db
 # Nota: Muitas vezes é boa prática ignorar o PDF e ter apenas o código fonte no Git.
 # Se o teu professor quiser que o PDF final esteja no Git, deixa esta linha comentada.
 # Se quiseres ignorar o PDF sempre, tira o '#' da linha abaixo:
-# *.pdf
+*.pdf
+
+*.iml
+.kotlin
+.gradle
+**/build/
+xcuserdata
+!src/**/build/
+local.properties
+.idea
+.DS_Store
+captures
+.externalNativeBuild
+.cxx
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+!*.xcodeproj/project.xcworkspace/
+!*.xcworkspace/contents.xcworkspacedata
+**/xcshareddata/WorkspaceSettings.xcsettings
+node_modules/
+
+# Compiled class file
+*.class
+
+# Log file
+*.log
+
+# BlueJ files
+*.ctxt
+
+# Mob
