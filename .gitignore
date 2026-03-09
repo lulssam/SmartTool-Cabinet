@@ -1,0 +1,45 @@
+# =========================
+# Ficheiros Auxiliares do LaTeX
+# =========================
+*.aux
+*.bbl
+*.blg
+*.bcf
+*.fdb_latexmk
+*.fls
+*.lof
+*.log
+*.lot
+*.out
+*.run.xml
+*.synctex.gz
+*.synctex(busy)
+*.toc
+*.xdv
+
+# =========================
+# Glossários e Acrónimos
+# =========================
+*.acn
+*.acr
+*.alg
+*.glg
+*.glo
+*.gls
+*.ist
+
+# =========================
+# Ficheiros de Editores / SO
+# =========================
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# =========================
+# PDF Gerado
+# =========================
+# Nota: Muitas vezes é boa prática ignorar o PDF e ter apenas o código fonte no Git.
+# Se o teu professor quiser que o PDF final esteja no Git, deixa esta linha comentada.
+# Se quiseres ignorar o PDF sempre, tira o '#' da linha abaixo:
+# *.pdf
