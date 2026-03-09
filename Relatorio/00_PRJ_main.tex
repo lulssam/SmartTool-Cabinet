@@ -1,25 +1,25 @@
 %%________________________________________________________________________
 %% LEIM | PROJETO
 %% 2022 / 2013 / 2012
-%% Modelo para relatório
-%% v04: alteração ADEETC para DEETC; outros ajustes
-%% v03: correção de gralhas
-%% v02: inclui anexo sobre utilização sistema controlo de versões
+%% Modelo para relatï¿½rio
+%% v04: alteraï¿½ï¿½o ADEETC para DEETC; outros ajustes
+%% v03: correï¿½ï¿½o de gralhas
+%% v02: inclui anexo sobre utilizaï¿½ï¿½o sistema controlo de versï¿½es
 %% v01: original
-%% PTS / MAR.2022 / MAI.2013 / 23.MAI.2012 (construído)
+%% PTS / MAR.2022 / MAI.2013 / 23.MAI.2012 (construï¿½do)
 %%________________________________________________________________________
 %%
 %%
-%% É importante ver o essencial do LaTeX antes de usar este template.
+%% ï¿½ importante ver o essencial do LaTeX antes de usar este template.
 %% um bom "ponto de partida": http://en.wikibooks.org/wiki/LaTeX/
 %%
 %%________________________________________________________________________
-%% Para alterar o Título, Nome dos Autores e Nome dos Orientadores fazer:
+%% Para alterar o Tï¿½tulo, Nome dos Autores e Nome dos Orientadores fazer:
 %% - abrir o ficheiro "00_PRJ_padrao.sty"
 %% - procurar "Nome do aluno" e alterar
-%% - procurar "número" e alterar; deixar os parêntesis
+%% - procurar "nï¿½mero" e alterar; deixar os parï¿½ntesis
 %% - procurar "Nome do orientador" e alterar
-%% - procurar "[Doutor]" e atirar os parêntesis rectos ou eliminar tudo
+%% - procurar "[Doutor]" e atirar os parï¿½ntesis rectos ou eliminar tudo
 %%
 %% Caso precise de adicionar um novo aluno, ou orientador, deve:
 %% - selecionar toda a linha (com "Nome do aluno" ou "Nome do orientador")
@@ -32,38 +32,38 @@
 
 
 
-%% o documento é definido do tipo "book" em a4, font 12pt
+%% o documento ï¿½ definido do tipo "book" em a4, font 12pt
 \documentclass[a4paper,12pt]{book}
 
 %% para usar caracteres acentuados
-%\usepackage[utf8]{inputenc} % no Unix (com codificação UTF-8)
-\usepackage[latin1]{inputenc} % no Windows (com codificação ISO-8859-1, ou ISO-8859-15)
+%\usepackage[utf8]{inputenc} % no Unix (com codificaï¿½ï¿½o UTF-8)
+\usepackage[latin1]{inputenc} % no Windows (com codificaï¿½ï¿½o ISO-8859-1, ou ISO-8859-15)
 
-% para aspectos de hifenização (do Português)
+% para aspectos de hifenizaï¿½ï¿½o (do Portuguï¿½s)
 \usepackage[portuguese]{babel}
 
-%% para incluir imagens e tratar de modo adequado endereços url
+%% para incluir imagens e tratar de modo adequado endereï¿½os url
 \usepackage{graphicx,url}
 
 %% para usar \begin{comment} ... \end{comment}
 \usepackage{verbatim}
 
-%% para usar o símbolo do euro
+%% para usar o sï¿½mbolo do euro
 %usepackage{eurosym}
 
 %% para juntar multiplas linhas em tabelas
 \usepackage{multirow}
 
-%% para usar símbolos matemáticos
+%% para usar sï¿½mbolos matemï¿½ticos
 \usepackage[centertags]{amsmath}
 
 %% para usar \mathds{...}
 \usepackage{dsfont}
 
-%% para formatação (e.g. espaçamento) de Tabelas
+%% para formataï¿½ï¿½o (e.g. espaï¿½amento) de Tabelas
 \usepackage{tabls}
 
-%% para usar listagens de código
+%% para usar listagens de cï¿½digo
 \usepackage{listings}
 
 %% para escrita "formal" de algoritmos
@@ -73,13 +73,13 @@
 %% (e nao no contexto de cada capitulo!)
 \usepackage{chngcntr}
 
-% para usar um estilo diferente na identificação de "Capítulo"
+% para usar um estilo diferente na identificaï¿½ï¿½o de "Capï¿½tulo"
 %Sonny, Lenny(x), Glenn, Conny, Rejne, Bjarne
 %\usepackage[Lenny]{fncychap}
-% Para ter no "heading" o nome do capítulo e da secção
+% Para ter no "heading" o nome do capï¿½tulo e da secï¿½ï¿½o
 \usepackage{fancyhdr}
 
-% para usar hiperligações (especialmente relevante para o índice)
+% para usar hiperligaï¿½ï¿½es (especialmente relevante para o ï¿½ndice)
 \usepackage[hidelinks]{hyperref}
 %\hypersetup{linktocpage}
 %\hypersetup{
@@ -98,18 +98,18 @@
 
 
 %%________________________________________________________________________
-% mudar alguns nomes fixos para Português
+% mudar alguns nomes fixos para Portuguï¿½s
 %%________________________________________________________________________
-% renomear "Listing" para "Código"
-\renewcommand{\lstlistingname}{Código}
+% renomear "Listing" para "Cï¿½digo"
+\renewcommand{\lstlistingname}{Cï¿½digo}
 \addto\captionsportuges{
-    \renewcommand{\contentsname}{Índice}}
+    \renewcommand{\contentsname}{ï¿½ndice}}
 \addto\captionsportuges{
     \renewcommand{\bibname}{Bibliografia}}
 \addto\captionsportuges{
     \renewcommand{\proofname}{Prova}}
 \addto\captionsportuges{
-    \renewcommand{\chaptername}{Capítulo}}
+    \renewcommand{\chaptername}{Capï¿½tulo}}
 \setlength{\headheight}{15pt}
 %%________________________________________________________________________
 
@@ -129,10 +129,10 @@
 \frontmatter
 \fazerCapa
 %% incluir o resumo e abstract
-%% caso pretenda, incluir os agradecimentos e a dedicatória
+%% caso pretenda, incluir os agradecimentos e a dedicatï¿½ria
 \frontmatter
 %%________________________________________________________________________
-%% comentar o que não interessar
+%% comentar o que nï¿½o interessar
 \include{./00a_PRJ_resumo_abstract}
 \include{./00b_PRJ_agradecimentos}
 \include{./00c_PRJ_dedicatoria}
@@ -142,12 +142,12 @@
 
 
 
-%% incluir a lista de conteúdos (índice, tabelas e figuras)
-%comentar se quiser alterar o espaçamento entre linhas
+%% incluir a lista de conteï¿½dos (ï¿½ndice, tabelas e figuras)
+%comentar se quiser alterar o espaï¿½amento entre linhas
 \setlinespacing{1.15}
 \myTableOfContents
 %%________________________________________________________________________
-%% comentar o que não interessar
+%% comentar o que nï¿½o interessar
 \myListOfTables
 \myListOfFigures
 %%________________________________________________________________________
@@ -159,10 +159,10 @@
 %% "Corpo Principal" do texto
 \mainmatter
 \myPageStyle
-%% cada um dos Capítulos
+%% cada um dos Capï¿½tulos
 %% (aqui separados em dois ficheiros)
 %%________________________________________________________________________
-%% comentar o que não interessar (ou incluir outros ficheiros)
+%% comentar o que nï¿½o interessar (ou incluir outros ficheiros)
 \input{./01_PRJ_cap_1_2_3.tex}
 \input{./01_PRJ_cap_4_5_6.tex}
 %%________________________________________________________________________
@@ -172,7 +172,7 @@
 
 \appendix
 %%________________________________________________________________________
-%% comentar o que não interessar (ou incluir outros ficheiros)
+%% comentar o que nï¿½o interessar (ou incluir outros ficheiros)
 \input{./02_PRJ_cap_apendice.tex}
 %%________________________________________________________________________
 
@@ -181,9 +181,9 @@
 
 
 %% bibliografia
-%% estilo para construção de referências bibliográficas
+%% estilo para construï¿½ï¿½o de referï¿½ncias bibliogrï¿½ficas
 %% PTS. Alterei o estilo "apalike" e chamei-lhe "apalikeMy".
-%% Coloquei vários termos em Português
+%% Coloquei vï¿½rios termos em Portuguï¿½s
 %% (e.g., "and", "of", "chapter", "editors", etc)
 \bibliographystyle{apalikeMy}
 \backmatter
