@@ -1,16 +1,16 @@
 %%________________________________________________________________________
 %% LEIM | PROJETO
 %% 2022 / 2012
-%% Modelo para relatório | definição do estilo
-%% PTS / 31.MAR.2022 (mudança de ADEETC para DEETC)
-%% PTS / 23.MAI.2012 (construído)
+%% Modelo para relatï¿½rio | definiï¿½ï¿½o do estilo
+%% PTS / 31.MAR.2022 (mudanï¿½a de ADEETC para DEETC)
+%% PTS / 23.MAI.2012 (construï¿½do)
 %%________________________________________________________________________
 
 
 
 %%________________________________________________________________________
-%% para usar comentários no texto
-%% e.g., \comment{isto é um comentário}
+%% para usar comentï¿½rios no texto
+%% e.g., \comment{isto ï¿½ um comentï¿½rio}
 %%________________________________________________________________________
 \long\def\comment#1{}
 
@@ -24,7 +24,7 @@
 \begin{titlepage}
 \begin{center}
 %%________________________________________________________________________
-%% logo do ISEL, nome e departamento (ex área departamental)
+%% logo do ISEL, nome e departamento (ex ï¿½rea departamental)
 \begin{figure}[h]
    \begin{minipage}[b]{0.17\linewidth}
       \centering
@@ -34,7 +34,7 @@
       \centering
       \textsc{\small Instituto Superior de Engenharia de Lisboa (ISEL)}
       \\[0.2cm]
-      \textsc{\small Departamento de Engenharia Eletrónica e de Telecomunicações e Computadores (DEETC)}
+      \textsc{\small Departamento de Engenharia Eletrï¿½nica e de Telecomunicaï¿½ï¿½es e Computadores (DEETC)}
    \end{minipage}
 \end{figure}
 %%________________________________________________________________________
@@ -42,14 +42,14 @@
 
 
 %%________________________________________________________________________
-%% identificação do curso e unidade curricular
+%% identificaï¿½ï¿½o do curso e unidade curricular
 \begin{table}[h]
    \centering
    \begin{tabular}{c}
    \hline
    \textsc{\small LEIM}
    \\
-   \textsc{\small Licenciatura em Engenharia Informática e Multimédia}
+   \textsc{\small Licenciatura em Engenharia Informï¿½tica e Multimï¿½dia}
    \\
    \textsc{\small Unidade Curricular de Projeto}
    \\
@@ -62,9 +62,9 @@
 
 
 %%________________________________________________________________________
-%% identificação do trabalho (título)
+%% identificaï¿½ï¿½o do trabalho (tï¿½tulo)
 \Large \textbf{
-Título do Trabalho
+Tï¿½tulo do Trabalho
 }
 \vspace{0.5cm}
 %%________________________________________________________________________
@@ -78,7 +78,7 @@ Título do Trabalho
    \linethickness{0.1pt}
    \put(0,0){\framebox(13,4){
    \small (eventual) imagem ilustrativa do trabalho -- 
-   \textit{dimensão}: até 13cm x 4cm
+   \textit{dimensï¿½o}: atï¿½ 13cm x 4cm
    }}
 \end{picture}
 %%________________________________________________________________________
@@ -86,16 +86,16 @@ Título do Trabalho
 
 
 %%________________________________________________________________________
-%% identificação do(s) autor(es), orientador(es) e data
+%% identificaï¿½ï¿½o do(s) autor(es), orientador(es) e data
 \normalsize
 \begin{table}[ht]
    \centering
    \begin{tabular}{lr}
    \\
-   Nome do aluno & (número)
+   GonÃ§alo Charneca & (50727)
    \\
    \\
-   Nome do aluno & (número)
+   MÂª LuÃ­sa Melo e Sampaio & (50799)
    \\ \\
    \end{tabular}
    \\
@@ -105,15 +105,15 @@ Título do Trabalho
    \\
    \hline
    \\
-   \textit{Professor [Doutor]} & Nome do orientador
+   \textit{Professor} & Tiago Dias
    \\
    \\
-   \textit{Professor [Doutor]} & Nome do orientador
+   \textit{Professor} & Carlos Gonçalves
    \\ \\
    \hline
    \\ \\
    \multicolumn{2}{c}{\textit{
-   Mês, ano
+   Mï¿½s, ano
    }}
    \end{tabular}
 \end{table}
@@ -130,7 +130,7 @@ Título do Trabalho
 
 
 %%________________________________________________________________________
-%% para colocar, no índice, Capítulos não numerados
+%% para colocar, no ï¿½ndice, Capï¿½tulos nï¿½o numerados
 %%________________________________________________________________________
 \newcommand{\noNumChapterInIndex}[1]
    {
@@ -138,7 +138,7 @@ Título do Trabalho
    \addcontentsline{toc}{chapter}{#1}
    }
 
-%% Para os "Capítulos" do "\frontmatter"
+%% Para os "Capï¿½tulos" do "\frontmatter"
 %% (anteriores ao corpo principal do texto)
 \newcommand{\myPrefaceChapter}[1]
    {
@@ -151,7 +151,7 @@ Título do Trabalho
 
 
 %%________________________________________________________________________
-%% para a dedicatória
+%% para a dedicatï¿½ria
 %%________________________________________________________________________
 \newenvironment{myDedication}
    {
@@ -169,20 +169,20 @@ Título do Trabalho
 
 
 %%________________________________________________________________________
-%% Para colocar as listas de conteúdos (Índice, Tabelas e Figuras)
-%% como entrada no Índice
+%% Para colocar as listas de conteï¿½dos (ï¿½ndice, Tabelas e Figuras)
+%% como entrada no ï¿½ndice
 %% (em vez dos comandos LaTeX:
 %% \tableofcontents, \listoftables, \listoffigures
 %%________________________________________________________________________
 \newcommand{\myTocXX}[2]
    {
-   \chapter*{#1\@mkboth{Conteúdo}{CONTENTS}}
+   \chapter*{#1\@mkboth{Conteï¿½do}{CONTENTS}}
    \addcontentsline{toc}{chapter}{#1}
    \@starttoc{#2}
    }
 
 \newcommand{\myTableOfContents}
-   { \myTocXX{Índice}{toc} }
+   { \myTocXX{ï¿½ndice}{toc} }
 
 \newcommand{\myListOfTables}
    { \myTocXX{Lista de Tabelas}{lot} }
@@ -195,7 +195,7 @@ Título do Trabalho
 
 
 %%________________________________________________________________________
-%% Para o comando "\thebibliography" gerar uma entrada no índice
+%% Para o comando "\thebibliography" gerar uma entrada no ï¿½ndice
 %%________________________________________________________________________
 \let\@myTheBibliography\thebibliography
 \renewcommand{\thebibliography}[1]
@@ -209,7 +209,7 @@ Título do Trabalho
 
 
 %%________________________________________________________________________
-%% Para definir o estilo para o cabeçalho e para a nota de rodapé
+%% Para definir o estilo para o cabeï¿½alho e para a nota de rodapï¿½
 %% (usar com: "\usepackage{fancyhdr}")
 %%________________________________________________________________________
 \newcommand{\myPageStyle}
@@ -224,7 +224,7 @@ Título do Trabalho
    \fancyhead[LE,RO]{\thepage}
    \fancyhead[LO]{\nouppercase{\rightmark}}
    \fancyhead[RE]{\nouppercase{\leftmark}}
-   %\fancyhead[RE]{\leftmark} % em uppercase títulos compridos não cabem
+   %\fancyhead[RE]{\leftmark} % em uppercase tï¿½tulos compridos nï¿½o cabem
    \addtolength{\headheight}{0.5pt} % make space for the rule
    }
 %\renewcommand{\chaptermark}[1]{\markboth{#1}{}}
@@ -244,7 +244,7 @@ Título do Trabalho
 \newcommand{\plicas}[1]{`{#1}'}
 \newcommand{\aspas}[1]{``{#1}''}
 
-% Vocábulos Latinos e Gregos
+% Vocï¿½bulos Latinos e Gregos
 \newcommand{\versus}{\plicas{versus}}
 \newcommand{\aPriori}{\plicas{a priori}}
 \newcommand{\cf}{cf.}
@@ -255,7 +255,7 @@ Título do Trabalho
 
 
 % ------------------------------------------------------------------------
-% Espaçamento de Linhas
+% Espaï¿½amento de Linhas
 % ------------------------------------------------------------------------
 \newlength{\defbaselineskip}
 \setlength{\defbaselineskip}{\baselineskip}

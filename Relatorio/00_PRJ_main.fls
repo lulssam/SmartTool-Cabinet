@@ -178,6 +178,7 @@ INPUT ./fig_logo_ISEL.png
 INPUT ./fig_logo_ISEL.png
 INPUT /Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/public/cm/cmcsc10.tfm
 INPUT /Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/public/cm/cmcsc10.tfm
+INPUT /Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/jknappen/ec/tcrm1095.tfm
 INPUT /Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/public/cm/cmr8.tfm
 INPUT /Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/public/cm/cmr6.tfm
 INPUT /Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/public/cm/cmmi12.tfm
@@ -191,9 +192,13 @@ INPUT /Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/public/amsfon
 INPUT /Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm
 INPUT /Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/public/cm/cmr17.tfm
 INPUT /Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/public/cm/cmbx12.tfm
+INPUT /Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/jknappen/ec/tcbx1728.tfm
 INPUT /Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/public/cm/cmr10.tfm
 INPUT /Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/public/cm/cmti10.tfm
+INPUT /Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/jknappen/ec/tcti1095.tfm
+INPUT /Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/jknappen/ec/tcrm1200.tfm
 INPUT /Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/public/cm/cmti12.tfm
+INPUT /Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/jknappen/ec/tcti1200.tfm
 INPUT /Users/luisameloesampaio/Library/Application Support/MiKTeX/texmfs/data/fonts/map/pdftex/pdftex.map
 INPUT /Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/public/cm/cmsl12.tfm
 INPUT ./00a_PRJ_resumo_abstract.tex
@@ -204,8 +209,6 @@ INPUT ./00a_PRJ_resumo_abstract.tex
 INPUT 00a_PRJ_resumo_abstract.tex
 INPUT /Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/public/cm/cmr17.tfm
 INPUT /Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/public/cm/cmbx12.tfm
-INPUT /Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/jknappen/ec/tcrm1200.tfm
-INPUT /Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/public/cm/cmr12.tfm
 INPUT /Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/public/cm/cmbx12.tfm
 INPUT ./00b_PRJ_agradecimentos.tex
 INPUT ./00b_PRJ_agradecimentos.tex
@@ -219,11 +222,13 @@ OUTPUT ./00c_PRJ_dedicatoria.aux
 INPUT ./00c_PRJ_dedicatoria.tex
 INPUT ./00c_PRJ_dedicatoria.tex
 INPUT 00c_PRJ_dedicatoria.tex
+INPUT /Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/jknappen/ec/tcbx2488.tfm
 INPUT ./00_PRJ_main.toc
 INPUT ./00_PRJ_main.toc
 INPUT 00_PRJ_main.toc
-INPUT /Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/public/cm/cmbx12.tfm
+INPUT /Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/jknappen/ec/tcbx1200.tfm
 OUTPUT 00_PRJ_main.toc
+INPUT /Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/jknappen/ec/tcsl1200.tfm
 INPUT ./00_PRJ_main.lot
 INPUT ./00_PRJ_main.lot
 INPUT 00_PRJ_main.lot
@@ -247,7 +252,6 @@ INPUT 02_PRJ_cap_apendice.tex
 INPUT ./00_PRJ_main.bbl
 INPUT ./00_PRJ_main.bbl
 INPUT 00_PRJ_main.bbl
-INPUT /Library/Application Support/MiKTeX/texmfs/install/fonts/tfm/public/cm/cmtt12.tfm
 INPUT 00_PRJ_main.aux
 INPUT ./00a_PRJ_resumo_abstract.aux
 INPUT ./00a_PRJ_resumo_abstract.aux
@@ -260,8 +264,22 @@ INPUT ./00c_PRJ_dedicatoria.aux
 INPUT 00c_PRJ_dedicatoria.aux
 INPUT ./00_PRJ_main.out
 INPUT ./00_PRJ_main.out
+INPUT /Users/luisameloesampaio/Library/Application Support/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/tcsl1200.pk
+INPUT /Users/luisameloesampaio/Library/Application Support/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/tcsl1200.pk
+INPUT /Users/luisameloesampaio/Library/Application Support/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/tcbx1200.pk
+INPUT /Users/luisameloesampaio/Library/Application Support/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/tcbx1200.pk
+INPUT /Users/luisameloesampaio/Library/Application Support/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/tcbx2488.pk
+INPUT /Users/luisameloesampaio/Library/Application Support/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/tcbx2488.pk
+INPUT /Users/luisameloesampaio/Library/Application Support/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/tcti1200.pk
+INPUT /Users/luisameloesampaio/Library/Application Support/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/tcti1200.pk
 INPUT /Users/luisameloesampaio/Library/Application Support/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/tcrm1200.pk
 INPUT /Users/luisameloesampaio/Library/Application Support/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/tcrm1200.pk
+INPUT /Users/luisameloesampaio/Library/Application Support/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/tcti1095.pk
+INPUT /Users/luisameloesampaio/Library/Application Support/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/tcti1095.pk
+INPUT /Users/luisameloesampaio/Library/Application Support/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/tcbx1728.pk
+INPUT /Users/luisameloesampaio/Library/Application Support/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/tcbx1728.pk
+INPUT /Users/luisameloesampaio/Library/Application Support/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/tcrm1095.pk
+INPUT /Users/luisameloesampaio/Library/Application Support/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/tcrm1095.pk
 INPUT /Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmbx12.pfb
 INPUT /Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmbx12.pfb
 INPUT /Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmcsc10.pfb
@@ -284,5 +302,3 @@ INPUT /Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsf
 INPUT /Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmti10.pfb
 INPUT /Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmti12.pfb
 INPUT /Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmti12.pfb
-INPUT /Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmtt12.pfb
-INPUT /Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmtt12.pfb
