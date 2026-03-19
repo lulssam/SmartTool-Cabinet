@@ -107,15 +107,15 @@ as equipas de TI podem gerir o aceso dos utilizadores de forma centralizada,
 fortalecendo a segurança geral e, ao mesmo tempo, aumentando a conveniência e a
 eficiência. \cite{SSOTechPrescient}
 
-\subsection{Tipos de SSO}
-Existem uma variadade de protocolos que tem de se ter atenção quando se trabalha com SSO, sendo os seguintes, os mais comuns:
+\subsubsection{Tipos de SSO}
+Existem uma variadade de protocolos que a ter em conta quando se trabalha com SSO, sendo os seguintes, os mais comuns:
 \begin{itemize}
     \item \textbf{\textit{Security Access Markup Language} (SAML)}: O SAML é um standard aberto baseado em linguagem XML, sendo historicamente o protocolo de eleição para implementações SSO em ambientes corporativos e de grande escala. \cite{SSOTechPrescient}. É ideal para sistemas integrados entre empresas parceiras ou no acesso a portais internos, onde a segurança robusta baseada em certificados é um requisito crítico. \cite{OIDCvsSAML}
     \item \textbf{\textit{Open Authorization} (OAuth 2.0)}: Embora frequentemente associado ao SSO, o OAuth 2.0 é estritamente um \textit{framework} de \textbf{autorização}, e não de autenticação. Permite que os utilizadores concendam acesso a aplicações ou APIs sem partilhar as suas palavras-passe. \cite{DiffSSOMiniOrange}
-    \item \textbf{OpenID Connect (OIDC)}: O OpenID Connect resolve a limitação do OAuth 2.0 adicionando-lhe uma camada dedicada à autenticação (identidade). Tornou-se o standard moderno para autenticação de utilizadores em aplicações \textit{cloud-native} e \textit{mobile} devido à sua arquitetura leve (REST/JSON) e facilidade de integração pelos programadores. É a tecnologia que suporta o chamado \textit{Social SSO} (ex: "Iniciar sessão com o Google"). \cite{SSOTechPrescient}.
+    \item \textbf{OpenID Connect (OIDC)}: O OpenID Connect resolve a limitação do OAuth 2.0 adicionando uma camada dedicada à autenticação (identidade). Tornou-se o standard moderno para autenticação de utilizadores em aplicações \textit{cloud-native} e \textit{mobile} devido à sua arquitetura leve (REST/JSON) e facilidade de integração pelos programadores. É a tecnologia que suporta o chamado \textit{Social SSO} (ex: "Iniciar sessão com o Google"). \cite{SSOTechPrescient}.
 \end{itemize}
 
-\subsection{Funcionamento Tecnlógico}
+\subsubsection{Funcionamento Tecnlógico}
 Num modelo federado, o pilar central da arquitetura é a confiança inter-organizacional.
 O processo envolve essencialmente duas entidades principais:
 
