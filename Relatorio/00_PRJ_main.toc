@@ -12,13 +12,13 @@
 \contentsline {section}{\numberline {3.2}Fundamentos}{5}{section.3.2}%
 \contentsline {subsection}{\numberline {3.2.1}Aut\^entica\c c\~ao Federada}{6}{subsection.3.2.1}%
 \contentsline {subsubsection}{Defini\c c\~ao}{6}{section*.8}%
-\contentsline {subsection}{\numberline {3.2.2}Tipos de SSO}{6}{subsection.3.2.2}%
-\contentsline {subsection}{\numberline {3.2.3}Funcionamento Tecnl\'ogico}{7}{subsection.3.2.3}%
+\contentsline {subsubsection}{Tipos de SSO}{6}{section*.9}%
+\contentsline {subsubsection}{Funcionamento Tecnl\'ogico}{7}{section*.10}%
 \contentsline {section}{\numberline {3.3}Abordagem}{7}{section.3.3}%
 \contentsline {chapter}{\numberline {4}Implementa\c c\~ao do Modelo}{9}{chapter.4}%
 \contentsline {chapter}{\numberline {5}Valida\c c\~ao e Testes}{11}{chapter.5}%
-\contentsline {paragraph}{Aten\c c\~ao.}{11}{section*.9}%
+\contentsline {paragraph}{Aten\c c\~ao.}{11}{section*.11}%
 \contentsline {chapter}{\numberline {6}Conclus\~oes e Trabalho Futuro}{13}{chapter.6}%
 \contentsline {chapter}{\numberline {A}Um Detalhe Adicional}{15}{appendix.A}%
 \contentsline {chapter}{\numberline {B}Outro Detalhe Adicional}{17}{appendix.B}%
-\contentsline {chapter}{Bibliografia}{19}{appendix*.10}%
+\contentsline {chapter}{Bibliografia}{19}{appendix*.12}%

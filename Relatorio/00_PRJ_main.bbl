@@ -1,21 +1,18 @@
-\begin{thebibliography}{}
+\begin{thebibliography}{1}
 
-\bibitem[Dias and Gonçalves, 2026]{proposta}
-Dias, T. and Gonçalves, C. (2026).
-\newblock Sistema de gestão central para smart tool cabinets.
-\newblock pdf.
+\bibitem{proposta}
+T.~Dias and C.~Gonçalves, ``Sistema de gestão central para smart tool
+  cabinets.'' pdf, 2026.
 
-\bibitem[Guo, 2025]{OIDCvsSAML}
-Guo, H. (2025).
-\newblock Oidc vs. saml: Understanding the differences and upgrading to modern
-  authentication.
+\bibitem{SSOTechPrescient}
+Y.~Laygude, ``What is single sign-on (sso) and how it works,'' 2025.
 
-\bibitem[Laygude, 2025]{SSOTechPrescient}
-Laygude, Y. (2025).
-\newblock What is single sign-on (sso) and how it works.
+\bibitem{OIDCvsSAML}
+H.~Guo, ``Oidc vs. saml: Understanding the differences and upgrading to modern
+  authentication,'' 2025.
 
-\bibitem[miniOrange, 2025]{DiffSSOMiniOrange}
-miniOrange (2025).
-\newblock What is the difference between saml vs oauth vs openid connect?
+\bibitem{DiffSSOMiniOrange}
+miniOrange, ``What is the difference between saml vs oauth vs openid
+  connect?,'' 2025.
 
 \end{thebibliography}
