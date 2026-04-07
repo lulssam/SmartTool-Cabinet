@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.1) (preloaded format=pdflatex 2025.10.20)  7 APR 2026 12:59
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.1) (preloaded format=pdflatex 2025.10.20)  7 APR 2026 13:25
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -387,7 +387,7 @@ Package hyperref Info: Link coloring OFF on input line 124.
 \@outlinefile=\write3
 \openout3 = `00_PRJ_main.out'.
 
-<./fig_logo_ISEL.png, id=87, 464.4552pt x 456.7464pt>
+<./fig_logo_ISEL.png, id=91, 464.4552pt x 456.7464pt>
 File: ./fig_logo_ISEL.png Graphic file (type png)
 <use ./fig_logo_ISEL.png>
 Package pdftex.def Info: ./fig_logo_ISEL.png  used on input line 130.
@@ -515,6 +515,16 @@ Cap\'{\i }tulo 1.
 LaTeX Warning: Citation `ciberduvidas' on page 2 undefined on input line 30.
 
 
+Overfull \hbox (10.53781pt too wide) in paragraph at lines 34--35
+[]\OT1/cmr/m/n/12 Caso uti-lize ou-tro pro-ces-sa-dor, ou edi-tor, de texto deve ter muita aten^^?^^P?`\TS1/cmr/m/n/12 ^^bd\OT1/cmr/m/n/12 ^^?^^P?`\TS1/cmr/m/n/12 ^^bd\OT1/cmr/m/n/12 o
+ []
+
+
+Overfull \hbox (2.63557pt too wide) in paragraph at lines 34--35
+\OT1/cmr/m/n/12 exem-plo ^^?^^P?`\TS1/cmr/m/n/12 ^^bd \OT1/cmr/m/n/12 usual os do-cu-men-tos apre-sen-ta-rem in-corre^^?^^P?`\TS1/cmr/m/n/12 ^^bd\OT1/cmr/m/n/12 ^^?^^P?`\TS1/cmr/m/n/12 ^^bd\OT1/cmr/m/n/12 es na forma^^?^^P?`\TS1/cmr/m/n/12 ^^bd\OT1/cmr/m/n/12 ^^?^^P?`\TS1/cmr/m/n/12 ^^bd\OT1/cmr/m/n/12 o
+ []
+
+
 
 [2]
 Cap\'{\i }tulo 2.
@@ -548,81 +558,109 @@ LaTeX Warning: Citation `Marin_2006' on page 3 undefined on input line 61.
 [4]
 Cap\'{\i }tulo 3.
 
-Overfull \hbox (2.9563pt too wide) in paragraph at lines 106--117
+Overfull \hbox (10.68831pt too wide) in paragraph at lines 108--119
  [][] 
  []
 
 
-Underfull \vbox (badness 10000) has occurred while \output is active []
+Underfull \vbox (badness 6758) has occurred while \output is active []
 
 
 
 [5
 
 ]
-Underfull \hbox (badness 1742) in paragraph at lines 130--130
-[]\OT1/cmr/m/n/12 Mostrar Fer-ra-men-tas dis-pon^^S^^Pveis ao Ges-tor e
- []
-
-
-Overfull \hbox (2.9563pt too wide) in paragraph at lines 124--137
+Overfull \hbox (2.9563pt too wide) in paragraph at lines 126--139
  [][] 
  []
 
 
-Overfull \hbox (2.9563pt too wide) in paragraph at lines 144--151
+Overfull \hbox (2.9563pt too wide) in paragraph at lines 146--153
  [][] 
  []
 
 
-Overfull \hbox (2.9563pt too wide) in paragraph at lines 158--167
+Overfull \hbox (2.9563pt too wide) in paragraph at lines 160--169
  [][] 
  []
 
 
 
 [6]
-Overfull \hbox (5.63266pt too wide) in paragraph at lines 175--184
+Overfull \hbox (13.79106pt too wide) in paragraph at lines 177--186
  [][] 
  []
 
 
-Overfull \hbox (5.63266pt too wide) in paragraph at lines 191--198
+Overfull \hbox (13.79106pt too wide) in paragraph at lines 193--200
  [][] 
  []
 
 
-Overfull \hbox (24.23663pt too wide) in paragraph at lines 205--216
+Overfull \hbox (32.39503pt too wide) in paragraph at lines 207--218
  [][] 
  []
 
 
-Overfull \hbox (5.63266pt too wide) in paragraph at lines 223--230
+Overfull \hbox (13.79106pt too wide) in paragraph at lines 225--232
  [][] 
  []
 
 
 
 [7]
-Overfull \hbox (5.63266pt too wide) in paragraph at lines 238--245
+Overfull \hbox (13.79106pt too wide) in paragraph at lines 240--247
  [][] 
+ []
+
+<img/UCD-BackOffice.drawio.png, id=268, 3666.69875pt x 2593.69pt>
+File: img/UCD-BackOffice.drawio.png Graphic file (type png)
+<use img/UCD-BackOffice.drawio.png>
+Package pdftex.def Info: img/UCD-BackOffice.drawio.png  used on input line 256.
+(pdftex.def)             Requested size: 390.0pt x 275.848pt.
+<img/UCD-Gestor.drawio.png, id=269, 3666.69875pt x 2593.69pt>
+File: img/UCD-Gestor.drawio.png Graphic file (type png)
+<use img/UCD-Gestor.drawio.png>
+Package pdftex.def Info: img/UCD-Gestor.drawio.png  used on input line 264.
+(pdftex.def)             Requested size: 390.0pt x 275.848pt.
+
+
+[8 <./img/UCD-BackOffice.drawio.png>]
+<img/UCD-Tecnico.drawio.png, id=279, 3666.69875pt x 2593.69pt>
+File: img/UCD-Tecnico.drawio.png Graphic file (type png)
+<use img/UCD-Tecnico.drawio.png>
+Package pdftex.def Info: img/UCD-Tecnico.drawio.png  used on input line 272.
+(pdftex.def)             Requested size: 390.0pt x 275.848pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+
+[9 <./img/UCD-Gestor.drawio.png>]
+
+[10 <./img/UCD-Tecnico.drawio.png>]
+Overfull \hbox (3.05338pt too wide) in paragraph at lines 300--301
+[]\OT1/cmr/bx/n/12 OpenID Con-nect (OIDC)\OT1/cmr/m/n/12 : O Ope-nID Con-nect re-solve a li-mita^^?^^P?`\TS1/cmr/m/n/12 ^^bd\OT1/cmr/m/n/12 ^^?^^P?`\TS1/cmr/m/n/12 ^^bd\OT1/cmr/m/n/12 o
+ []
+
+
+Overfull \hbox (28.53159pt too wide) in paragraph at lines 309--310
+[]\OT1/cmr/bx/n/12 Fornecedor de Servi^^?^^P?`\TS1/cmr/bx/n/12 ^^bd\OT1/cmr/bx/n/12 os \OT1/cmr/bx/it/12 Ser-vice Pro-vi-der \OT1/cmr/bx/n/12 - SP\OT1/cmr/m/n/12 : S^^?^^P?`\TS1/cmr/m/n/12 ^^bd\OT1/cmr/m/n/12 o as aplica^^?^^P?`\TS1/cmr/m/n/12 ^^bd\OT1/cmr/m/n/12 ^^?^^P?`\TS1/cmr/m/n/12 ^^bd\OT1/cmr/m/n/12 es
  []
 
 
 
-[8]
+[11]) (01_PRJ_cap_4_5_6.tex
 
-[9]) (01_PRJ_cap_4_5_6.tex
-
-[10]
+[12]
 Cap\'{\i }tulo 4.
 
 
-[11
+[13
 
 ]
 
-[12
+[14
 
 ]
 Cap\'{\i }tulo 5.
@@ -632,37 +670,37 @@ Package pdftex.def Info: ./fig_logo_ISEL.png  used on input line 58.
 (pdftex.def)             Requested size: 56.9055pt x 55.95714pt.
 
 
-[13]
-
-[14
-
-]
-Cap\'{\i }tulo 6.
-) (02_PRJ_cap_apendice.tex
-
 [15]
 
 [16
 
 ]
-Ap\^endice A.
-
+Cap\'{\i }tulo 6.
+) (02_PRJ_cap_apendice.tex
 
 [17]
 
 [18
 
 ]
-Ap\^endice B.
-)
+Ap\^endice A.
+
 
 [19]
 
 [20
 
+]
+Ap\^endice B.
+)
+
+[21]
+
+[22
+
 ] (00_PRJ_main.bbl)
 
-[21
+[23
 
 ] (00_PRJ_main.aux (00a_PRJ_resumo_abstract.aux) (00b_PRJ_agradecimentos.aux) (00c_PRJ_dedicatoria.aux))
  ***********
@@ -677,20 +715,20 @@ LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 LaTeX Warning: There were undefined references.
 
 Package rerunfilecheck Info: File `00_PRJ_main.out' has not changed.
-(rerunfilecheck)             Checksum: D2836C3FB8433F98732CD9891FB234DA;2788.
+(rerunfilecheck)             Checksum: 313C4EF143564D6521D2D424DA7DE551;3069.
  ) 
 Here is how much of TeX's memory you used:
- 12727 strings out of 468224
- 208533 string characters out of 5430035
- 625847 words of memory out of 5000000
- 40955 multiletter control sequences out of 15000+600000
- 637497 words of font info for 74 fonts, out of 8000000 for 9000
+ 12763 strings out of 468224
+ 209425 string characters out of 5430035
+ 626082 words of memory out of 5000000
+ 40981 multiletter control sequences out of 15000+600000
+ 637838 words of font info for 75 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,12n,79p,915b,636s stack positions out of 10000i,1000n,20000p,200000b,200000s
- </Users/luisameloesampaio/Library/Application Support/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/tcsl1200.pk> </Users/luisameloesampaio/Library/Application Support/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/tcbx1200.pk> </Users/luisameloesampaio/Library/Application Support/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/tcbx2488.pk> </Users/luisameloesampaio/Library/Application Support/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/tcti1200.pk> </Users/luisameloesampaio/Library/Application Support/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/tcrm1200.pk> </Users/luisameloesampaio/Library/Application Support/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/tcti1095.pk> </Users/luisameloesampaio/Library/Application Support/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/tcbx1728.pk> </Users/luisameloesampaio/Library/Application Support/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/tcrm1095.pk></Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmbx12.pfb></Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmbxti10.pfb></Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmcsc10.pfb></Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmex10.pfb></Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmmi12.pfb></Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmmi8.pfb></Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmr10.pfb></Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmr12.pfb></Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmr8.pfb></Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmsl12.pfb></Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmti10.pfb></Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmti12.pfb>
-Output written on 00_PRJ_main.pdf (37 pages, 353920 bytes).
+ 75i,12n,79p,967b,636s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ </Users/luisameloesampaio/Library/Application Support/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/tcbx1440.pk> </Users/luisameloesampaio/Library/Application Support/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/tcsl1200.pk> </Users/luisameloesampaio/Library/Application Support/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/tcbx1200.pk> </Users/luisameloesampaio/Library/Application Support/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/tcbx2488.pk> </Users/luisameloesampaio/Library/Application Support/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/tcti1200.pk> </Users/luisameloesampaio/Library/Application Support/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/tcrm1200.pk> </Users/luisameloesampaio/Library/Application Support/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/tcti1095.pk> </Users/luisameloesampaio/Library/Application Support/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/tcbx1728.pk> </Users/luisameloesampaio/Library/Application Support/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/tcrm1095.pk></Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmbx12.pfb></Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmbxti10.pfb></Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmcsc10.pfb></Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmex10.pfb></Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmmi12.pfb></Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmmi8.pfb></Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmr10.pfb></Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmr12.pfb></Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmr8.pfb></Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmsl12.pfb></Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmti10.pfb></Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmti12.pfb>
+Output written on 00_PRJ_main.pdf (39 pages, 1416121 bytes).
 PDF statistics:
- 450 PDF objects out of 1000 (max. 8388607)
- 87 named destinations out of 1000 (max. 500000)
- 174 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 490 PDF objects out of 1000 (max. 8388607)
+ 96 named destinations out of 1000 (max. 500000)
+ 197 words of extra memory for PDF output out of 10000 (max. 10000000)
 
