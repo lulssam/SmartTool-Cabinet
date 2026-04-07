@@ -73,11 +73,16 @@ Para fazer referência a um trabalho é necessário seguir as boas regras (sintátic
 \label{ch:modeloProposto}
 %%________________________________________________________________________
 
-Aqui mostra um caminho que inicia com requisitos (\cf, secção \ref{sec:requisitos}), passa pela aplicação dos fundamentos (\cf, secção \ref{sec:fundamentos}) e continua até conseguir transmitir uma visão clara e um formalismo com nível de detalhe adequado a um leitor que tenha um perfil (competência técnica) idêntico ao seu.
+Aqui mostra um caminho que inicia com requisitos (\cf, secção \ref{sec:requisitos}), passa pela aplicação dos 
+fundamentos (\cf, secção \ref{sec:fundamentos}) e continua até conseguir transmitir uma visão clara e um formalismo 
+com nível de detalhe adequado a um leitor que tenha um perfil (competência técnica) idêntico ao seu.
 
-Recorra, sempre que possível, a exemplos ilustrativos da utilização do seu modelo. Esses exemplos devem ajudar o leitor a compreender os aspetos mais específicos do seu trabalho.
+Recorra, sempre que possível, a exemplos ilustrativos da utilização do seu modelo. Esses exemplos devem ajudar o leitor a 
+compreender os aspetos mais específicos do seu trabalho.
 
-O modelo aqui proposto deve ser (tanto quanto possível) independente de tecnologias concretas (\eg, linguagens de programação ou bibliotecas). No entanto deve fornecer os argumentos que contribuam para justificar uma posterior escolha (adoção) de tecnologias.
+O modelo aqui proposto deve ser (tanto quanto possível) independente de tecnologias 
+concretas (\eg, linguagens de programação ou bibliotecas). No entanto deve fornecer os argumentos que contribuam para 
+justificar uma posterior escolha (adoção) de tecnologias.
 
 
 %%________________________________________________________________________
@@ -85,12 +90,167 @@ O modelo aqui proposto deve ser (tanto quanto possível) independente de tecnolog
 \label{sec:requisitos}
 %%________________________________________________________________________
 
-Aqui o essencial (e se aplicável) dos requisitos funcionais, não funcionais e modelo de casos de utilização. Aqui deve também apresentar matriz para decisão sobre prioridade dos casos de utilização (se aplicável) \ldots
+Aqui o essencial (e se aplicável) dos requisitos funcionais, não funcionais e modelo de casos de 
+utilização. Aqui deve também apresentar matriz para decisão sobre prioridade dos casos de utilização
+ (se aplicável) \ldots
 
-Deve apresentar de forma \aspas{moderada} o resultado da fase avaliação de requisitos. A informação de maior detalhe (\eg, diagramas UML demasiado detalhados) deve ser colocada em apêndice.
+Deve apresentar de forma \aspas{moderada} o resultado da fase avaliação de requisitos. 
+A informação de maior detalhe (\eg, diagramas UML demasiado detalhados) deve ser colocada em apêndice.
 
+\subsection{Requisitos Funcionais}
+
+
+\subsubsection{Sistema}
+
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|p{9cm}|c|}
+\hline
+\textbf{Requisito} & \textbf{Descrição} & \textbf{Tipo} \\
+\hline
+RF1 & O sistema não permite funcionários acederem a aplicação fora do horário de trabalho & Evidente \\
+\hline
+RF2 & Apenas funcionários registados pelo Back Office podem ter acesso á aplicação & Invisível \\
+\hline
+RF3 & Guardar Histórico de 7 dias das ferramentas requisitada & Invisível \\
+\hline
+\end{tabular}
+\caption{Requisitos Funcionais do Sistema}
+\label{tab:req_fun_sis}
+\end{table}
+
+\subsubsection{Interface}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|p{9cm}|c|}
+        \hline
+        \textbf{Requisito}& \textbf{Descrição} & \textbf{Tipo} \\
+        \hline
+        RF4 & Mostrar o Histórico de 7 dias das ferramentas requisitadas ao Gestor e Técnico & Evidente \\
+        \hline
+        RF5 & Mostrar Ferramentas disponíveis ao Gestor e Técnico & Evidente \\
+        \hline
+        RF6 & Mostrar ao Gestor o estado dos Armários & Evidente \\
+        \hline
+        RF7 & Mostrar ao Gestor Alertas ativos & Evidente \\
+        \hline
+    \end{tabular}
+    \caption{Requisitos Funcionais da Interface}
+    \label{tab:req_fun_int}
+\end{table}
+
+\subsubsection{Notificação}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|p{9cm}|c|}
+        \hline
+        \textbf{Requisito} & \textbf{Descrição} & \textbf{Tipo} \\ 
+        \hline
+       RF8 & Enviar ao Gestor Notificação caso haja um Alerta de Grau de Importância Elevado & Evidente \\
+        \hline
+    \end{tabular}
+    \caption{Requisitos Funcionais de Notificação}
+    \label{tab:req_fun_not}
+\end{table}
+
+\subsubsection{Autênticação}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|p{9cm}|c|}
+        \hline
+        \textbf{Requisito} & \textbf{Descrição} & \textbf{Tipo} \\ 
+        \hline
+        RF9 & O sistema permite autenticação de utilizadores com Autênticação Federada & Evidente \\
+        \hline
+        RF10 & O sistema permite autenticação de utilizadores com Email/Password & Evidente \\
+        \hline
+    \end{tabular}
+    \caption{Requisitos Funcionais de Autênticação}
+    \label{tab:req_fun_aut}
+\end{table}
+
+\subsection{Requisitos Não Funcionais}
+\subsubsection{Estética}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|p{9cm}|c|}
+        \hline
+        \textbf{Requisito} & \textbf{Descrição} & \textbf{Tipo} \\ 
+        \hline
+        RnF1 & Palette de cores da aplicação deve seguir estilo da TAP & Desejável \\
+        \hline
+        RnF2 & Garantir que ícones são do mesmo estilo & Desejável \\
+        \hline
+    \end{tabular}
+    \caption{Requisitos Não Funcionais Estéticos}
+    \label{tab:req_n_fun_est}
+\end{table}
+
+\subsubsection{Facilidade de Utilização}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|p{9cm}|c|}
+         \hline
+        \textbf{Requisito} & \textbf{Descrição} & \textbf{Tipo} \\ 
+        \hline
+        RnF3 & Navegação de menus simples & Desejável \\ 
+        \hline
+    \end{tabular}
+    \caption{Requisitos Não Funcionais da Facilidade de Utilização}
+    \label{tab:req_n_fun_facilidade}
+\end{table}
+
+\subsubsection{Plataformas}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|p{9cm}|c|}
+         \hline
+        \textbf{Requisito} & \textbf{Descrição} & \textbf{Tipo} \\ 
+        \hline
+        RnF4 & Android & Obrigatório \\ 
+        \hline
+        RnF5 & iOS & Obrigatório \\
+        \hline
+        RnF6 & Desktop & Desejável (?) \\ 
+        \hline
+    \end{tabular}
+    \caption{Requisitos Não Funcionais de Plataformas}
+    \label{tab:req_n_fun_plat}
+\end{table}
+
+\subsubsection{Interação Pessoa-Máquina}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|p{9cm}|c|}
+         \hline
+        \textbf{Requisito} & \textbf{Descrição} & \textbf{Tipo} \\ 
+        \hline
+        RnF7 & Resposta rápida do sistema & Desejável \\ 
+        \hline
+    \end{tabular}
+    \caption{Requisitos Não Funcionais de Interação Pessoa-Máquina}
+    \label{tab:req_n_fun_ipm}
+\end{table}
+
+
+\subsubsection{Acessibilidade}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|p{9cm}|c|}
+         \hline
+        \textbf{Requisito} & \textbf{Descrição} & \textbf{Tipo} \\ 
+        \hline
+        RnF8 & Navegação de menus simples & Desejável \\ 
+        \hline
+    \end{tabular}
+    \caption{Requisitos Não Funcionais de Acessibilidade}
+    \label{tab:req_n_fun_acess}
+\end{table}
 
 %%________________________________________________________________________
+
+
 \section{Fundamentos}
 \label{sec:fundamentos}
 %%________________________________________________________________________
@@ -105,7 +265,7 @@ necessidade de criar ou gerir credenciais separadas para cada um desses sistemas
 Ao integrar estas aplicações numa estrutura de autênticação unificada, 
 as equipas de TI podem gerir o aceso dos utilizadores de forma centralizada, 
 fortalecendo a segurança geral e, ao mesmo tempo, aumentando a conveniência e a
-eficiência. \cite{SSOTechPrescient}
+eficiência.~\cite{SSOTechPrescient}
 
 \subsubsection{Tipos de SSO}
 Existem uma variadade de protocolos que a ter em conta quando se trabalha com SSO, sendo os seguintes, os mais comuns:
