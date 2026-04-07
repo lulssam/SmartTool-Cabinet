@@ -5,31 +5,35 @@
 \contentsline {chapter}{\IeC {\"\i }\IeC {\textquestiondown }\IeC {\textonehalf }ndice}{ix}{chapter*.5}%
 \contentsline {chapter}{Lista de Tabelas}{xi}{chapter*.6}%
 \contentsline {chapter}{Lista de Figuras}{xiii}{chapter*.7}%
-\contentsline {chapter}{\numberline {1}Introdu\c c\~ao}{1}{chapter.1}%
+\contentsline {chapter}{\numberline {1}Introdu\IeC {\"\i }\IeC {\textquestiondown }\IeC {\textonehalf }\IeC {\"\i }\IeC {\textquestiondown }\IeC {\textonehalf }o}{1}{chapter.1}%
 \contentsline {chapter}{\numberline {2}Trabalho Relacionado}{3}{chapter.2}%
 \contentsline {chapter}{\numberline {3}Modelo Proposto}{5}{chapter.3}%
 \contentsline {section}{\numberline {3.1}Requisitos}{5}{section.3.1}%
 \contentsline {subsection}{\numberline {3.1.1}Requisitos Funcionais}{6}{subsection.3.1.1}%
 \contentsline {subsubsection}{Sistema}{6}{section*.8}%
 \contentsline {subsubsection}{Interface}{6}{section*.9}%
-\contentsline {subsubsection}{Notifica\c c\~ao}{6}{section*.10}%
-\contentsline {subsubsection}{Aut\^entica\c c\~ao}{7}{section*.11}%
-\contentsline {subsection}{\numberline {3.1.2}Requisitos N\~ao Funcionais}{7}{subsection.3.1.2}%
-\contentsline {subsubsection}{Est\'etica}{7}{section*.12}%
-\contentsline {subsubsection}{Facilidade de Utiliza\c c\~ao}{7}{section*.13}%
+\contentsline {subsubsection}{Notifica\IeC {\"\i }\IeC {\textquestiondown }\IeC {\textonehalf }\IeC {\"\i }\IeC {\textquestiondown }\IeC {\textonehalf }o}{6}{section*.10}%
+\contentsline {subsubsection}{Aut\IeC {\"\i }\IeC {\textquestiondown }\IeC {\textonehalf }ntica\IeC {\"\i }\IeC {\textquestiondown }\IeC {\textonehalf }\IeC {\"\i }\IeC {\textquestiondown }\IeC {\textonehalf }o}{7}{section*.11}%
+\contentsline {subsection}{\numberline {3.1.2}Requisitos N\IeC {\"\i }\IeC {\textquestiondown }\IeC {\textonehalf }o Funcionais}{7}{subsection.3.1.2}%
+\contentsline {subsubsection}{Est\IeC {\"\i }\IeC {\textquestiondown }\IeC {\textonehalf }tica}{7}{section*.12}%
+\contentsline {subsubsection}{Facilidade de Utiliza\IeC {\"\i }\IeC {\textquestiondown }\IeC {\textonehalf }\IeC {\"\i }\IeC {\textquestiondown }\IeC {\textonehalf }o}{7}{section*.13}%
 \contentsline {subsubsection}{Plataformas}{7}{section*.14}%
-\contentsline {subsubsection}{Intera\c c\~ao Pessoa-M\'aquina}{8}{section*.15}%
+\contentsline {subsubsection}{Intera\IeC {\"\i }\IeC {\textquestiondown }\IeC {\textonehalf }\IeC {\"\i }\IeC {\textquestiondown }\IeC {\textonehalf }o Pessoa-M\IeC {\"\i }\IeC {\textquestiondown }\IeC {\textonehalf }quina}{8}{section*.15}%
 \contentsline {subsubsection}{Acessibilidade}{8}{section*.16}%
-\contentsline {section}{\numberline {3.2}Fundamentos}{8}{section.3.2}%
-\contentsline {subsection}{\numberline {3.2.1}Aut\^entica\c c\~ao Federada}{8}{subsection.3.2.1}%
-\contentsline {subsubsection}{Defini\c c\~ao}{8}{section*.17}%
-\contentsline {subsubsection}{Tipos de SSO}{8}{section*.18}%
-\contentsline {subsubsection}{Funcionamento Tecnl\'ogico}{9}{section*.19}%
-\contentsline {section}{\numberline {3.3}Abordagem}{9}{section.3.3}%
-\contentsline {chapter}{\numberline {4}Implementa\c c\~ao do Modelo}{11}{chapter.4}%
-\contentsline {chapter}{\numberline {5}Valida\c c\~ao e Testes}{13}{chapter.5}%
-\contentsline {paragraph}{Aten\c c\~ao.}{13}{section*.20}%
-\contentsline {chapter}{\numberline {6}Conclus\~oes e Trabalho Futuro}{15}{chapter.6}%
-\contentsline {chapter}{\numberline {A}Um Detalhe Adicional}{17}{appendix.A}%
-\contentsline {chapter}{\numberline {B}Outro Detalhe Adicional}{19}{appendix.B}%
-\contentsline {chapter}{Bibliografia}{21}{appendix*.21}%
+\contentsline {subsection}{\numberline {3.1.3}Casos de Utiliza\~A\IeC {\S }\~A\IeC {\pounds }o}{8}{subsection.3.1.3}%
+\contentsline {subsubsection}{\textit {Back-Office}}{8}{section*.17}%
+\contentsline {subsubsection}{Gestor}{9}{section*.18}%
+\contentsline {subsubsection}{T\~A\IeC {\copyright }cnico}{10}{section*.19}%
+\contentsline {section}{\numberline {3.2}Fundamentos}{10}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Aut\IeC {\"\i }\IeC {\textquestiondown }\IeC {\textonehalf }ntica\IeC {\"\i }\IeC {\textquestiondown }\IeC {\textonehalf }\IeC {\"\i }\IeC {\textquestiondown }\IeC {\textonehalf }o Federada}{10}{subsection.3.2.1}%
+\contentsline {subsubsection}{Defini\IeC {\"\i }\IeC {\textquestiondown }\IeC {\textonehalf }\IeC {\"\i }\IeC {\textquestiondown }\IeC {\textonehalf }o}{10}{section*.20}%
+\contentsline {subsubsection}{Tipos de SSO}{11}{section*.21}%
+\contentsline {subsubsection}{Funcionamento Tecnl\IeC {\"\i }\IeC {\textquestiondown }\IeC {\textonehalf }gico}{11}{section*.22}%
+\contentsline {section}{\numberline {3.3}Abordagem}{12}{section.3.3}%
+\contentsline {chapter}{\numberline {4}Implementa\c c\~ao do Modelo}{13}{chapter.4}%
+\contentsline {chapter}{\numberline {5}Valida\c c\~ao e Testes}{15}{chapter.5}%
+\contentsline {paragraph}{Aten\c c\~ao.}{15}{section*.23}%
+\contentsline {chapter}{\numberline {6}Conclus\~oes e Trabalho Futuro}{17}{chapter.6}%
+\contentsline {chapter}{\numberline {A}Um Detalhe Adicional}{19}{appendix.A}%
+\contentsline {chapter}{\numberline {B}Outro Detalhe Adicional}{21}{appendix.B}%
+\contentsline {chapter}{Bibliografia}{23}{appendix*.24}%
