@@ -18,7 +18,11 @@ import pfc.a50727a50799.smarttool_cabinet.core.auth.AuthError
 class FuncionarioRemoteDataSource(
     private val httpClient: HttpClient
 ) {
-    suspend fun getFuncionario(email: String): AuthResult<FuncionarioDto?> {
+
+    /**
+     * @param email do funcionario a procurar
+     * @return os dados do funcionário ou um erro a explicar o que correu mal*/
+    suspend fun getFuncionario(email: String): AuthResult<FuncionarioDto> {
         return try {
             val response = httpClient.get("/api/funcionarios/$email")
             when (response.status) {
