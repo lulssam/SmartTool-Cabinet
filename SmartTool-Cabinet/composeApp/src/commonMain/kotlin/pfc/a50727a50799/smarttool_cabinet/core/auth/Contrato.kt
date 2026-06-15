@@ -77,4 +77,9 @@ interface AuthRepository {
      * NÃO significa fazer login outra vez.
      * */
     suspend fun getSession(): AuthResult<Session?>
+
+
+    /**
+     * termina sessão atual*/
+    fun logout()
 }
