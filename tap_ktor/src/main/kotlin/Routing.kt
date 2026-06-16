@@ -15,7 +15,7 @@ fun Application.configureRouting() {
         }
 
         get("/api/ferramentas") {
-            val url = "jdbc:mysql://localhost:3306/GestaoFerramentas?useSSL=false&allowPublicKeyRetrieval=true"
+            val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
             val user = "root"
             val password = "rootpass"
 
