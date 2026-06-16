@@ -1,9 +1,12 @@
 package com.tapktor.respostas
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class FuncionariosResponse(
     val idFunc: Int,
-    val nomeCompleto: String,
-    val email: String
+    val nome: String,
+    val cargo: String
 )
 
 
