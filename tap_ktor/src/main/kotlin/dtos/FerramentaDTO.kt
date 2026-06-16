@@ -1,9 +1,9 @@
-package com.tapktor.respostas
+package com.tapktor.dtos
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class FerramentaResponse(
+data class FerramentaDTO(
     val idFerramenta: Int,
     val nome: String,
     val categoria: String,
