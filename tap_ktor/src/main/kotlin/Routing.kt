@@ -1,19 +1,19 @@
 package com.tapktor
 
+import com.tapktor.respostas.FerramentaResponse
+import com.tapktor.respostas.FuncionariosResponse
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.serialization.Serializable
 import java.sql.DriverManager
+import javax.swing.text.AbstractDocument.Content
 
 fun Application.configureRouting() {
     routing {
 
-        get("/") {
-            call.respondText("Hello, World! O motor está a funcionar!")
-        }
-
+        // devolve vista das ferramentas
         get("/api/ferramentas") {
             val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
             val user = "root"
@@ -52,23 +52,41 @@ fun Application.configureRouting() {
                 call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain)
             }
         }
+
+        // devolve {idFunc, nome, cargo}
+        get("/api/funcionarios/{email}") {
+            val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
+            val user = "root"
+            val password = "rootpass"
+
+            val listaFuncionarios = mutableListOf<FuncionariosResponse>()
+
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver")
+                val connection = DriverManager.getConnection(url, user, password)
+                try {
+                    val statement = connection.createStatement()
+                    val resultSet = statement.executeQuery(
+                        "" // adicionar vista funcionarios
+                    )
+
+                    while (resultSet.next()) {
+                        listaFuncionarios.add(
+                            FuncionariosResponse(
+                                idFunc = resultSet.getInt("id_func"),
+                                nomeCompleto = resultSet.getString("nomeCompleto"),
+                                email = resultSet.getString("email")
+                            )
+                        )
+                    }
+                } finally {
+                    connection.close()
+                }
+
+                call.respond(listaFuncionarios)
+            } catch (e: Exception) {
+                call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain)
+            }
+        }
     }
 }
-
-@Serializable
-data class FerramentaResponse(
-    val idFerramenta: Int,
-    val nome: String,
-    val categoria: String,
-    val estado: String,
-    val disponibilidade: String,
-    val localizacao: String
-)
-
-@Serializable
-data class HistoricoResponse(
-    val idRequesicao: Int,
-    val tecnico: String,
-    val ferramenta: String,
-    val dataSaida: String
-)
