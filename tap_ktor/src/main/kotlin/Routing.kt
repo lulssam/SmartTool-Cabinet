@@ -59,31 +59,32 @@ fun Application.configureRouting() {
             val user = "root"
             val password = "rootpass"
 
-            val listaFuncionarios = mutableListOf<FuncionariosResponse>()
-
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver")
                 val connection = DriverManager.getConnection(url, user, password)
                 try {
-                    val statement = connection.createStatement()
+                    val email = call.parameters["email"]
+                    val sql = "SELECT id_func, nomeCompleto, email, cargo FROM View_Email WHERE email = ?"
+                    val statement = connection.prepareStatement(sql)
+                    statement.setString(1, email)
                     val resultSet = statement.executeQuery(
-                        "" // adicionar vista funcionarios
                     )
 
-                    while (resultSet.next()) {
-                        listaFuncionarios.add(
+                    if (resultSet.next()) {
+                        call.respond(
                             FuncionariosResponse(
                                 idFunc = resultSet.getInt("id_func"),
-                                nomeCompleto = resultSet.getString("nomeCompleto"),
-                                email = resultSet.getString("email")
+                                nome = resultSet.getString("nomeCompleto"),
+                                cargo = resultSet.getString("cargo")
                             )
                         )
+                    } else {
+                        call.respond(HttpStatusCode.NotFound, "Funcionário não encontrado")
                     }
                 } finally {
                     connection.close()
                 }
 
-                call.respond(listaFuncionarios)
             } catch (e: Exception) {
                 call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain)
             }
