@@ -6,20 +6,21 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import io.ktor.client.HttpClient
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
+import io.ktor.serialization.kotlinx.json.json
+import pfc.a50727a50799.smarttool_cabinet.core.auth.FirebaseAuthRepository
+import pfc.a50727a50799.smarttool_cabinet.core.auth.data.FuncionarioRemoteDataSource
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-
-        setContent {
-            App()
+        val httpClient = HttpClient {
+            install(ContentNegotiation) { json() }      // p/ ler o FuncionarioDto
+            defaultRequest { url("http://10.0.2.2:8080") } // ⚠️ ver nota abaixo
         }
+        val repo = FirebaseAuthRepository(FuncionarioRemoteDataSource(httpClient))
+        setContent { App(repo) }
     }
-}
-
-@Preview
-@Composable
-fun AppAndroidPreview() {
-    App()
 }
