@@ -1,14 +1,13 @@
 package com.tapktor
 
-import com.tapktor.dtos.ArmariosDTO
-import com.tapktor.dtos.FerramentaDTO
-import com.tapktor.dtos.FuncionariosDTO
-import com.tapktor.dtos.HistoricoDTO
+import com.tapktor.dtos.*
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import java.sql.DriverManager
+import java.sql.Statement
 
 /**
  * Função principal das calls da API
@@ -21,6 +20,7 @@ fun Application.configureRouting() {
 
     routing {
 
+        // ====== GETS ======
         // devolve vista das ferramentas
         get("/api/ferramentas") {
             val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
@@ -217,6 +217,52 @@ fun Application.configureRouting() {
                 }
 
                 call.respond(listaHistorico)
+            } catch (e: Exception) {
+                call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain)
+            }
+        }
+
+        // ====== POSTS ======
+        // técnico requisita ferramenta
+        post("/api/requisicoes") {
+            val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
+            val user = USER
+            val password = PASSWORD
+
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver")
+                val connection = DriverManager.getConnection(url, user, password)
+                connection.autoCommit = false
+
+                try {
+                    val pedido = call.receive<NovaRequisicaoDTO>()
+                    val sqlRequisicao = "INSERT INTO requisicao (dhRequisicao, id_tecnico) VALUES (NOW(), ?)"
+                    val statement = connection.prepareStatement(sqlRequisicao, Statement.RETURN_GENERATED_KEYS)
+                    statement.setInt(1, pedido.idTecnico)
+                    statement.executeUpdate()
+
+                    val keys = statement.generatedKeys
+                    keys.next()
+                    val idRequisicao = keys.getInt(1)
+
+                    val sqlFerramenta = "INSERT INTO requisicao_ferramenta (idRequisicao, codigo_tipo, nFerramenta) " +
+                            "VALUES (?, ?, ?)"
+
+                    val statementFerramenta = connection.prepareStatement(sqlFerramenta)
+                    statementFerramenta.setInt(1, idRequisicao)
+                    statementFerramenta.setInt(2, pedido.codigoTipo)
+                    statementFerramenta.setInt(3, pedido.nFerramenta)
+                    statementFerramenta.executeUpdate()
+
+                    connection.commit()
+
+                    call.respond(HttpStatusCode.Created, "Requisição $idRequisicao criada")
+                } catch (e: Exception) {
+                    connection.rollback() // se alguma coisa falhar, desfaz tudo
+                    throw e
+                } finally {
+                    connection.close()
+                }
             } catch (e: Exception) {
                 call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain)
             }
