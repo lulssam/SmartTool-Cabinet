@@ -36,6 +36,7 @@ CREATE TABLE armario (
   nArmario INT NOT NULL,
   capacidade INT NOT NULL,
   estado VARCHAR(50) NOT NULL,
+  trancado BOOLEAN NOT NULL,
   id_gestor INT DEFAULT NULL,
   PRIMARY KEY (nArmario),
   FOREIGN KEY (id_gestor) REFERENCES gestor(id_func) ON DELETE SET NULL
