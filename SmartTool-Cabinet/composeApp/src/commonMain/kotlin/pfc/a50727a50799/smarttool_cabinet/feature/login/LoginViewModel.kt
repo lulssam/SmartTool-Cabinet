@@ -31,8 +31,41 @@ class LoginViewModel(
             _state.update { it.copy(isLoading = true, error = null, sessao = null) }
             val atual = _state.value
             when (val r = authRepository.loginEmail(atual.email, atual.password)) {
-                is AuthResult.Success -> _state.update { it.copy(isLoading = false, sessao = r.data) }
-                is AuthResult.Error   -> _state.update { it.copy(isLoading = false, error = mensagem(r.error)) }
+                is AuthResult.Success -> _state.update {
+                    it.copy(
+                        isLoading = false,
+                        sessao = r.data
+                    )
+                }
+
+                is AuthResult.Error -> _state.update {
+                    it.copy(
+                        isLoading = false,
+                        error = mensagem(r.error)
+                    )
+                }
+            }
+        }
+    }
+
+    /** Chamado quando o user carrega em "Entrar Com Google". */
+    fun onGoogleToken(idToken: String) {
+        viewModelScope.launch {
+            _state.update { it.copy(isLoading = true, error = null, sessao = null) }
+
+            when (val r = authRepository.loginGoogle(idToken = idToken)) {
+                is AuthResult.Success -> _state.update {
+                    it.copy(
+                        isLoading = false,
+                        sessao = r.data
+                    )
+                }
+                is AuthResult.Error -> _state.update {
+                    it.copy(
+                        isLoading = false,
+                        error = mensagem(r.error)
+                    )
+                }
             }
         }
     }
@@ -40,8 +73,8 @@ class LoginViewModel(
     /** Transforma o erro tipado numa frase legível para o user. */
     private fun mensagem(erro: AuthError): String = when (erro) {
         AuthError.InvalidCredentials -> "Email ou password errados"
-        AuthError.RoleNotFound       -> "Email não registado no sistema"
-        AuthError.NetworkError       -> "Não foi possível contactar o servidor"
-        is AuthError.Unknown         -> erro.message ?: "Erro desconhecido"
+        AuthError.RoleNotFound -> "Email não registado no sistema"
+        AuthError.NetworkError -> "Não foi possível contactar o servidor"
+        is AuthError.Unknown -> erro.message ?: "Erro desconhecido"
     }
 }

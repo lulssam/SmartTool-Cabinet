@@ -33,7 +33,8 @@ fun LoginScreenContent(
     resultado: String?,                 // texto a mostrar quando o login corre bem
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
-    onLoginClick: () -> Unit
+    onLoginClick: () -> Unit,
+    onGoogleClick: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier.fillMaxSize().padding(24.dp),
@@ -61,6 +62,10 @@ fun LoginScreenContent(
             Text(if (isLoading) "A entrar..." else "Entrar")
         }
 
+        Button(onClick = onGoogleClick, modifier = Modifier.fillMaxWidth()) {
+            Text(text = "Login com google")
+        }
+
         if (error != null) {
             Spacer(Modifier.height(12.dp))
             Text(error, color = MaterialTheme.colorScheme.error)
@@ -74,7 +79,10 @@ fun LoginScreenContent(
 
 /** Liga o ViewModel ao conteúdo visual. */
 @Composable
-fun LoginScreen(viewModel: LoginViewModel) {
+fun LoginScreen(
+    viewModel: LoginViewModel,
+    onGoogleClick: () -> Unit
+) {
     val state by viewModel.state.collectAsState()
     LoginScreenContent(
         email = state.email,
@@ -84,7 +92,8 @@ fun LoginScreen(viewModel: LoginViewModel) {
         resultado = state.sessao?.let { "OK! ${it.email} — ${it.role}" },
         onEmailChange = viewModel::onEmailChange,
         onPasswordChange = viewModel::onPasswordChange,
-        onLoginClick = viewModel::onLoginClick
+        onLoginClick = viewModel::onLoginClick,
+        onGoogleClick = onGoogleClick
     )
 }
 

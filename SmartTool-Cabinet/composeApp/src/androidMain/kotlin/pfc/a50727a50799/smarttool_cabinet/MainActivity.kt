@@ -12,6 +12,7 @@ import io.ktor.client.plugins.defaultRequest
 import io.ktor.serialization.kotlinx.json.json
 import pfc.a50727a50799.smarttool_cabinet.core.auth.FirebaseAuthRepository
 import pfc.a50727a50799.smarttool_cabinet.core.auth.data.FuncionarioRemoteDataSource
+import pfc.a50727a50799.smarttool_cabinet.core.auth.obterGoogleIdToken
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,6 +22,11 @@ class MainActivity : ComponentActivity() {
             defaultRequest { url("http://10.0.2.2:8080") }
         }
         val repo = FirebaseAuthRepository(FuncionarioRemoteDataSource(httpClient))
-        setContent { App(repo) }
+        setContent {
+            App(
+                authRepository = repo,
+                googleSignIn = { obterGoogleIdToken(this@MainActivity) }
+            )
+        }
     }
 }
