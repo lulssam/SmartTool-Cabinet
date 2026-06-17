@@ -3,6 +3,7 @@ package com.tapktor
 import com.tapktor.dtos.ArmariosDTO
 import com.tapktor.dtos.FerramentaDTO
 import com.tapktor.dtos.FuncionariosDTO
+import com.tapktor.dtos.HistoricoDTO
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
@@ -173,6 +174,49 @@ fun Application.configureRouting() {
                     connection.close()
                 }
                 call.respond(listaFerramentasArmarios)
+            } catch (e: Exception) {
+                call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain)
+            }
+        }
+
+        // requisições dos últimos 7 dias (usa View_Mapa_Emprestimos)
+        // todo ver se eventualmente fazemos com 30 dias por ex
+        get("/api/historico") {
+            val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
+            val user = USER
+            val password = PASSWORD
+
+            val listaHistorico = mutableListOf<HistoricoDTO>()
+
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver")
+                val connection = DriverManager.getConnection(url, user, password)
+
+                try {
+                    val sql =
+                        "SELECT idRequisicao, tecnico, idFerramenta, ferramenta, dhRequisicao, dhDevolucao " +
+                                "FROM View_Mapa_Emprestimos " +
+                                "WHERE dhRequisicao >= CURDATE() - INTERVAL 7 DAY"
+                    val statement = connection.createStatement()
+                    val resultSet = statement.executeQuery(sql)
+
+                    while (resultSet.next()) {
+                        listaHistorico.add(
+                            HistoricoDTO(
+                                idRequisicao = resultSet.getInt("idRequisicao"),
+                                nomeFuncionario = resultSet.getString("tecnico"),
+                                idFerramenta = resultSet.getInt("idFerramenta"),
+                                nomeFerramenta = resultSet.getString("ferramenta"),
+                                dhRequisicao = resultSet.getString("dhRequisicao"),
+                                dhDevolucao = resultSet.getString("dhDevolucao")
+                            )
+                        )
+                    }
+                } finally {
+                    connection.close()
+                }
+
+                call.respond(listaHistorico)
             } catch (e: Exception) {
                 call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain)
             }

@@ -67,7 +67,7 @@ data class FerramentaResponse(
 
 @Serializable
 data class HistoricoResponse(
-    val idRequesicao: Int,
+    val idrequisicao: Int,
     val tecnico: String,
     val ferramenta: String,
     val dataSaida: String

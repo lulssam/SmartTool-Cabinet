@@ -66,19 +66,19 @@ CREATE TABLE ferramenta (
 );
 
 CREATE TABLE requisicao (
-  idRequesicao INT NOT NULL AUTO_INCREMENT,
-  dhRequesicao DATETIME NOT NULL,
+  idRequisicao INT NOT NULL AUTO_INCREMENT,
+  dhRequisicao DATETIME NOT NULL,
   dhDevolucao DATETIME DEFAULT NULL,
   id_tecnico INT NOT NULL,
-  PRIMARY KEY (idRequesicao),
+  PRIMARY KEY (idRequisicao),
   FOREIGN KEY (id_tecnico) REFERENCES tecnico(id_func) ON DELETE CASCADE
 );
 
 CREATE TABLE requisicao_ferramenta (
-  idRequesicao INT NOT NULL,
+  idRequisicao INT NOT NULL,
   codigo_tipo INT NOT NULL,
   nFerramenta INT NOT NULL,
-  PRIMARY KEY (idRequesicao, codigo_tipo, nFerramenta),
-  FOREIGN KEY (idRequesicao) REFERENCES requisicao(idRequesicao) ON DELETE CASCADE,
+  PRIMARY KEY (idRequisicao, codigo_tipo, nFerramenta),
+  FOREIGN KEY (idRequisicao) REFERENCES requisicao(idRequisicao) ON DELETE CASCADE,
   FOREIGN KEY (codigo_tipo, nFerramenta) REFERENCES ferramenta(codigo_tipo, nFerramenta) ON DELETE CASCADE
 );

@@ -24,3 +24,18 @@ FROM funcionario f
 LEFT JOIN gestor     g ON f.id_func = g.id_func
 LEFT JOIN tecnico    t ON f.id_func = t.id_func
 LEFT JOIN backoffice b ON f.id_func = b.id_func;  
+
+-- View usada pelo endpoint GET /api/historico
+-- não filtrei já aqui pela data para isto puder ser usado noutras queries
+CREATE VIEW View_Mapa_Emprestimos AS
+SELECT  r.idRequisicao,
+        f.nomeCompleto      AS tecnico,
+        fe.idFerramenta,
+        fe.nome_tipo        AS ferramenta,
+        r.dhRequisicao,
+        r.dhDevolucao
+FROM    requisicao r
+JOIN    funcionario f          ON r.id_tecnico   = f.id_func
+JOIN    requisicao_ferramenta rf ON r.idRequisicao = rf.idRequisicao
+JOIN    ferramenta fe          ON rf.codigo_tipo = fe.codigo_tipo
+                              AND rf.nFerramenta = fe.nFerramenta;
