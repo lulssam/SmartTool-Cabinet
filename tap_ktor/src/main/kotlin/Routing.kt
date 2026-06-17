@@ -98,6 +98,7 @@ fun Application.configureRouting() {
         }
 
         // devolve lista de armários com estado
+
         get("/api/armarios") {
             val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
             val user = USER
@@ -267,5 +268,44 @@ fun Application.configureRouting() {
                 call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain)
             }
         }
+
+        // ====== PATCH ======
+        // tecnico devolve ferramenta
+        patch("/api/requisicoes/{id}/devolver") {
+            val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
+            val user = USER
+            val password = PASSWORD
+
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver")
+                val connection = DriverManager.getConnection(url, user, password)
+
+                try {
+                    val id = call.parameters["id"]?.toIntOrNull()
+
+                    if (id == null) {
+                        call.respond(HttpStatusCode.BadRequest, "id da requisição inválido")
+                        return@patch
+                    }
+
+                    val sql = "UPDATE requisicao SET dhDevolucao = NOW() WHERE idRequisicao = ?"
+                    val statement = connection.prepareStatement(sql)
+                    statement.setInt(1, id)
+
+                    val linhasAfetadas = statement.executeUpdate()
+                    if (linhasAfetadas == 0) {
+                        // nenhuma linha mudou -> o id não existe
+                        call.respond(HttpStatusCode.NotFound, "Requisição $id não encontrada")
+                    } else {
+                        call.respond(HttpStatusCode.OK, "Requisição $id devolvida")
+                    }
+                } finally {
+                    connection.close()
+                }
+            } catch (e: Exception) {
+                call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain)
+            }
+        }
+
     }
 }
