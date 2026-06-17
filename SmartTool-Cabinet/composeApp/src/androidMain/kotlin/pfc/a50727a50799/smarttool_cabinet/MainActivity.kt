@@ -17,8 +17,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val httpClient = HttpClient {
-            install(ContentNegotiation) { json() }      // p/ ler o FuncionarioDto
-            defaultRequest { url("http://10.0.2.2:8080") } // ⚠️ ver nota abaixo
+            install(ContentNegotiation) { json() }
+            defaultRequest { url("http://10.0.2.2:8080") }
         }
         val repo = FirebaseAuthRepository(FuncionarioRemoteDataSource(httpClient))
         setContent { App(repo) }
