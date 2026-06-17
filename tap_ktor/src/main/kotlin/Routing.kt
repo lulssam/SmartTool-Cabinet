@@ -223,6 +223,57 @@ fun Application.configureRouting() {
             }
         }
 
+        // ferramentas em falta + armários destrancados (fim do turno)
+        get("/api/alertas") {
+            val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
+            val user = USER
+            val password = PASSWORD
+
+            val listaAlertas = mutableListOf<AlertasDTO>()
+
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver")
+                val connection = DriverManager.getConnection(url, user, password)
+
+                try {
+
+                    val stmtFerramentas = connection.createStatement()
+                    val rsFerramentas = stmtFerramentas.executeQuery(
+                        "SELECT idFerramenta, nome_tipo FROM ferramenta WHERE disponibilidade = 'Requisitada'"
+                    )
+                    while (rsFerramentas.next()) {
+                        listaAlertas.add(
+                            AlertasDTO(
+                                tipo = "FERRAMENTA_EM_FALTA",
+                                descricao = "Ferramenta '${rsFerramentas.getString("nome_tipo")}' não devolvida",
+                                referencia = rsFerramentas.getInt("idFerramenta").toString()
+                            )
+                        )
+                    }
+
+                    val stmtArmarios = connection.createStatement()
+                    val rsArmarios = stmtArmarios.executeQuery(
+                        "SELECT nArmario FROM armario WHERE trancado = FALSE"
+                    )
+                    while (rsArmarios.next()) {
+                        listaAlertas.add(
+                            AlertasDTO(
+                                tipo = "ARMARIO_DESTRANCADO",
+                                descricao = "Armário ${rsArmarios.getInt("nArmario")} está destrancado",
+                                referencia = rsArmarios.getInt("nArmario").toString()
+                            )
+                        )
+                    }
+                } finally {
+                    connection.close()
+                }
+
+                call.respond(listaAlertas)
+            } catch (e: Exception) {
+                call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain)
+            }
+        }
+
         // ====== POSTS ======
         // técnico requisita ferramenta
         post("/api/requisicoes") {
