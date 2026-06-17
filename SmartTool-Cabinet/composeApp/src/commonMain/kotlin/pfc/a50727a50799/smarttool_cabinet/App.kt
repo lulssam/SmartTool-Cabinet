@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import pfc.a50727a50799.smarttool_cabinet.core.auth.AuthRepository
 import pfc.a50727a50799.smarttool_cabinet.feature.login.LoginScreen
@@ -25,9 +26,22 @@ import smarttoolcabinet.composeapp.generated.resources.compose_multiplatform
 
 @Composable
 
-fun App(authRepository: AuthRepository) {
+fun App(
+    authRepository: AuthRepository,
+    googleSignIn: suspend () -> String
+) {
     MaterialTheme {
         val viewModel = viewModel { LoginViewModel(authRepository) }
-        LoginScreen(viewModel)
+        val scope = rememberCoroutineScope() // lançar corrotina do click
+
+        LoginScreen(
+            viewModel = viewModel,
+            onGoogleClick = {
+                scope.launch {
+                    val idToken = googleSignIn()
+                    viewModel.onGoogleToken(idToken)
+                }
+            }
+        )
     }
 }
