@@ -86,7 +86,7 @@ INSERT INTO ferramenta
 --    Req em aberto -> dhDevolucao = NULL (ferramentas estao 'Requisitada')
 --    Req fechada   -> dhDevolucao preenchida (ferramentas voltaram a 'Disponivel')
 -- ------------------------------------------------------------
-INSERT INTO requisicao (idRequesicao, dhRequesicao, dhDevolucao, id_tecnico) VALUES
+INSERT INTO requisicao (idRequisicao, dhRequisicao, dhDevolucao, id_tecnico) VALUES
   (1, '2026-06-09 09:15:00', '2026-06-09 17:30:00', 3),  -- fechada (Pedro)
   (2, '2026-06-12 08:00:00', NULL,                  4),  -- aberta  (Ana)
   (3, '2026-06-15 14:20:00', NULL,                  5),  -- aberta  (Rui)
@@ -95,7 +95,7 @@ INSERT INTO requisicao (idRequesicao, dhRequesicao, dhDevolucao, id_tecnico) VAL
 -- ------------------------------------------------------------
 -- 8. FERRAMENTAS POR REQUISICAO
 -- ------------------------------------------------------------
-INSERT INTO requisicao_ferramenta (idRequesicao, codigo_tipo, nFerramenta) VALUES
+INSERT INTO requisicao_ferramenta (idRequisicao, codigo_tipo, nFerramenta) VALUES
   -- Req 1 (fechada) -> ferramentas ja devolvidas (Disponivel)
   (1, 1, 1),
   (1, 2, 1),
