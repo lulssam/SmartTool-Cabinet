@@ -38,11 +38,11 @@ INSERT INTO armazem (id_Armazem) VALUES
 -- ------------------------------------------------------------
 -- 4. ARMARIOS (cada um pode pertencer a um gestor)
 -- ------------------------------------------------------------
-INSERT INTO armario (nArmario, capacidade, estado, id_gestor) VALUES
-  (101, 20, 'Operacional', 1),
-  (102, 20, 'Operacional', 1),
-  (103, 15, 'Avariado',    2),
-  (201, 30, 'Operacional', 2);
+INSERT INTO armario (nArmario, capacidade, estado, trancado, id_gestor) VALUES
+  (101, 20, 'Operacional',TRUE, 1),
+  (102, 20, 'Operacional',TRUE, 1),
+  (103, 15, 'Avariado',FALSE, 2),
+  (201, 30, 'Operacional',TRUE, 2);
 
 -- ------------------------------------------------------------
 -- 5. TIPOS DE FERRAMENTA
