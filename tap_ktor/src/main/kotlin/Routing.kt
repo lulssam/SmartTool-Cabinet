@@ -307,5 +307,64 @@ fun Application.configureRouting() {
             }
         }
 
+        // marcar estado das ferramentas
+        patch("/api/ferramentas/{id}/estado") {
+            val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
+            val user = USER
+            val password = PASSWORD
+
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver")
+                val connection = DriverManager.getConnection(url, user, password)
+
+                try {
+                    val id = call.parameters["id"]?.toIntOrNull()
+                    if (id == null) {
+                        call.respond(HttpStatusCode.BadRequest, "id da ferramenta inválido")
+                        return@patch
+                    }
+
+                    val pedido = call.receive<EstadoFerramentaDTO>()
+
+                    // consultar disponivbilidade atual
+                    val sqlDispo = "SELECT disponibilidade FROM ferramenta WHERE idFerramenta = ?"
+                    val statementDisp = connection.prepareStatement(sqlDispo)
+                    statementDisp.setInt(1, id)
+
+                    val resultSet = statementDisp.executeQuery()
+
+                    if (!resultSet.next()) {
+                        // não existe nenhuma ferramenta com este id
+                        call.respond(HttpStatusCode.NotFound, "Ferramenta com o id: $id não encontrada.")
+                        return@patch
+                    }
+
+                    val disponibilidade = resultSet.getString("disponibilidade")
+                    if (disponibilidade != "Requisitada") {
+                        // existe mas não está requisitada -> não podemos mudar o estado
+                        call.respond(
+                            HttpStatusCode.Conflict,
+                            "Só é possível mudar o estado de uma ferramenta requisitada (está: $disponibilidade)."
+                        )
+                        return@patch
+                    }
+
+                    // passou na validação do estado -> atualizar o estado
+                    val sql = "UPDATE ferramenta SET estado = ? WHERE idFerramenta = ?"
+                    val statement = connection.prepareStatement(sql)
+                    statement.setString(1, pedido.estado)
+                    statement.setInt(2, id)
+                    statement.executeUpdate()
+
+                    call.respond(HttpStatusCode.OK, "Ferramenta com o id: $id teve o seu estado atualizado.")
+
+                } finally {
+                    connection.close()
+                }
+            } catch (e: Exception) {
+                call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain)
+            }
+        }
+
     }
 }
