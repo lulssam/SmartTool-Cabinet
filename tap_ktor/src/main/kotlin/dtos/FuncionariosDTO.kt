@@ -6,7 +6,8 @@ import kotlinx.serialization.Serializable
 data class FuncionariosDTO(
     val idFunc: Int,
     val nome: String,
-    val cargo: String
+    val cargo: String,
+    val turno: String
 )
 
 

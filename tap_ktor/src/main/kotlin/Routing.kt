@@ -72,7 +72,7 @@ fun Application.configureRouting() {
                 val connection = DriverManager.getConnection(url, user, password)
                 try {
                     val email = call.parameters["email"]
-                    val sql = "SELECT id_func, nomeCompleto, email, cargo FROM View_Email WHERE email = ?"
+                    val sql = "SELECT id_func, nomeCompleto, email, turno, cargo FROM View_Email WHERE email = ?"
                     val statement = connection.prepareStatement(sql)
                     statement.setString(1, email)
                     val resultSet = statement.executeQuery()
@@ -82,7 +82,8 @@ fun Application.configureRouting() {
                             FuncionariosDTO(
                                 idFunc = resultSet.getInt("id_func"),
                                 nome = resultSet.getString("nomeCompleto"),
-                                cargo = resultSet.getString("cargo")
+                                cargo = resultSet.getString("cargo"),
+                                turno = resultSet.getString("turno")
                             )
                         )
                     } else {
@@ -418,14 +419,180 @@ fun Application.configureRouting() {
             }
         }
 
+        // gerir permições de acesso
+        patch("/api/funcionarios/{id}/cargo") {
+            val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
+            val user = USER
+            val password = PASSWORD
+
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver")
+                val connection = DriverManager.getConnection(url, user, password)
+                connection.autoCommit = false
+
+                try {
+                    val id = call.parameters["id"]?.toIntOrNull()
+                    if (id == null) {
+                        call.respond(HttpStatusCode.BadRequest, "id do funcionário inválido")
+                        return@patch
+                    }
+
+                    val pedido = call.receive<NovoCargoDTO>()
+                    val novoCargo = pedido.cargo.uppercase()
+
+
+                    if (novoCargo !in listOf("GESTOR", "TECNICO", "BACKOFFICE")) {
+                        call.respond(HttpStatusCode.BadRequest, "Cargo inválido. Usa GESTOR, TECNICO ou BACKOFFICE.")
+                        return@patch
+                    }
+
+                    val sqlCheck = "SELECT id_func FROM funcionario WHERE id_func = ?"
+                    val stmtCheck = connection.prepareStatement(sqlCheck)
+                    stmtCheck.setInt(1, id)
+                    if (!stmtCheck.executeQuery().next()) {
+                        call.respond(HttpStatusCode.NotFound, "Funcionário $id não encontrado.")
+                        return@patch
+                    }
+
+                    val deleteGestor = connection.prepareStatement("DELETE FROM gestor WHERE id_func = ?")
+                    deleteGestor.setInt(1, id)
+                    deleteGestor.executeUpdate()
+
+                    val deleteTecnico = connection.prepareStatement("DELETE FROM tecnico WHERE id_func = ?")
+                    deleteTecnico.setInt(1, id)
+                    deleteTecnico.executeUpdate()
+
+                    val deleteBackoffice = connection.prepareStatement("DELETE FROM backoffice WHERE id_func = ?")
+                    deleteBackoffice.setInt(1, id)
+                    deleteBackoffice.executeUpdate()
+
+                    //Inserir o funcionário na tabela com o novo cargo
+                    val sqlInsert = when (novoCargo) {
+                        "GESTOR" -> "INSERT INTO gestor (id_func) VALUES (?)"
+                        "TECNICO" -> "INSERT INTO tecnico (id_func) VALUES (?)"
+                        "BACKOFFICE" -> "INSERT INTO backoffice (id_func) VALUES (?)"
+                        else -> throw IllegalArgumentException("Cargo não suportado")
+                    }
+
+                    val stmtInsert = connection.prepareStatement(sqlInsert)
+                    stmtInsert.setInt(1, id)
+                    stmtInsert.executeUpdate()
+
+                    connection.commit()
+
+                    call.respond(HttpStatusCode.OK, "Cargo do funcionário $id atualizado com sucesso para $novoCargo.")
+
+                } catch (e: Exception) {
+                    connection.rollback()
+                    throw e
+                } finally {
+                    connection.close()
+                }
+            } catch (e: Exception) {
+                call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain)
+            }
+        }
+
+        // definir turnos (ver sql não temos nada la de turnos)
+        patch("/api/funcionarios/{id}/turno") {
+            val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
+            val user = USER
+            val password = PASSWORD
+
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver")
+                val connection = DriverManager.getConnection(url, user, password)
+
+                try {
+                    val id = call.parameters["id"]?.toIntOrNull()
+                    if (id == null) {
+                        call.respond(HttpStatusCode.BadRequest, "id do funcionário inválido")
+                        return@patch
+                    }
+
+                    val pedido = call.receive<NovoTurnoDTO>()
+                    val novoTurno = pedido.turno.uppercase()
+
+
+                    if (novoTurno !in listOf("MANHA", "TARDE", "NOITE")) {
+                        call.respond(HttpStatusCode.BadRequest, "Turno inválido. Usa MANHA, TARDE ou NOITE.")
+                        return@patch
+                    }
+
+                    val sql = "UPDATE funcionario SET turno = ? WHERE id_func = ?"
+                    val statement = connection.prepareStatement(sql)
+                    statement.setString(1, novoTurno)
+                    statement.setInt(2, id)
+
+                    val linhasAfetadas = statement.executeUpdate()
+
+                    if (linhasAfetadas == 0) {
+                        call.respond(HttpStatusCode.NotFound, "Funcionário $id não encontrado.")
+                    } else {
+                        call.respond(HttpStatusCode.OK, "Turno do funcionário $id atualizado para $novoTurno.")
+                    }
+
+                } finally {
+                    connection.close()
+                }
+            } catch (e: Exception) {
+                call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain, status = HttpStatusCode.InternalServerError)
+            }
+        }
+        // consultar ferramentas em falta e o seu eventual detentor
+
+        get("/api/ferramentas/em-falta") {
+            val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
+            val user = USER
+            val password = PASSWORD
+
+            val listaEmFalta = mutableListOf<FerramentaEmFaltaDTO>()
+
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver")
+                val connection = DriverManager.getConnection(url, user, password)
+
+                try {
+                    // Usamos a View_Mapa_Emprestimos e filtramos por devoluções não concluídas
+                    val sql = """
+                        SELECT idFerramenta, ferramenta, tecnico, dhRequisicao 
+                        FROM View_Mapa_Emprestimos 
+                        WHERE dhDevolucao IS NULL
+                    """.trimIndent()
+
+                    val statement = connection.createStatement()
+                    val resultSet = statement.executeQuery(sql)
+
+                    while (resultSet.next()) {
+                        listaEmFalta.add(
+                            FerramentaEmFaltaDTO(
+                                idFerramenta = resultSet.getInt("idFerramenta"),
+                                nomeFerramenta = resultSet.getString("ferramenta"),
+                                detentor = resultSet.getString("tecnico"),
+                                dataRequisicao = resultSet.getString("dhRequisicao") ?: "Data desconhecida"
+                            )
+                        )
+                    }
+                } finally {
+                    connection.close()
+                }
+
+                call.respond(listaEmFalta)
+
+            } catch (e: Exception) {
+                call.respondText(
+                    "Erro na DB: ${e.message}",
+                    ContentType.Text.Plain,
+                    status = HttpStatusCode.InternalServerError
+                )
+            }
+        }
         // TODO CASOS DE UTILIZAÇÃO
         // Adicionar/remover funcionario (diria post/patch?, não remover completamente porque historico de empresa)
-        // gerir permições de acesso
-        // definir turnos (ver sql não temos nada la de turnos)
+
 
         // atribuir tarefas e/ou ferramentas
-        // consultar ferramentas em falta e o seu eventual detentor
-        // verificar estado das ferramentas
+
 
     }
 }
