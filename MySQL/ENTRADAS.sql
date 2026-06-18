@@ -10,7 +10,10 @@ INSERT INTO funcionario (id_func, nomeCompleto, email) VALUES
   (4, 'Ana Ferreira',    'ana.ferreira@empresa.example'),
   (5, 'Rui Almeida',     'rui.almeida@empresa.example'),
   (6, 'Carlos Mendes',   'carlos.mendes@empresa.example'),
-  (7, 'Sofia Rodrigues', 'sofia.rodrigues@empresa.example');
+  (7, 'Sofia Rodrigues', 'sofia.rodrigues@empresa.example'),
+  (8, 'Luísa Sampaio', 'aluno1@example.com'),
+  (9, 'Gonçalo Charneca', 'aluno2@example.com');
+
 
 -- ------------------------------------------------------------
 -- 2. PAPEIS (subtipos de funcionario)
@@ -26,7 +29,9 @@ INSERT INTO tecnico (id_func) VALUES
 
 INSERT INTO backoffice (id_func) VALUES
   (6),
-  (7);
+  (7),
+  (9),
+  (8);
 
 -- ------------------------------------------------------------
 -- 3. ARMAZENS
