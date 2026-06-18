@@ -359,6 +359,7 @@ fun Application.configureRouting() {
         }
 
         // marcar estado das ferramentas
+        // TODO ao marcar estragada, disponibilidade tem que ir para indisponivel
         patch("/api/ferramentas/{id}/estado") {
             val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
             val user = USER
@@ -416,6 +417,15 @@ fun Application.configureRouting() {
                 call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain)
             }
         }
+
+        // TODO CASOS DE UTILIZAÇÃO
+        // Adicionar/remover funcionario (diria post/patch?, não remover completamente porque historico de empresa)
+        // gerir permições de acesso
+        // definir turnos (ver sql não temos nada la de turnos)
+
+        // atribuir tarefas e/ou ferramentas
+        // consultar ferramentas em falta e o seu eventual detentor
+        // verificar estado das ferramentas
 
     }
 }
