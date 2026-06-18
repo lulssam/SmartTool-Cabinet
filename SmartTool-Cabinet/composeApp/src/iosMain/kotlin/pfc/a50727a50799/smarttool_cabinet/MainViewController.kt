@@ -14,7 +14,7 @@ fun MainViewController() = ComposeUIViewController {
     val httpClient = remember {
         HttpClient(Darwin) {
             install(ContentNegotiation) { json() }
-            defaultRequest { url("http://127.0.0.1:8080") }
+            defaultRequest { url("http://192.168.0.222:8080") } // mudar para 127.0.0.1 se estivermos num emulador
         }
     }
 
