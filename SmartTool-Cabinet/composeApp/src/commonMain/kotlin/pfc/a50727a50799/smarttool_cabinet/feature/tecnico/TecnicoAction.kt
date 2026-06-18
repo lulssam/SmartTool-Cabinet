@@ -20,5 +20,4 @@ package pfc.a50727a50799.smarttool_cabinet.feature.tecnico
  * @see TecnicoViewModel.onAction
  */
 sealed interface TecnicoAction {
-
 }
