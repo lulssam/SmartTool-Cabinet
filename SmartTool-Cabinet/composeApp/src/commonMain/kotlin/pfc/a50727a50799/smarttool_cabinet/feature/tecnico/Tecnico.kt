@@ -1,6 +1,7 @@
 package pfc.a50727a50799.smarttool_cabinet.feature.tecnico
 
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.tooling.preview.Preview
@@ -53,6 +54,8 @@ fun TecnicoScreen(
     state: TecnicoState,
     onAction: (TecnicoAction) -> Unit,
 ) {
+
+    Text(text = "Tecnico")
 
 }
 

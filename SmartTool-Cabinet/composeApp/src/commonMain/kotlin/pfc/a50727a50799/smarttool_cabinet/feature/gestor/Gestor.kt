@@ -1,6 +1,7 @@
 package pfc.a50727a50799.smarttool_cabinet.feature.gestor
 
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.tooling.preview.Preview
@@ -53,7 +54,7 @@ fun GestorScreen(
     state: GestorState,
     onAction: (GestorAction) -> Unit,
 ) {
-
+    Text(text = "Gestor")
 }
 
 /**
