@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import pfc.a50727a50799.smarttool_cabinet.R
 
@@ -11,13 +12,12 @@ import pfc.a50727a50799.smarttool_cabinet.R
 suspend fun obterGoogleIdToken(context: Context): String {
     val credentialManager = CredentialManager.create(context)
 
-    val googleIdOption = GetGoogleIdOption.Builder()
-        .setServerClientId(context.getString(R.string.default_web_client_id))
-        .setFilterByAuthorizedAccounts(false)   // false = mostra todas as contas (1º login)
-        .build()
+    val signInOption = GetSignInWithGoogleOption.Builder(
+        serverClientId = context.getString(R.string.default_web_client_id)
+    ).build()
 
     val request = GetCredentialRequest.Builder()
-        .addCredentialOption(googleIdOption)
+        .addCredentialOption(signInOption)
         .build()
 
     val result = credentialManager.getCredential(context, request)
