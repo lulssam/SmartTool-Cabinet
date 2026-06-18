@@ -14,62 +14,107 @@ import pfc.a50727a50799.smarttool_cabinet.feature.navigation.GestorRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.LoginRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.TecnicoRoute
 import androidx.navigation.compose.*
+import pfc.a50727a50799.smarttool_cabinet.core.auth.Session
 import pfc.a50727a50799.smarttool_cabinet.core.auth.UserRole
+import pfc.a50727a50799.smarttool_cabinet.feature.navigation.routeForRole
+import pfc.a50727a50799.smarttool_cabinet.feature.session.SessionUiState
+import pfc.a50727a50799.smarttool_cabinet.feature.session.SessionViewModel
+import pfc.a50727a50799.smarttool_cabinet.feature.session.SplashScreen
 
+
+/**
+ * Ponto de entrada visual da aplicação.
+ * Ao arrancar, pergunta ao [SessionViewModel] se já existe alguém com sessão iniciada
+ * e decide o que mostrar: o ecrã de "a carregar" enquanto não sabe, o login se não houver
+ * sessão, ou diretamente o ecrã do cargo da pessoa se já houver.
+ *
+ * @param authRepository Quem trata da autenticação. É entregue aos ecrãs que precisam dele.
+ * @param googleSignIn Função que abre o seletor de contas Google e devolve o token dessa conta.
+ *                     Cada plataforma (Android/iOS) fornece a sua.
+ */
 @Composable
-
 fun App(
     authRepository: AuthRepository,
     googleSignIn: suspend () -> String
 ) {
     MaterialTheme {
 
-        val navController = rememberNavController()
 
-        NavHost(navController = navController, startDestination = LoginRoute) {
-            composable<LoginRoute> {
-                val viewModel = viewModel { LoginViewModel(authRepository) }
-                val scope = rememberCoroutineScope() // lançar corrotina do click
+        val sessionViewModel = viewModel { SessionViewModel(authRepository) }
+        val sessionState by sessionViewModel.state.collectAsState()
 
-                val state by viewModel.state.collectAsState()
+        when (val state = sessionState) {
+            SessionUiState.Loading -> SplashScreen()
+            SessionUiState.NoSession ->
+                AppNavHost(startDestination = LoginRoute, authRepository, googleSignIn)
+            is SessionUiState.Authenticated ->
+                AppNavHost(startDestination = routeForRole(state.session.role), authRepository, googleSignIn)
 
-                LaunchedEffect(state.sessao) {
-                    val sessao = state.sessao
-                    if (sessao != null) {
-                        val destino = when (sessao.role) {
-                            UserRole.GESTOR -> GestorRoute
-                            UserRole.BACKOFFICE -> BackOfficeRoute
-                            UserRole.TECNICO -> TecnicoRoute
-                        }
-                        navController.navigate(destino) {
-                            popUpTo(LoginRoute) { inclusive = true }
-                        }
-                    }
-                }
-
-                LoginScreen(
-                    viewModel = viewModel,
-                    onGoogleClick = {
-                        scope.launch {
-                            val idToken = googleSignIn()
-                            viewModel.onGoogleToken(idToken)
-                        }
-                    }
-                )
-            }
-
-            composable<GestorRoute> {
-                // TODO
-            }
-
-            composable<BackOfficeRoute> {
-                // TODO
-            }
-
-            composable<TecnicoRoute> {
-                // TODO
-            }
         }
 
     }
+}
+
+/**
+ * Monta o mapa de navegação da app (todos os ecrãs e como se passa de um para o outro).
+ * É aqui que o login, depois de correr bem, encaminha o utilizador para o ecrã do seu cargo.
+ *
+ * @param startDestination O ecrã por onde a navegação começa: o login quando ninguém tem
+ *                         sessão, ou o ecrã do cargo quando já existe uma sessão iniciada.
+ * @param authRepository Quem trata da autenticação, entregue aos ecrãs que precisam.
+ * @param googleSignIn Função que abre o seletor de contas Google e devolve o token dessa conta.
+ */
+@Composable
+private fun AppNavHost(
+    startDestination: Any,
+    authRepository: AuthRepository,
+    googleSignIn: suspend () -> String
+) {
+
+    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = startDestination) {
+        composable<LoginRoute> {
+            val viewModel = viewModel { LoginViewModel(authRepository) }
+            val scope = rememberCoroutineScope() // lançar corrotina do click
+
+            val state by viewModel.state.collectAsState()
+
+            LaunchedEffect(state.sessao) {
+                val sessao = state.sessao
+                if (sessao != null) {
+                    val destino = when (sessao.role) {
+                        UserRole.GESTOR -> GestorRoute
+                        UserRole.BACKOFFICE -> BackOfficeRoute
+                        UserRole.TECNICO -> TecnicoRoute
+                    }
+                    navController.navigate(destino) {
+                        popUpTo(LoginRoute) { inclusive = true }
+                    }
+                }
+            }
+
+            LoginScreen(
+                viewModel = viewModel,
+                onGoogleClick = {
+                    scope.launch {
+                        val idToken = googleSignIn()
+                        viewModel.onGoogleToken(idToken)
+                    }
+                }
+            )
+        }
+
+        composable<GestorRoute> {
+            // TODO
+        }
+
+        composable<BackOfficeRoute> {
+            // TODO
+        }
+
+        composable<TecnicoRoute> {
+            // TODO
+        }
+    }
+
 }
