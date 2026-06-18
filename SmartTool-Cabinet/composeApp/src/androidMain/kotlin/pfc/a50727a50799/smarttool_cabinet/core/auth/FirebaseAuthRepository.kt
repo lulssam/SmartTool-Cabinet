@@ -22,6 +22,7 @@ class FirebaseAuthRepository(
             val result = auth.signInWithEmailAndPassword(email, password).await()
             buildSession(result.user)
         } catch (e: Exception) {
+            println("loginEmail falhou: ${e::class.simpleName} - ${e.message}")
             AuthResult.Error(AuthError.InvalidCredentials)
         }
     }

@@ -4,6 +4,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.serialization.json.Json
 import pfc.a50727a50799.smarttool_cabinet.core.auth.AuthRepository
 import pfc.a50727a50799.smarttool_cabinet.core.auth.data.FuncionarioRemoteDataSource
 
@@ -38,7 +39,7 @@ object AppModule {
      */
     private val httpClient: HttpClient by lazy { // by lazy garante que cada coisa é criada uma unica vez, na primeira vez que for pedida
         HttpClient {
-            install(ContentNegotiation) {json()}
+            install(ContentNegotiation) {json(Json { ignoreUnknownKeys = true })}
             defaultRequest { url(baseUrl) }
         }
     }
