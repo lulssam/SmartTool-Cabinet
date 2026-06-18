@@ -7,7 +7,8 @@ data class FuncionariosDTO(
     val idFunc: Int,
     val nome: String,
     val cargo: String,
-    val turno: String
+    val turno: String,
+    val ativo: Boolean
 )
 
 

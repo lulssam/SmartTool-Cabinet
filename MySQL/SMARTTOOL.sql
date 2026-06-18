@@ -5,6 +5,8 @@ CREATE TABLE funcionario (
   id_func INT NOT NULL AUTO_INCREMENT,
   nomeCompleto VARCHAR(150) NOT NULL,
   email VARCHAR(100) NOT NULL,
+  turno VARCHAR(10) DEFAULT 'MANHA',
+  ativo BOOLEAN DEFAULT TRUE,
   PRIMARY KEY (id_func),
   UNIQUE KEY (email)
 );
@@ -81,5 +83,26 @@ CREATE TABLE requisicao_ferramenta (
   nFerramenta INT NOT NULL,
   PRIMARY KEY (idRequisicao, codigo_tipo, nFerramenta),
   FOREIGN KEY (idRequisicao) REFERENCES requisicao(idRequisicao) ON DELETE CASCADE,
+  FOREIGN KEY (codigo_tipo, nFerramenta) REFERENCES ferramenta(codigo_tipo, nFerramenta) ON DELETE CASCADE
+);
+
+CREATE TABLE tarefa (
+  idTarefa INT NOT NULL AUTO_INCREMENT,
+  descricao VARCHAR(255) NOT NULL,
+  id_gestor INT NOT NULL,
+  id_tecnico INT NOT NULL,
+  estado VARCHAR(50) DEFAULT 'PENDENTE', -- Pode ser PENDENTE, EM CURSO, CONCLUIDA
+  dhAtribuicao DATETIME DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (idTarefa),
+  FOREIGN KEY (id_gestor) REFERENCES gestor(id_func),
+  FOREIGN KEY (id_tecnico) REFERENCES tecnico(id_func)
+);
+
+CREATE TABLE tarefa_ferramenta_permitida (
+  idTarefa INT NOT NULL,
+  codigo_tipo INT NOT NULL,
+  nFerramenta INT NOT NULL,
+  PRIMARY KEY (idTarefa, codigo_tipo, nFerramenta),
+  FOREIGN KEY (idTarefa) REFERENCES tarefa(idTarefa) ON DELETE CASCADE,
   FOREIGN KEY (codigo_tipo, nFerramenta) REFERENCES ferramenta(codigo_tipo, nFerramenta) ON DELETE CASCADE
 );
