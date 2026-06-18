@@ -10,7 +10,10 @@ INSERT INTO funcionario (id_func, nomeCompleto, email) VALUES
   (4, 'Ana Ferreira',    'ana.ferreira@tap.pt'),
   (5, 'Rui Almeida',     'rui.almeida@tap.pt'),
   (6, 'Carlos Mendes',   'carlos.mendes@tap.pt'),
-  (7, 'Sofia Rodrigues', 'sofia.rodrigues@tap.pt');
+  (7, 'Sofia Rodrigues', 'sofia.rodrigues@tap.pt'),
+  (8, 'Luísa Sampaio', 'lumelosampaio@gmail.com'),
+  (9, 'Gonçalo Charneca', 'gonka2004@gmail.com');
+
 
 -- ------------------------------------------------------------
 -- 2. PAPEIS (subtipos de funcionario)
@@ -26,7 +29,9 @@ INSERT INTO tecnico (id_func) VALUES
 
 INSERT INTO backoffice (id_func) VALUES
   (6),
-  (7);
+  (7),
+  (9),
+  (8);
 
 -- ------------------------------------------------------------
 -- 3. ARMAZENS
