@@ -4,7 +4,11 @@ import kotlinx.serialization.Serializable
 import pfc.a50727a50799.smarttool_cabinet.core.auth.UserRole
 
 /** Rota do ecrã de login (entrada por email/password ou Google). */
-@Serializable data object LoginRoute
+@Serializable data object WelcomeRoute
+
+@Serializable data object LoginEmailRoute
+
+@Serializable data object SSORoute
 
 /** Rota do ecrã principal do Gestor. */
 @Serializable data object GestorRoute
