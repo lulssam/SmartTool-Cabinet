@@ -61,7 +61,7 @@ fun Application.configureRouting() {
             }
         }
 
-        // devolve {idFunc, nome, cargo}
+        // devolve {idFunc, nome, cargo, turno, ativo}
         get("/api/funcionarios/{email}") {
             val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
             val user = USER
@@ -72,7 +72,8 @@ fun Application.configureRouting() {
                 val connection = DriverManager.getConnection(url, user, password)
                 try {
                     val email = call.parameters["email"]
-                    val sql = "SELECT id_func, nomeCompleto, email, turno, cargo FROM View_Email WHERE email = ?"
+                    // Atualizado o SQL para incluir a coluna 'ativo'
+                    val sql = "SELECT id_func, nomeCompleto, email, cargo, turno, ativo FROM View_Email WHERE email = ?"
                     val statement = connection.prepareStatement(sql)
                     statement.setString(1, email)
                     val resultSet = statement.executeQuery()
@@ -83,7 +84,8 @@ fun Application.configureRouting() {
                                 idFunc = resultSet.getInt("id_func"),
                                 nome = resultSet.getString("nomeCompleto"),
                                 cargo = resultSet.getString("cargo"),
-                                turno = resultSet.getString("turno")
+                                turno = resultSet.getString("turno"),
+                                ativo = resultSet.getBoolean("ativo") // Adicionada a leitura do booleano aqui
                             )
                         )
                     } else {
@@ -94,7 +96,7 @@ fun Application.configureRouting() {
                 }
 
             } catch (e: Exception) {
-                call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain)
+                call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain, status = HttpStatusCode.InternalServerError)
             }
         }
 
@@ -285,39 +287,149 @@ fun Application.configureRouting() {
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver")
                 val connection = DriverManager.getConnection(url, user, password)
+
+                // Desligar o autoCommit para a transação
                 connection.autoCommit = false
 
                 try {
                     val pedido = call.receive<NovaRequisicaoDTO>()
+
+                    // --- 1. NOVA VALIDAÇÃO DE PERMISSÕES ---
+                    // Verifica se há alguma tarefa não concluída para este técnico que permita esta ferramenta
+                    val sqlValidacao = """
+                        SELECT 1 
+                        FROM tarefa t
+                        JOIN tarefa_ferramenta_permitida tfp ON t.idTarefa = tfp.idTarefa
+                        WHERE t.id_tecnico = ? 
+                          AND tfp.codigo_tipo = ? 
+                          AND tfp.nFerramenta = ?
+                          AND t.estado != 'CONCLUIDA'
+                    """.trimIndent()
+
+                    val stmtValidacao = connection.prepareStatement(sqlValidacao)
+                    stmtValidacao.setInt(1, pedido.idTecnico)
+                    stmtValidacao.setInt(2, pedido.codigoTipo)
+                    stmtValidacao.setInt(3, pedido.nFerramenta)
+
+                    val rsValidacao = stmtValidacao.executeQuery()
+
+                    if (!rsValidacao.next()) {
+                        // Se não encontrar resultados, bloqueia o pedido
+                        call.respond(
+                            HttpStatusCode.Forbidden,
+                            "Acesso Negado: Não tens nenhuma tarefa ativa que te permita levantar esta ferramenta."
+                        )
+                        return@post // Aborta a execução aqui, não guarda nada na base de dados
+                    }
+                    // ----------------------------------------
+
+                    // 2. Criar a requisição na tabela principal
                     val sqlRequisicao = "INSERT INTO requisicao (dhRequisicao, id_tecnico) VALUES (NOW(), ?)"
                     val statement = connection.prepareStatement(sqlRequisicao, Statement.RETURN_GENERATED_KEYS)
                     statement.setInt(1, pedido.idTecnico)
                     statement.executeUpdate()
 
                     val keys = statement.generatedKeys
-                    keys.next()
+                    if (!keys.next()) throw Exception("Erro ao gerar ID da requisição")
                     val idRequisicao = keys.getInt(1)
 
-                    val sqlFerramenta = "INSERT INTO requisicao_ferramenta (idRequisicao, codigo_tipo, nFerramenta) " +
-                            "VALUES (?, ?, ?)"
-
+                    // 3. Associar a ferramenta à requisição
+                    val sqlFerramenta = "INSERT INTO requisicao_ferramenta (idRequisicao, codigo_tipo, nFerramenta) VALUES (?, ?, ?)"
                     val statementFerramenta = connection.prepareStatement(sqlFerramenta)
                     statementFerramenta.setInt(1, idRequisicao)
                     statementFerramenta.setInt(2, pedido.codigoTipo)
                     statementFerramenta.setInt(3, pedido.nFerramenta)
                     statementFerramenta.executeUpdate()
 
+                    // 4. (Opcional mas recomendado) Atualizar a disponibilidade da ferramenta
+                    val sqlUpdateFerramenta = "UPDATE ferramenta SET disponibilidade = 'Requisitada' WHERE codigo_tipo = ? AND nFerramenta = ?"
+                    val stmtUpdate = connection.prepareStatement(sqlUpdateFerramenta)
+                    stmtUpdate.setInt(1, pedido.codigoTipo)
+                    stmtUpdate.setInt(2, pedido.nFerramenta)
+                    stmtUpdate.executeUpdate()
+
+                    // Se passou em tudo, confirma as alterações na base de dados
                     connection.commit()
 
-                    call.respond(HttpStatusCode.Created, "Requisição $idRequisicao criada")
+                    call.respond(HttpStatusCode.Created, "Requisição $idRequisicao criada com sucesso.")
+
                 } catch (e: Exception) {
-                    connection.rollback() // se alguma coisa falhar, desfaz tudo
+                    connection.rollback() // Se alguma coisa falhar, desfaz tudo
                     throw e
                 } finally {
                     connection.close()
                 }
             } catch (e: Exception) {
-                call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain)
+                call.respondText(
+                    "Erro na DB: ${e.message}",
+                    ContentType.Text.Plain,
+                    status = HttpStatusCode.InternalServerError
+                )
+            }
+        }
+        // atribuir tarefas e ferramentas a um técnico
+        post("/api/tarefas") {
+            val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
+            val user = USER
+            val password = PASSWORD
+
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver")
+                val connection = DriverManager.getConnection(url, user, password)
+
+                // Desligar o autoCommit para a transação
+                connection.autoCommit = false
+
+                try {
+                    val pedido = call.receive<NovaTarefaDTO>()
+
+                    // 1. Inserir a Tarefa Principal
+                    val sqlTarefa = "INSERT INTO tarefa (descricao, id_gestor, id_tecnico, dhAtribuicao) VALUES (?, ?, ?, NOW())"
+                    val statementTarefa = connection.prepareStatement(sqlTarefa, Statement.RETURN_GENERATED_KEYS)
+                    statementTarefa.setString(1, pedido.descricao)
+                    statementTarefa.setInt(2, pedido.idGestor)
+                    statementTarefa.setInt(3, pedido.idTecnico)
+                    statementTarefa.executeUpdate()
+
+                    // Obter o ID da tarefa que acabou de ser criada
+                    val keys = statementTarefa.generatedKeys
+                    if (!keys.next()) {
+                        throw Exception("Falha ao obter o ID da nova tarefa.")
+                    }
+                    val idTarefaGerada = keys.getInt(1)
+
+                    // 2. Inserir as ferramentas permitidas para esta tarefa
+                    if (pedido.ferramentasPermitidasIds.isEmpty()) {
+                        val sqlFerramenta = "INSERT INTO tarefa_ferramenta_permitida (idTarefa, codigo_tipo, nFerramenta) VALUES (?, ?, ?)"
+                        val statementFerramenta = connection.prepareStatement(sqlFerramenta)
+
+                        for (ferramenta in pedido.ferramentasPermitidasIds) {
+                            statementFerramenta.setInt(1, idTarefaGerada)
+                            statementFerramenta.setInt(2, ferramenta.codigoTipo)
+                            statementFerramenta.setInt(3, ferramenta.nFerramenta)
+                            // Usa addBatch para inserir várias de uma vez de forma eficiente
+                            statementFerramenta.addBatch()
+                        }
+                        statementFerramenta.executeBatch()
+                    }
+
+                    // 3. Tudo correu bem, confirmamos as alterações na DB
+                    connection.commit()
+
+                    call.respond(HttpStatusCode.Created, "Tarefa $idTarefaGerada atribuída ao técnico ${pedido.idTecnico} com sucesso.")
+
+                } catch (e: Exception) {
+                    connection.rollback() // Reverte tudo se houver um erro a meio
+                    throw e
+                } finally {
+                    connection.close()
+                }
+            } catch (e: Exception) {
+                call.respondText(
+                    "Erro na DB: ${e.message}",
+                    ContentType.Text.Plain,
+                    status = HttpStatusCode.InternalServerError
+                )
             }
         }
 
@@ -587,11 +699,101 @@ fun Application.configureRouting() {
                 )
             }
         }
-        // TODO CASOS DE UTILIZAÇÃO
-        // Adicionar/remover funcionario (diria post/patch?, não remover completamente porque historico de empresa)
 
+        // Adicionar novo funcionário
+        post("/api/funcionarios") {
+            val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
+            val user = USER
+            val password = PASSWORD
 
-        // atribuir tarefas e/ou ferramentas
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver")
+                val connection = DriverManager.getConnection(url, user, password)
+                connection.autoCommit = false // Inicia transação
+
+                try {
+                    val pedido = call.receive<NovoFuncionarioDTO>()
+                    val cargoFormatado = pedido.cargo.uppercase()
+
+                    if (cargoFormatado !in listOf("GESTOR", "TECNICO", "BACKOFFICE")) {
+                        call.respond(HttpStatusCode.BadRequest, "Cargo inválido.")
+                        return@post
+                    }
+
+                    // 1. Inserir na tabela principal
+                    val sqlFunc = "INSERT INTO funcionario (nomeCompleto, email, turno) VALUES (?, ?, ?)"
+                    val stmtFunc = connection.prepareStatement(sqlFunc, Statement.RETURN_GENERATED_KEYS)
+                    stmtFunc.setString(1, pedido.nomeCompleto)
+                    stmtFunc.setString(2, pedido.email)
+                    stmtFunc.setString(3, pedido.turno.uppercase())
+                    stmtFunc.executeUpdate()
+
+                    val keys = stmtFunc.generatedKeys
+                    if (!keys.next()) throw Exception("Falha ao obter o ID do funcionário.")
+                    val idFuncGerado = keys.getInt(1)
+
+                    // 2. Inserir na tabela do cargo
+                    val sqlCargo = when (cargoFormatado) {
+                        "GESTOR" -> "INSERT INTO gestor (id_func) VALUES (?)"
+                        "TECNICO" -> "INSERT INTO tecnico (id_func) VALUES (?)"
+                        "BACKOFFICE" -> "INSERT INTO backoffice (id_func) VALUES (?)"
+                        else -> throw Exception("Erro no mapeamento do cargo.")
+                    }
+
+                    val stmtCargo = connection.prepareStatement(sqlCargo)
+                    stmtCargo.setInt(1, idFuncGerado)
+                    stmtCargo.executeUpdate()
+
+                    connection.commit()
+                    call.respond(HttpStatusCode.Created, "Funcionário $idFuncGerado criado com sucesso.")
+
+                } catch (e: Exception) {
+                    connection.rollback()
+                    throw e
+                } finally {
+                    connection.close()
+                }
+            } catch (e: Exception) {
+                call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain, status = HttpStatusCode.InternalServerError)
+            }
+        }
+
+        // remover  um funcionário
+        patch("/api/funcionarios/{id}/desativar") {
+            val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
+            val user = USER
+            val password = PASSWORD
+
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver")
+                val connection = DriverManager.getConnection(url, user, password)
+
+                try {
+                    val id = call.parameters["id"]?.toIntOrNull()
+                    if (id == null) {
+                        call.respond(HttpStatusCode.BadRequest, "ID inválido.")
+                        return@patch
+                    }
+
+                    val sql = "UPDATE funcionario SET ativo = FALSE WHERE id_func = ?"
+                    val statement = connection.prepareStatement(sql)
+                    statement.setInt(1, id)
+
+                    val linhas = statement.executeUpdate()
+                    if (linhas == 0) {
+                        call.respond(HttpStatusCode.NotFound, "Funcionário não encontrado.")
+                    } else {
+                        call.respond(HttpStatusCode.OK, "Funcionário $id desativado com sucesso (mantido no histórico).")
+                    }
+
+                } finally {
+                    connection.close()
+                }
+            } catch (e: Exception) {
+                call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain, status = HttpStatusCode.InternalServerError)
+            }
+        }
+
 
 
     }
