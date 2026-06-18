@@ -9,21 +9,11 @@ import io.ktor.client.plugins.defaultRequest
 import io.ktor.serialization.kotlinx.json.json
 import pfc.a50727a50799.smarttool_cabinet.core.auth.data.FuncionarioRemoteDataSource
 import pfc.a50727a50799.smarttool_cabinet.core.auth.iOSAuthRepository
+import pfc.a50727a50799.smarttool_cabinet.di.AppModule
 
 fun MainViewController() = ComposeUIViewController {
-    val httpClient = remember {
-        HttpClient(Darwin) {
-            install(ContentNegotiation) { json() }
-            defaultRequest { url("http://192.168.0.222:8080") } // mudar para 127.0.0.1 se estivermos num emulador
-        }
-    }
-
-    val repo = remember {
-        iOSAuthRepository(FuncionarioRemoteDataSource(httpClient))
-    }
-
     App(
-        authRepository = repo,
+        authRepository = AppModule.authRepository,
         googleSignIn = { throw NotImplementedError("Google Sign-In indisponível no iOS") }
     )
 }
