@@ -7,54 +7,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.AppTheme
 
-
-/**
- * Composable raiz que serve como ponto de entrada para o ecrã Gestor. 
- *
- * Esta função é responsável por:
- * - Instanciar e gerir o [GestorViewModel]
- * - Observar o estado do ViewModel de forma lifecycle-aware
- * - Delegar a renderização para [GestorScreen]
- *
- * @param viewModel O ViewModel que gere o estado e lógica do ecrã. 
- *                  Por defeito, é criado automaticamente pelo Compose.
- *
- * @see GestorViewModel
- * @see GestorScreen
- */
 @Composable
-fun GestorRoot(
-    viewModel: GestorViewModel = viewModel()
-) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
+private fun GestorScreenContent(){
 
-    GestorScreen(
-        state = state,
-        onAction = viewModel::onAction
-    )
 }
 
-/**
- * Composable stateless que renderiza a UI do ecrã Gestor.
- *
- * Segue o padrão de UI stateless, recebendo todo o estado necessário
- * como parâmetro e comunicando eventos através de callbacks.
- * Isto facilita os testes e previews.
- *
- * @param state O estado atual do ecrã contendo todos os dados a apresentar.
- * @param onAction Callback invocado quando o utilizador realiza uma ação.
- *                 As ações são definidas em [GestorAction]. 
- *
- * @see GestorState
- * @see GestorAction
- */
 @Composable
 fun GestorScreen(
-    state: GestorState,
-    onAction: (GestorAction) -> Unit,
 ) {
-    Text(text = "Gestor")
 }
 
 /**
@@ -66,10 +28,8 @@ fun GestorScreen(
 @Preview
 @Composable
 private fun Preview() {
-    MaterialTheme {
+    AppTheme {
         GestorScreen(
-            state = GestorState(),
-            onAction = {}
         )
     }
 }
