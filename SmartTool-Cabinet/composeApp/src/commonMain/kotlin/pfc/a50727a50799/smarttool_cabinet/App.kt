@@ -13,6 +13,7 @@ import pfc.a50727a50799.smarttool_cabinet.feature.navigation.TecnicoRoute
 import androidx.navigation.compose.*
 import kotlinx.coroutines.launch
 import pfc.a50727a50799.smarttool_cabinet.core.auth.UserRole
+import pfc.a50727a50799.smarttool_cabinet.feature.email.emailScreen
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.LoginEmailRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.SSORoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.routeForRole
@@ -105,9 +106,16 @@ private fun AppNavHost(
         }
 
         composable<LoginEmailRoute> {
-            // TODO
-            // ecrã de email/password
-            // chamar loginviewmodel + formulario + redireção pos login
+            val viewModel = viewModel { WelcomeViewModel(authRepository) }
+            emailScreen(
+                viewModel = viewModel,
+                onBackClick = {navController.popBackStack()},
+                onAuthenticated = {role ->
+                    navController.navigate(routeForRole(role)) {
+                        popUpTo(WelcomeRoute) { inclusive = true }
+                    }
+                }
+            )
         }
 
         composable<SSORoute> {
