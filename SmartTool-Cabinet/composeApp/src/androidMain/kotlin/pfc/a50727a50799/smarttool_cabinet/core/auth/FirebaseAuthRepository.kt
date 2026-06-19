@@ -1,11 +1,11 @@
 package pfc.a50727a50799.smarttool_cabinet.core.auth
 
-import pfc.a50727a50799.smarttool_cabinet.core.auth.data.FuncionarioRemoteDataSource
+import pfc.a50727a50799.smarttool_cabinet.core.auth.data.funcionario.FuncionarioRemoteDataSource
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.tasks.await
-import pfc.a50727a50799.smarttool_cabinet.core.auth.data.toUserRole
+import pfc.a50727a50799.smarttool_cabinet.core.auth.data.funcionario.toUserRole
 
 /**
  *  Implementação real da autenticação, usando o firebase para confirmar quem é o user,

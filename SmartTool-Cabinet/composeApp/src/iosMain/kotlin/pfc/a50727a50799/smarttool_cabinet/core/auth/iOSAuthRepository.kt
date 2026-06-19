@@ -1,7 +1,7 @@
 package pfc.a50727a50799.smarttool_cabinet.core.auth
 
-import pfc.a50727a50799.smarttool_cabinet.core.auth.data.FuncionarioRemoteDataSource
-import pfc.a50727a50799.smarttool_cabinet.core.auth.data.toUserRole
+import pfc.a50727a50799.smarttool_cabinet.core.auth.data.funcionario.FuncionarioRemoteDataSource
+import pfc.a50727a50799.smarttool_cabinet.core.auth.data.funcionario.toUserRole
 
 class iOSAuthRepository(
     private val funcionarioDataSource: FuncionarioRemoteDataSource
