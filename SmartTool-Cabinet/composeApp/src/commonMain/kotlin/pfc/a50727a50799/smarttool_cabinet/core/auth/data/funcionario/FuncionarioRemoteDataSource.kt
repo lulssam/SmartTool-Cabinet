@@ -1,4 +1,4 @@
-package pfc.a50727a50799.smarttool_cabinet.core.auth.data
+package pfc.a50727a50799.smarttool_cabinet.core.auth.data.funcionario
 
 import pfc.a50727a50799.smarttool_cabinet.core.auth.AuthResult
 

@@ -13,7 +13,10 @@ import pfc.a50727a50799.smarttool_cabinet.feature.navigation.TecnicoRoute
 import androidx.navigation.compose.*
 import kotlinx.coroutines.launch
 import pfc.a50727a50799.smarttool_cabinet.core.auth.UserRole
+import pfc.a50727a50799.smarttool_cabinet.di.AppModule
 import pfc.a50727a50799.smarttool_cabinet.feature.email.emailScreen
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.GestorScreen
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.GestorViewModel
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.LoginEmailRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.SSORoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.routeForRole
@@ -149,7 +152,8 @@ private fun AppNavHost(
         }
 
         composable<GestorRoute> {
-            // TODO
+            val viewModel = viewModel { GestorViewModel(AppModule.ferramentaRemoteDataSource) }
+            GestorScreen(viewModel = viewModel)
         }
 
         composable<BackOfficeRoute> {

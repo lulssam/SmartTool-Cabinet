@@ -2,7 +2,7 @@ package pfc.a50727a50799.smarttool_cabinet.di
 
 import pfc.a50727a50799.smarttool_cabinet.core.auth.AuthRepository
 import pfc.a50727a50799.smarttool_cabinet.core.auth.FirebaseAuthRepository
-import pfc.a50727a50799.smarttool_cabinet.core.auth.data.FuncionarioRemoteDataSource
+import pfc.a50727a50799.smarttool_cabinet.core.auth.data.funcionario.FuncionarioRemoteDataSource
 
 /**
  * No emulador Android, o backend que corre no teu computador é alcançado pelo
