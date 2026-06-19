@@ -4,8 +4,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class FerramentaDto(
-    val id: Int,
+    val idFerramenta: Int,
     val nome: String,
     val estado: String,
-    val armarioId: Int
+    val categoria: String,
+    val localizacao: String
 )
