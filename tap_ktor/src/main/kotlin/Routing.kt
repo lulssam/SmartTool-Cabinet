@@ -491,7 +491,7 @@ fun Application.configureRouting() {
 
                     val pedido = call.receive<EstadoFerramentaDTO>()
 
-                    // consultar disponivbilidade atual
+                    // consultar disponibilidade atual
                     val sqlDispo = "SELECT disponibilidade FROM ferramenta WHERE idFerramenta = ?"
                     val statementDisp = connection.prepareStatement(sqlDispo)
                     statementDisp.setInt(1, id)
@@ -578,7 +578,7 @@ fun Application.configureRouting() {
                     deleteBackoffice.setInt(1, id)
                     deleteBackoffice.executeUpdate()
 
-                    //Inserir o funcionário na tabela com o novo cargo
+                    //altera o cargo do funcionário
                     val sqlInsert = when (novoCargo) {
                         "GESTOR" -> "INSERT INTO gestor (id_func) VALUES (?)"
                         "TECNICO" -> "INSERT INTO tecnico (id_func) VALUES (?)"
@@ -605,7 +605,7 @@ fun Application.configureRouting() {
             }
         }
 
-        // definir turnos (ver sql não temos nada la de turnos)
+        // definir turnos
         patch("/api/funcionarios/{id}/turno") {
             val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
             val user = USER
@@ -665,7 +665,7 @@ fun Application.configureRouting() {
                 val connection = DriverManager.getConnection(url, user, password)
 
                 try {
-                    // Usamos a View_Mapa_Emprestimos e filtramos por devoluções não concluídas
+
                     val sql = """
                         SELECT idFerramenta, ferramenta, tecnico, dhRequisicao 
                         FROM View_Mapa_Emprestimos 
@@ -720,7 +720,6 @@ fun Application.configureRouting() {
                         return@post
                     }
 
-                    // 1. Inserir na tabela principal
                     val sqlFunc = "INSERT INTO funcionario (nomeCompleto, email, turno) VALUES (?, ?, ?)"
                     val stmtFunc = connection.prepareStatement(sqlFunc, Statement.RETURN_GENERATED_KEYS)
                     stmtFunc.setString(1, pedido.nomeCompleto)
@@ -732,7 +731,7 @@ fun Application.configureRouting() {
                     if (!keys.next()) throw Exception("Falha ao obter o ID do funcionário.")
                     val idFuncGerado = keys.getInt(1)
 
-                    // 2. Inserir na tabela do cargo
+                    // inserir na tabela do cargo
                     val sqlCargo = when (cargoFormatado) {
                         "GESTOR" -> "INSERT INTO gestor (id_func) VALUES (?)"
                         "TECNICO" -> "INSERT INTO tecnico (id_func) VALUES (?)"
