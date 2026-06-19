@@ -1,4 +1,4 @@
-package pfc.a50727a50799.smarttool_cabinet.feature.login
+package pfc.a50727a50799.smarttool_cabinet.feature.welcome
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,12 +15,12 @@ import pfc.a50727a50799.smarttool_cabinet.core.auth.AuthResult
  * Trata da lógica do login. Fala com o [AuthRepository] (a interface),
  * nunca diretamente com o Firebase.
  */
-class LoginViewModel(
+class WelcomeViewModel(
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(LoginUiState())
-    val state: StateFlow<LoginUiState> = _state.asStateFlow()
+    private val _state = MutableStateFlow(WelcomeUiState())
+    val state: StateFlow<WelcomeUiState> = _state.asStateFlow()
 
     fun onEmailChange(novo: String) = _state.update { it.copy(email = novo) }
     fun onPasswordChange(nova: String) = _state.update { it.copy(password = nova) }

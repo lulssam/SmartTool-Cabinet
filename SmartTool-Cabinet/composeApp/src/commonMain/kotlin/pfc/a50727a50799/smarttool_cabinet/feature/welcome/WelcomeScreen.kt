@@ -1,14 +1,20 @@
-package pfc.a50727a50799.smarttool_cabinet.feature.login
+package pfc.a50727a50799.smarttool_cabinet.feature.welcome
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -18,13 +24,17 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.jetbrains.compose.resources.painterResource
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AppTheme
-import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapBrandGreen
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.PillShape
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapGreenishBlue
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapLightGreen
+import smarttoolcabinet.composeapp.generated.resources.Res
+import smarttoolcabinet.composeapp.generated.resources.tap_logo
 
 /**
  * A parte visual do login. Não sabe nada da lógica — só mostra o que recebe
@@ -39,31 +49,60 @@ fun LoginScreenContent(
     onSSOClick: () -> Unit = {}
 ) {
     Column(
-        modifier = Modifier.fillMaxSize().padding(24.dp),
-        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxSize()
+            .windowInsetsPadding(WindowInsets.safeDrawing)
+            .padding(horizontal = 24.dp, vertical = 16.dp),
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
+        Spacer(Modifier.height(100.dp))
+
+        Image(
+            painter = painterResource(Res.drawable.tap_logo),
+            contentDescription = "TAP Air Portugal",
+            modifier = Modifier
+                .fillMaxWidth(0.8f)
+                .widthIn(max = 260.dp)
+        )
+
+        Spacer(Modifier.height(28.dp))
+
+        Text(
+            text = "SmartTool Cabinet".uppercase(),
+            color = TapGreenishBlue,
+            fontWeight = FontWeight.Medium,
+            fontSize = 13.sp,
+            letterSpacing = 1.sp
+        )
+
+        Spacer(Modifier.height(6.dp))
+        Box(Modifier.widthIn(32.dp).height(2.dp).background(TapLightGreen))
+
+        Spacer(modifier = Modifier.weight(1f))
 
         Button(
             onClick = onLoginEmailClick,
             enabled = !isLoading,
+            shape = PillShape,
             colors = ButtonDefaults.buttonColors(containerColor = TapGreenishBlue),
-            contentPadding = PaddingValues(vertical = 18.dp),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().height(55.dp)
         ) {
             Text(
                 text = "Iniciar sessão com email",
-                fontSize = 15.sp)
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Medium
+            )
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(14.dp))
 
         Button(
             onClick = onSSOClick,
+            shape = PillShape,
             colors = ButtonDefaults.buttonColors(containerColor = TapLightGreen),
-            modifier = Modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(vertical = 18.dp),
+            modifier = Modifier.fillMaxWidth().height(55.dp),
         ) {
             Text(
                 text = "Autenticação Federada",
@@ -79,13 +118,16 @@ fun LoginScreenContent(
             Spacer(Modifier.height(12.dp))
             Text(resultado, color = MaterialTheme.colorScheme.primary)
         }
+
+        Spacer(modifier = Modifier.weight(0.4f))
     }
 }
 
 /** Liga o ViewModel ao conteúdo visual. */
 @Composable
 fun LoginScreen(
-    viewModel: LoginViewModel,
+    viewModel: WelcomeViewModel,
+    onLoginEmailClick: () -> Unit,
     onSSOClick: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
@@ -93,7 +135,7 @@ fun LoginScreen(
         isLoading = state.isLoading,
         error = state.error,
         resultado = state.sessao?.let { "OK! ${it.email} — ${it.role}" },
-        onLoginEmailClick = viewModel::onLoginClick,
+        onLoginEmailClick = onLoginEmailClick,
         onSSOClick = onSSOClick
     )
 }
