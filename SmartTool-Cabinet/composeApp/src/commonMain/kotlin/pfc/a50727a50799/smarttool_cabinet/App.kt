@@ -1,19 +1,19 @@
 package pfc.a50727a50799.smarttool_cabinet
 
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.launch
 import pfc.a50727a50799.smarttool_cabinet.core.auth.AuthRepository
-import pfc.a50727a50799.smarttool_cabinet.feature.login.LoginScreen
-import pfc.a50727a50799.smarttool_cabinet.feature.login.LoginViewModel
+import pfc.a50727a50799.smarttool_cabinet.feature.welcome.LoginScreen
+import pfc.a50727a50799.smarttool_cabinet.feature.welcome.WelcomeViewModel
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.BackOfficeRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.GestorRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.WelcomeRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.TecnicoRoute
 import androidx.navigation.compose.*
 import pfc.a50727a50799.smarttool_cabinet.core.auth.UserRole
+import pfc.a50727a50799.smarttool_cabinet.feature.navigation.LoginEmailRoute
+import pfc.a50727a50799.smarttool_cabinet.feature.navigation.SSORoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.routeForRole
 import pfc.a50727a50799.smarttool_cabinet.feature.session.SessionUiState
 import pfc.a50727a50799.smarttool_cabinet.feature.session.SessionViewModel
@@ -44,8 +44,13 @@ fun App(
             SessionUiState.Loading -> SplashScreen()
             SessionUiState.NoSession ->
                 AppNavHost(startDestination = WelcomeRoute, authRepository, googleSignIn)
+
             is SessionUiState.Authenticated ->
-                AppNavHost(startDestination = routeForRole(state.session.role), authRepository, googleSignIn)
+                AppNavHost(
+                    startDestination = routeForRole(state.session.role),
+                    authRepository,
+                    googleSignIn
+                )
 
         }
 
@@ -71,7 +76,7 @@ private fun AppNavHost(
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = startDestination) {
         composable<WelcomeRoute> {
-            val viewModel = viewModel { LoginViewModel(authRepository) }
+            val viewModel = viewModel { WelcomeViewModel(authRepository) }
             val scope = rememberCoroutineScope() // lançar corrotina do click
 
             val state by viewModel.state.collectAsState()
@@ -92,13 +97,25 @@ private fun AppNavHost(
 
             LoginScreen(
                 viewModel = viewModel,
+                onLoginEmailClick = {
+                    navController.navigate(LoginEmailRoute)
+                },
                 onSSOClick = {
-                    /*scope.launch {
-                        val idToken = googleSignIn()
-                        viewModel.onGoogleToken(idToken)
-                    }*/
+                    navController.navigate(SSORoute)
+
                 }
             )
+        }
+
+        composable<LoginEmailRoute> {
+            // TODO
+        }
+
+        composable<SSORoute> {
+           /* scope.launch {
+                val idToken = googleSignIn()
+                viewModel.onGoogleToken(idToken)
+            }*/
         }
 
         composable<GestorRoute> {
