@@ -22,6 +22,7 @@ credentialsPlayServicesAuth = "1.6.0"
 googleid = "1.2.0"
 navigationCompose = "2.9.2"
 
+
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }

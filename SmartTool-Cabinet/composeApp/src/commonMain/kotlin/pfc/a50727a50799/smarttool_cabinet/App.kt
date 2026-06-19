@@ -4,13 +4,14 @@ import androidx.compose.runtime.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import pfc.a50727a50799.smarttool_cabinet.core.auth.AuthRepository
-import pfc.a50727a50799.smarttool_cabinet.feature.welcome.LoginScreen
+import pfc.a50727a50799.smarttool_cabinet.feature.welcome.WelcomeScreen
 import pfc.a50727a50799.smarttool_cabinet.feature.welcome.WelcomeViewModel
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.BackOfficeRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.GestorRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.WelcomeRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.TecnicoRoute
 import androidx.navigation.compose.*
+import kotlinx.coroutines.launch
 import pfc.a50727a50799.smarttool_cabinet.core.auth.UserRole
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.LoginEmailRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.SSORoute
@@ -18,6 +19,7 @@ import pfc.a50727a50799.smarttool_cabinet.feature.navigation.routeForRole
 import pfc.a50727a50799.smarttool_cabinet.feature.session.SessionUiState
 import pfc.a50727a50799.smarttool_cabinet.feature.session.SessionViewModel
 import pfc.a50727a50799.smarttool_cabinet.feature.session.SplashScreen
+import pfc.a50727a50799.smarttool_cabinet.feature.sso.SSOScreen
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AppTheme
 
 
@@ -95,27 +97,47 @@ private fun AppNavHost(
                 }
             }
 
-            LoginScreen(
-                viewModel = viewModel,
-                onLoginEmailClick = {
-                    navController.navigate(LoginEmailRoute)
-                },
-                onSSOClick = {
-                    navController.navigate(SSORoute)
-
-                }
+            WelcomeScreen(
+                onLoginEmailClick = { navController.navigate(LoginEmailRoute) },
+                onSSOClick = { navController.navigate(SSORoute) }
             )
+
         }
 
         composable<LoginEmailRoute> {
             // TODO
+            // ecrã de email/password
+            // chamar loginviewmodel + formulario + redireção pos login
         }
 
         composable<SSORoute> {
-           /* scope.launch {
-                val idToken = googleSignIn()
-                viewModel.onGoogleToken(idToken)
-            }*/
+
+            val viewModel = viewModel { WelcomeViewModel(authRepository) }
+            val scope = rememberCoroutineScope()
+            val state by viewModel.state.collectAsState()
+
+            // quando o login google funciona, vai para o ecrã do cargo suposto
+            LaunchedEffect(state.sessao) {
+                val sessao = state.sessao
+                if (sessao != null) {
+                    navController.navigate(routeForRole(sessao.role)) {
+                        popUpTo(WelcomeRoute) { inclusive = true }
+                    }
+                }
+            }
+
+            SSOScreen(
+                viewModel = viewModel,
+                onBackClick = { navController.popBackStack() },
+                onGoogleClick = {
+                    scope.launch {
+                        val idToken = googleSignIn()
+                        viewModel.onGoogleToken(idToken)
+                    }
+                }
+            )
+
+
         }
 
         composable<GestorRoute> {

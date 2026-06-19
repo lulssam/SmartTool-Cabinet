@@ -1,59 +1,124 @@
 package pfc.a50727a50799.smarttool_cabinet.feature.sso
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import org.jetbrains.compose.resources.painterResource
+import pfc.a50727a50799.smarttool_cabinet.feature.welcome.WelcomeViewModel
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AppTheme
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.CardShape
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapGreenishBlue
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapLightGreen
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.TextSecondary
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.TextTitle
+import smarttoolcabinet.composeapp.generated.resources.Res
+import smarttoolcabinet.composeapp.generated.resources.arrowleft
+import smarttoolcabinet.composeapp.generated.resources.google_logo
+import smarttoolcabinet.composeapp.generated.resources.tap_logo
 
 
-/**
- * Composable raiz que serve como ponto de entrada para o ecrã SSO. 
- *
- * Esta função é responsável por:
- * - Instanciar e gerir o [SSOViewModel]
- * - Observar o estado do ViewModel de forma lifecycle-aware
- * - Delegar a renderização para [SSOScreen]
- *
- * @param viewModel O ViewModel que gere o estado e lógica do ecrã. 
- *                  Por defeito, é criado automaticamente pelo Compose.
- *
- * @see SSOViewModel
- * @see SSOScreen
- */
 @Composable
-fun SSORoot(
-    viewModel: SSOViewModel = viewModel()
+fun SSOScreenContent(
+    onBackClick: () -> Unit,
+    onGoogleClick: () -> Unit,
+    isLoading: Boolean,
+    error: String?
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .windowInsetsPadding(WindowInsets.safeDrawing)
+            .padding(horizontal = 24.dp, vertical = 16.dp),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(Modifier.height(100.dp))
 
-    SSOScreen(
-        state = state,
-        onAction = viewModel::onAction
-    )
+        // LOGO
+        Image(
+            painter = painterResource(Res.drawable.tap_logo),
+            contentDescription = "TAP Air Portugal",
+            modifier = Modifier
+                .fillMaxWidth(0.8f)
+                .widthIn(max = 260.dp)
+        )
+
+        Spacer(Modifier.height(28.dp))
+
+        Text(
+            text = "SmartTool Cabinet".uppercase(),
+            color = TapGreenishBlue,
+            fontWeight = FontWeight.Medium,
+            fontSize = 13.sp,
+            letterSpacing = 1.sp
+        )
+
+        Spacer(Modifier.height(6.dp))
+        Box(Modifier.widthIn(32.dp).height(2.dp).background(TapLightGreen))
+        Spacer(Modifier.height(48.dp))
+
+        SSOCard(onBackClick = onBackClick, onGoogleClick = onGoogleClick, isLoading = isLoading)
+
+        if (error != null) {
+            Spacer(Modifier.height(12.dp))
+            Text(error, color = MaterialTheme.colorScheme.error, fontSize = 12.sp)
+        }
+
+        Spacer(Modifier.weight(1f))
+
+    }
 }
 
-/**
- * Composable stateless que renderiza a UI do ecrã SSO.
- *
- * Segue o padrão de UI stateless, recebendo todo o estado necessário
- * como parâmetro e comunicando eventos através de callbacks.
- * Isto facilita os testes e previews.
- *
- * @param state O estado atual do ecrã contendo todos os dados a apresentar.
- * @param onAction Callback invocado quando o utilizador realiza uma ação.
- *                 As ações são definidas em [SSOAction]. 
- *
- * @see SSOState
- * @see SSOAction
- */
 @Composable
 fun SSOScreen(
-    state: SSOState,
-    onAction: (SSOAction) -> Unit,
+    viewModel: WelcomeViewModel,
+    onBackClick: () -> Unit,
+    onGoogleClick: () -> Unit
 ) {
 
+    val state by viewModel.state.collectAsState()
+
+    SSOScreenContent(
+        isLoading = state.isLoading,
+        error = state.error,
+        onBackClick = onBackClick,
+        onGoogleClick = onGoogleClick
+    )
 }
 
 /**
@@ -62,13 +127,133 @@ fun SSOScreen(
  * Utiliza o tema do projeto e um estado por defeito para
  * permitir a pré-visualização durante o desenvolvimento.
  */
-@Preview
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun Preview() {
     AppTheme {
-        SSOScreen(
-            state = SSOState(),
-            onAction = {}
+        SSOScreenContent(
+            isLoading = false,
+            error = null,
+            onBackClick = {},
+            onGoogleClick = {}
         )
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewCard() {
+    AppTheme {
+        SSOCard(
+            onBackClick = {},
+            onGoogleClick = {},
+            isLoading = false
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewGoogleButton() {
+    AppTheme {
+        GoogleProviderButton(
+            onGoogleClick = {},
+            enabled = true
+        )
+    }
+}
+
+
+@Composable
+private fun SSOCard(
+    onBackClick: () -> Unit,
+    onGoogleClick: () -> Unit,
+    isLoading: Boolean,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                Color.White.copy(alpha = 0.9f),
+                shape = CardShape
+            )
+            .border(
+                0.5.dp, Color.Black.copy(alpha = 0.04f),
+                shape = CardShape
+            )
+            .padding(24.dp)
+    ) {
+        // Voltar
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.clickable(onClick = onBackClick)
+        ) {
+            Image(
+                painter = painterResource(Res.drawable.arrowleft),
+                contentDescription = null,
+                modifier = Modifier.size(20.dp)
+            )
+            Spacer(Modifier.width(6.dp))
+            Text(
+                "Voltar", color = TapGreenishBlue, fontSize = 13.sp,
+                fontWeight = FontWeight.Medium
+            )
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+        Text(
+            text = "Autenticação federada",
+            color = TextTitle,
+            fontWeight = FontWeight.Medium,
+            fontSize = 18.sp,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(Modifier.height(6.dp))
+
+        Text(
+            text = "Selecione o seu fornecedor de identidade",
+            color = TextSecondary,
+            fontSize = 13.sp,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(Modifier.height(20.dp))
+        GoogleProviderButton(onGoogleClick = onGoogleClick, enabled = !isLoading)
+    }
+}
+
+@Composable
+private fun GoogleProviderButton(
+    onGoogleClick: () -> Unit,
+    enabled: Boolean
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(14.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 64.dp)
+            .background(Color.White, shape = RoundedCornerShape(14.dp))
+            .border(0.5.dp, Color.Black.copy(alpha = 0.08f), RoundedCornerShape(14.dp))
+            .clickable(onClick = onGoogleClick, enabled = enabled)
+            .padding(horizontal = 16.dp)
+    ) {
+        Image(
+            painter = painterResource(Res.drawable.google_logo),
+            contentDescription = null,
+            modifier = Modifier.size(22.dp)
+        )
+
+        Column {
+            Text(
+                text = "Google",
+                color = TextTitle,
+                fontWeight = FontWeight.Medium,
+                fontSize = 14.sp
+            )
+        }
     }
 }

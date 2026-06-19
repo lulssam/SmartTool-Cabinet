@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,11 +16,8 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -41,13 +37,11 @@ import smarttoolcabinet.composeapp.generated.resources.tap_logo
  * e avisa quando o user faz algo. Totalmente previewável sem ViewModel.
  */
 @Composable
-fun LoginScreenContent(
-    isLoading: Boolean,
-    error: String?,
-    resultado: String?,                 // texto a mostrar quando o login corre bem
+fun WelcomeScreenContent(
     onLoginEmailClick: () -> Unit,
     onSSOClick: () -> Unit = {}
 ) {
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -59,6 +53,7 @@ fun LoginScreenContent(
 
         Spacer(Modifier.height(100.dp))
 
+        // LOGO
         Image(
             painter = painterResource(Res.drawable.tap_logo),
             contentDescription = "TAP Air Portugal",
@@ -84,7 +79,6 @@ fun LoginScreenContent(
 
         Button(
             onClick = onLoginEmailClick,
-            enabled = !isLoading,
             shape = PillShape,
             colors = ButtonDefaults.buttonColors(containerColor = TapGreenishBlue),
             modifier = Modifier.fillMaxWidth().height(55.dp)
@@ -110,31 +104,17 @@ fun LoginScreenContent(
             )
         }
 
-        if (error != null) {
-            Spacer(Modifier.height(12.dp))
-            Text(error, color = MaterialTheme.colorScheme.error)
-        }
-        if (resultado != null) {
-            Spacer(Modifier.height(12.dp))
-            Text(resultado, color = MaterialTheme.colorScheme.primary)
-        }
-
         Spacer(modifier = Modifier.weight(0.4f))
     }
 }
 
 /** Liga o ViewModel ao conteúdo visual. */
 @Composable
-fun LoginScreen(
-    viewModel: WelcomeViewModel,
+fun WelcomeScreen(
     onLoginEmailClick: () -> Unit,
     onSSOClick: () -> Unit
 ) {
-    val state by viewModel.state.collectAsState()
-    LoginScreenContent(
-        isLoading = state.isLoading,
-        error = state.error,
-        resultado = state.sessao?.let { "OK! ${it.email} — ${it.role}" },
+    WelcomeScreenContent(
         onLoginEmailClick = onLoginEmailClick,
         onSSOClick = onSSOClick
     )
@@ -143,12 +123,9 @@ fun LoginScreen(
 /** Preview com dados falsos*/
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun LoginPreview() {
+fun WelcomePreview() {
     AppTheme {
-        LoginScreenContent(
-            isLoading = false,
-            error = null,
-            resultado = null,
+        WelcomeScreenContent(
             onLoginEmailClick = {},
             onSSOClick = {}
         )
