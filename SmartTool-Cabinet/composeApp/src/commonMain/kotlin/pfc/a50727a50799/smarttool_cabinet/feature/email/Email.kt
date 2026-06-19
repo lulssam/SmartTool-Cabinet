@@ -66,6 +66,7 @@ import smarttoolcabinet.composeapp.generated.resources.mail
 import smarttoolcabinet.composeapp.generated.resources.tap_logo
 
 
+
 @Composable
 fun emailScreenContent(
     email: String,
@@ -184,6 +185,20 @@ private fun signInPreview() {
     }
 }
 
+/**
+ * O cartão branco do ecrã de login por email.
+ * Mostra os campos de email e palavra-passe, o botão de entrar e um eventual erro.
+ * Não tem lógica nenhuma — recebe o que mostrar e avisa quando o utilizador interage.
+ *
+ * @param email O que o utilizador escreveu até agora no campo de email.
+ * @param password O que o utilizador escreveu até agora no campo da palavra-passe.
+ * @param isLoading True enquanto o login está a correr (desativa o botão e mostra o spinner).
+ * @param error Mensagem a mostrar se o login falhar. Null = sem erro.
+ * @param onEmailChange Avisado sempre que o utilizador escreve no campo de email.
+ * @param onPasswordChange Avisado sempre que o utilizador escreve na palavra-passe.
+ * @param onLoginClick Chamado quando carrega em "Entrar".
+ * @param onBackClick Chamado quando carrega em "Voltar".
+ */
 @Composable
 private fun signInCard(
     email: String,
@@ -298,7 +313,10 @@ private fun signInCard(
                 val olho = if (passwordVisible) Res.drawable.eye_off else Res.drawable.eye_open
                 Image(
                     painter = painterResource(olho),
-                    contentDescription = if (passwordVisible) "Esconder palavra-passe" else "Mostrar palavra-passe",
+                    contentDescription = if (passwordVisible)
+                        "Esconder palavra-passe"
+                    else
+                        "Mostrar palavra-passe",
                     modifier = Modifier.size(16.dp).clickable { passwordVisible = !passwordVisible }
                 )
             },
