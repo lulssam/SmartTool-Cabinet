@@ -294,8 +294,6 @@ fun Application.configureRouting() {
                 try {
                     val pedido = call.receive<NovaRequisicaoDTO>()
 
-                    // --- 1. NOVA VALIDAÇÃO DE PERMISSÕES ---
-                    // Verifica se há alguma tarefa não concluída para este técnico que permita esta ferramenta
                     val sqlValidacao = """
                         SELECT 1 
                         FROM tarefa t
@@ -314,7 +312,6 @@ fun Application.configureRouting() {
                     val rsValidacao = stmtValidacao.executeQuery()
 
                     if (!rsValidacao.next()) {
-                        // Se não encontrar resultados, bloqueia o pedido
                         call.respond(
                             HttpStatusCode.Forbidden,
                             "Acesso Negado: Não tens nenhuma tarefa ativa que te permita levantar esta ferramenta."
@@ -323,7 +320,6 @@ fun Application.configureRouting() {
                     }
                     // ----------------------------------------
 
-                    // 2. Criar a requisição na tabela principal
                     val sqlRequisicao = "INSERT INTO requisicao (dhRequisicao, id_tecnico) VALUES (NOW(), ?)"
                     val statement = connection.prepareStatement(sqlRequisicao, Statement.RETURN_GENERATED_KEYS)
                     statement.setInt(1, pedido.idTecnico)
@@ -333,7 +329,6 @@ fun Application.configureRouting() {
                     if (!keys.next()) throw Exception("Erro ao gerar ID da requisição")
                     val idRequisicao = keys.getInt(1)
 
-                    // 3. Associar a ferramenta à requisição
                     val sqlFerramenta = "INSERT INTO requisicao_ferramenta (idRequisicao, codigo_tipo, nFerramenta) VALUES (?, ?, ?)"
                     val statementFerramenta = connection.prepareStatement(sqlFerramenta)
                     statementFerramenta.setInt(1, idRequisicao)
@@ -341,20 +336,19 @@ fun Application.configureRouting() {
                     statementFerramenta.setInt(3, pedido.nFerramenta)
                     statementFerramenta.executeUpdate()
 
-                    // 4. (Opcional mas recomendado) Atualizar a disponibilidade da ferramenta
                     val sqlUpdateFerramenta = "UPDATE ferramenta SET disponibilidade = 'Requisitada' WHERE codigo_tipo = ? AND nFerramenta = ?"
                     val stmtUpdate = connection.prepareStatement(sqlUpdateFerramenta)
                     stmtUpdate.setInt(1, pedido.codigoTipo)
                     stmtUpdate.setInt(2, pedido.nFerramenta)
                     stmtUpdate.executeUpdate()
 
-                    // Se passou em tudo, confirma as alterações na base de dados
+
                     connection.commit()
 
                     call.respond(HttpStatusCode.Created, "Requisição $idRequisicao criada com sucesso.")
 
                 } catch (e: Exception) {
-                    connection.rollback() // Se alguma coisa falhar, desfaz tudo
+                    connection.rollback()
                     throw e
                 } finally {
                     connection.close()
@@ -377,13 +371,11 @@ fun Application.configureRouting() {
                 Class.forName("com.mysql.cj.jdbc.Driver")
                 val connection = DriverManager.getConnection(url, user, password)
 
-                // Desligar o autoCommit para a transação
                 connection.autoCommit = false
 
                 try {
                     val pedido = call.receive<NovaTarefaDTO>()
 
-                    // 1. Inserir a Tarefa Principal
                     val sqlTarefa = "INSERT INTO tarefa (descricao, id_gestor, id_tecnico, dhAtribuicao) VALUES (?, ?, ?, NOW())"
                     val statementTarefa = connection.prepareStatement(sqlTarefa, Statement.RETURN_GENERATED_KEYS)
                     statementTarefa.setString(1, pedido.descricao)
@@ -391,14 +383,12 @@ fun Application.configureRouting() {
                     statementTarefa.setInt(3, pedido.idTecnico)
                     statementTarefa.executeUpdate()
 
-                    // Obter o ID da tarefa que acabou de ser criada
                     val keys = statementTarefa.generatedKeys
                     if (!keys.next()) {
                         throw Exception("Falha ao obter o ID da nova tarefa.")
                     }
                     val idTarefaGerada = keys.getInt(1)
 
-                    // 2. Inserir as ferramentas permitidas para esta tarefa
                     if (pedido.ferramentasPermitidasIds.isEmpty()) {
                         val sqlFerramenta = "INSERT INTO tarefa_ferramenta_permitida (idTarefa, codigo_tipo, nFerramenta) VALUES (?, ?, ?)"
                         val statementFerramenta = connection.prepareStatement(sqlFerramenta)
@@ -407,19 +397,17 @@ fun Application.configureRouting() {
                             statementFerramenta.setInt(1, idTarefaGerada)
                             statementFerramenta.setInt(2, ferramenta.codigoTipo)
                             statementFerramenta.setInt(3, ferramenta.nFerramenta)
-                            // Usa addBatch para inserir várias de uma vez de forma eficiente
                             statementFerramenta.addBatch()
                         }
                         statementFerramenta.executeBatch()
                     }
 
-                    // 3. Tudo correu bem, confirmamos as alterações na DB
                     connection.commit()
 
                     call.respond(HttpStatusCode.Created, "Tarefa $idTarefaGerada atribuída ao técnico ${pedido.idTecnico} com sucesso.")
 
                 } catch (e: Exception) {
-                    connection.rollback() // Reverte tudo se houver um erro a meio
+                    connection.rollback()
                     throw e
                 } finally {
                     connection.close()
