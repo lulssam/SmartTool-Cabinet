@@ -6,7 +6,8 @@ import io.ktor.client.plugins.defaultRequest
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import pfc.a50727a50799.smarttool_cabinet.core.auth.AuthRepository
-import pfc.a50727a50799.smarttool_cabinet.core.auth.data.FuncionarioRemoteDataSource
+import pfc.a50727a50799.smarttool_cabinet.core.auth.data.funcionario.FuncionarioRemoteDataSource
+import pfc.a50727a50799.smarttool_cabinet.core.ferramenta.data.FerramentaRemoteDataSource
 
 
 /**
@@ -49,4 +50,7 @@ object AppModule {
 
     /** Repositorio de autenticação pronto a usar*/
     val authRepository: AuthRepository by lazy { provideAuthRepository(funcionarioRemoteDataSource) }
+
+    /** A fonte que vai ao backend buscar as ferramentas (usa o [httpClient]). */
+    val ferramentaRemoteDataSource by lazy { FerramentaRemoteDataSource(httpClient) }
 }
