@@ -37,7 +37,7 @@ fun Application.configureRouting() {
                     val resultSet = statement.executeQuery(
                         "SELECT idFerramenta, Nome_Tipo, categoria, estado, disponibilidade, Armario FROM View_Inventario_Detalhado"
                     )
-
+                    
                     while (resultSet.next()) {
                         lista.add(
                             FerramentaDTO(
@@ -96,7 +96,11 @@ fun Application.configureRouting() {
                 }
 
             } catch (e: Exception) {
-                call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain, status = HttpStatusCode.InternalServerError)
+                call.respondText(
+                    "Erro na DB: ${e.message}",
+                    ContentType.Text.Plain,
+                    status = HttpStatusCode.InternalServerError
+                )
             }
         }
 
@@ -197,6 +201,7 @@ fun Application.configureRouting() {
                 val connection = DriverManager.getConnection(url, user, password)
 
                 try {
+                    // TODO mudar nome para id
                     val sql =
                         "SELECT idRequisicao, tecnico, idFerramenta, ferramenta, dhRequisicao, dhDevolucao " +
                                 "FROM View_Mapa_Emprestimos " +
@@ -329,14 +334,16 @@ fun Application.configureRouting() {
                     if (!keys.next()) throw Exception("Erro ao gerar ID da requisição")
                     val idRequisicao = keys.getInt(1)
 
-                    val sqlFerramenta = "INSERT INTO requisicao_ferramenta (idRequisicao, codigo_tipo, nFerramenta) VALUES (?, ?, ?)"
+                    val sqlFerramenta =
+                        "INSERT INTO requisicao_ferramenta (idRequisicao, codigo_tipo, nFerramenta) VALUES (?, ?, ?)"
                     val statementFerramenta = connection.prepareStatement(sqlFerramenta)
                     statementFerramenta.setInt(1, idRequisicao)
                     statementFerramenta.setInt(2, pedido.codigoTipo)
                     statementFerramenta.setInt(3, pedido.nFerramenta)
                     statementFerramenta.executeUpdate()
 
-                    val sqlUpdateFerramenta = "UPDATE ferramenta SET disponibilidade = 'Requisitada' WHERE codigo_tipo = ? AND nFerramenta = ?"
+                    val sqlUpdateFerramenta =
+                        "UPDATE ferramenta SET disponibilidade = 'Requisitada' WHERE codigo_tipo = ? AND nFerramenta = ?"
                     val stmtUpdate = connection.prepareStatement(sqlUpdateFerramenta)
                     stmtUpdate.setInt(1, pedido.codigoTipo)
                     stmtUpdate.setInt(2, pedido.nFerramenta)
@@ -376,7 +383,8 @@ fun Application.configureRouting() {
                 try {
                     val pedido = call.receive<NovaTarefaDTO>()
 
-                    val sqlTarefa = "INSERT INTO tarefa (descricao, id_gestor, id_tecnico, dhAtribuicao) VALUES (?, ?, ?, NOW())"
+                    val sqlTarefa =
+                        "INSERT INTO tarefa (descricao, id_gestor, id_tecnico, dhAtribuicao) VALUES (?, ?, ?, NOW())"
                     val statementTarefa = connection.prepareStatement(sqlTarefa, Statement.RETURN_GENERATED_KEYS)
                     statementTarefa.setString(1, pedido.descricao)
                     statementTarefa.setInt(2, pedido.idGestor)
@@ -390,7 +398,8 @@ fun Application.configureRouting() {
                     val idTarefaGerada = keys.getInt(1)
 
                     if (pedido.ferramentasPermitidasIds.isEmpty()) {
-                        val sqlFerramenta = "INSERT INTO tarefa_ferramenta_permitida (idTarefa, codigo_tipo, nFerramenta) VALUES (?, ?, ?)"
+                        val sqlFerramenta =
+                            "INSERT INTO tarefa_ferramenta_permitida (idTarefa, codigo_tipo, nFerramenta) VALUES (?, ?, ?)"
                         val statementFerramenta = connection.prepareStatement(sqlFerramenta)
 
                         for (ferramenta in pedido.ferramentasPermitidasIds) {
@@ -404,7 +413,10 @@ fun Application.configureRouting() {
 
                     connection.commit()
 
-                    call.respond(HttpStatusCode.Created, "Tarefa $idTarefaGerada atribuída ao técnico ${pedido.idTecnico} com sucesso.")
+                    call.respond(
+                        HttpStatusCode.Created,
+                        "Tarefa $idTarefaGerada atribuída ao técnico ${pedido.idTecnico} com sucesso."
+                    )
 
                 } catch (e: Exception) {
                     connection.rollback()
@@ -636,7 +648,11 @@ fun Application.configureRouting() {
                     connection.close()
                 }
             } catch (e: Exception) {
-                call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain, status = HttpStatusCode.InternalServerError)
+                call.respondText(
+                    "Erro na DB: ${e.message}",
+                    ContentType.Text.Plain,
+                    status = HttpStatusCode.InternalServerError
+                )
             }
         }
         // consultar ferramentas em falta e o seu eventual detentor
@@ -741,7 +757,11 @@ fun Application.configureRouting() {
                     connection.close()
                 }
             } catch (e: Exception) {
-                call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain, status = HttpStatusCode.InternalServerError)
+                call.respondText(
+                    "Erro na DB: ${e.message}",
+                    ContentType.Text.Plain,
+                    status = HttpStatusCode.InternalServerError
+                )
             }
         }
 
@@ -770,17 +790,23 @@ fun Application.configureRouting() {
                     if (linhas == 0) {
                         call.respond(HttpStatusCode.NotFound, "Funcionário não encontrado.")
                     } else {
-                        call.respond(HttpStatusCode.OK, "Funcionário $id desativado com sucesso (mantido no histórico).")
+                        call.respond(
+                            HttpStatusCode.OK,
+                            "Funcionário $id desativado com sucesso (mantido no histórico)."
+                        )
                     }
 
                 } finally {
                     connection.close()
                 }
             } catch (e: Exception) {
-                call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain, status = HttpStatusCode.InternalServerError)
+                call.respondText(
+                    "Erro na DB: ${e.message}",
+                    ContentType.Text.Plain,
+                    status = HttpStatusCode.InternalServerError
+                )
             }
         }
-
 
 
     }
