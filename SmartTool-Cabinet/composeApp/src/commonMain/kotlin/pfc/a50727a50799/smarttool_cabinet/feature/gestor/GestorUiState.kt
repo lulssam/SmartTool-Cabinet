@@ -12,5 +12,37 @@ import pfc.a50727a50799.smarttool_cabinet.core.ferramenta.FerramentaDto
 data class GestorUiState(
     val ferramentas: List<FerramentaDto> = emptyList(),
     val isLoading: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    val estatisticas: EstatisticasFerramentas = EstatisticasFerramentas(
+        0, 0, 0, 0
+    ),
+    val armarios: List<ArmarioUi> = emptyList(),
+    val alertas: List<AlertaUi> = emptyList()
+)
+
+data class EstatisticasFerramentas(
+    val disponiveis: Int,
+    val emUso: Int,
+    val emFalta: Int,
+    val manutencao: Int
+) {
+    val total get() = disponiveis + emUso + emFalta + manutencao
+}
+
+data class ArmarioUi(
+    val nome: String,
+    val slotsOcupados: Int,
+    val slotsTotal: Int,
+    val trancado: Boolean,
+    val emFalta: Int,
+    val online: Boolean
+)
+
+enum class Gravidade { CRITICO, AVISO }
+
+data class AlertaUi(
+    val titulo: String,
+    val descricao: String,
+    val hora: String,
+    val gravidade: Gravidade
 )
