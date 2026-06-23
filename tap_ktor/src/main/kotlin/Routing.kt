@@ -37,7 +37,7 @@ fun Application.configureRouting() {
                     val resultSet = statement.executeQuery(
                         "SELECT idFerramenta, Nome_Tipo, categoria, estado, disponibilidade, Armario FROM View_Inventario_Detalhado"
                     )
-                    
+
                     while (resultSet.next()) {
                         lista.add(
                             FerramentaDTO(
