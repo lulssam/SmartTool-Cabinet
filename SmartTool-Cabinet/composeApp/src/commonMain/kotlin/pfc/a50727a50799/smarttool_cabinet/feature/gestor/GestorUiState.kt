@@ -29,16 +29,18 @@ data class EstatisticasFerramentas(
     val total get() = disponiveis + emUso + emFalta + manutencao
 }
 
+enum class EstadoArmario { ONLINE, ALERTA, OFFLINE }
+
 data class ArmarioUi(
     val nome: String,
     val slotsOcupados: Int,
     val slotsTotal: Int,
     val trancado: Boolean,
     val emFalta: Int,
-    val online: Boolean
+    val online: EstadoArmario
 )
 
-enum class Gravidade { CRITICO, AVISO }
+enum class Gravidade { CRITICO, AVISO, }
 
 data class AlertaUi(
     val titulo: String,

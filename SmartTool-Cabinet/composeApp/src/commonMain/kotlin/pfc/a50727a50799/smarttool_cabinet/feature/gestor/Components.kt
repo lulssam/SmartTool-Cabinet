@@ -1,5 +1,6 @@
 package pfc.a50727a50799.smarttool_cabinet.feature.gestor
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,6 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.paddingFrom
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
@@ -30,13 +33,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.AlertOrange
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.AlertOrangeText
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AppTheme
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.CardBorder
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.CardShape
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.PillShape
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapAlert
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapBrandDark
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapBrandGreen
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapLightGreen
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapSurfaceGrey
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.TextSecondary
 import smarttoolcabinet.composeapp.generated.resources.Res
 import smarttoolcabinet.composeapp.generated.resources.alert_triangle
 import smarttoolcabinet.composeapp.generated.resources.arrowleft
@@ -94,7 +102,7 @@ fun TopBar(
 
                 Text(
                     text = when {
-                        alertasAtivos > 1 -> "$alertasAtivos alertas ativos"
+                        alertasAtivos > 1 -> "$alertasAtivos alertas ativo"
                         alertasAtivos == 1 -> "$alertasAtivos alerta ativo"
                         else -> "Nenhum alerta ativo"
                     },
@@ -194,9 +202,45 @@ fun SectionHeader(
 
 @Composable
 fun ArmarioCard(
-    armarioUi: ArmarioUi
+    armario: ArmarioUi
 ) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = CardShape,
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        border = BorderStroke(1.dp, CardBorder)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            // nome do armario + estado
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = armario.nome,
+                    fontSize = 15.sp,
+                    color = Color.Black,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+        }
+    }
+}
 
+/** pill de estados: verde -> Online ou laranja -> Alerta, cinzento -> Offline*/
+@Composable
+private fun StatusPill(
+    estado: EstadoArmario
+) {
+    val (fundo, texto, label) = when (estado) {
+        EstadoArmario.ONLINE -> Triple(TapLightGreen.copy(alpha = 0.2f), TapBrandDark, "Online")
+        EstadoArmario.ALERTA -> Triple(AlertOrange.copy(alpha = 0.2f), AlertOrangeText, "Alerta")
+        EstadoArmario.OFFLINE -> Triple(TextSecondary.copy(alpha = 0.2f), TextSecondary, "Offline")
+    }
 }
 
 @Preview
@@ -235,25 +279,15 @@ fun PreviewSectionHeader() {
 fun PreviewArmarioCard() {
     AppTheme {
         ArmarioCard(
-            armarioUi = ArmarioUi(
-                nome = "Arm.101",
-                slotsOcupados = 3,
-                slotsTotal = 5,
+            armario = ArmarioUi(
+                nome = "Arm.101 - Ferramentas Gerais",
+                slotsOcupados = 10,
+                slotsTotal = 11,
                 trancado = false,
-                emFalta = 2,
-                online = true
-            )
-        )
-
-        ArmarioCard(
-            armarioUi = ArmarioUi(
-                nome = "Arm.201",
-                slotsOcupados = 3,
-                slotsTotal = 5,
-                trancado = true,
-                emFalta = 2,
-                online = false
+                emFalta = 0,
+                online = EstadoArmario.ONLINE
             )
         )
     }
+
 }
