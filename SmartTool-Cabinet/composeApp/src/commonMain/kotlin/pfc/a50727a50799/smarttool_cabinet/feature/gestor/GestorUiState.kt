@@ -17,7 +17,9 @@ data class GestorUiState(
         0, 0, 0, 0
     ),
     val armarios: List<ArmarioUi> = emptyList(),
-    val alertas: List<AlertaUi> = emptyList()
+    val alertas: List<AlertaUi> = emptyList(),
+    val nomeGestor: String = "",
+    val turno: String = ""
 )
 
 data class EstatisticasFerramentas(
