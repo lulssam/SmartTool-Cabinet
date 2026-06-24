@@ -1,5 +1,6 @@
 package pfc.a50727a50799.smarttool_cabinet.feature.gestor
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -21,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import pfc.a50727a50799.smarttool_cabinet.core.ferramenta.FerramentaDto
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AppTheme
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.ScreenBg
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TextSecondary
 
 
@@ -30,25 +32,24 @@ private fun GestorScreenContent(
     isLoading: Boolean,
     error: String?
 ) {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        when {
-            isLoading -> CircularProgressIndicator()
-            error != null -> Text(error, color = MaterialTheme.colorScheme.error)
-            else -> LazyColumn(
-                modifier = Modifier.fillMaxSize().padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(ferramentas) { f ->
-                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text(f.nome)
-                        Text(f.categoria)
-                        Text(f.estado, color = TextSecondary)
-                    }
-                }
-            }
-        }
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(ScreenBg),
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        /*
+        item { TopBar(titulo = "Dashboard", alertasAtivos = state.alertas.size, onMenu = {}) }
+         item { WelcomeCard(state.nomeGestor, state.turno) }
+         item { EstadoFerramentasCard(state.estatisticas) }
+         item { SectionHeader("Estado dos Armários") { *//* ver todos *//* } }
+        items(state.armarios) { armario -> ArmarioCard(armario) }
+        item { SectionHeader("Alertas Recentes") { *//* ver todos *//* } }
+        items(state.alertas) { alerta -> AlertaCard(alerta) }
+    */
     }
 }
+
 
 @Composable
 fun GestorScreen(
