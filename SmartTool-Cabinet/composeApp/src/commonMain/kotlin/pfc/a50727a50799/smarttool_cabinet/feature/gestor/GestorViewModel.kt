@@ -35,33 +35,37 @@ class GestorViewModel(
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }
 
-            // get ferramentas
-            val listaFerramentas = when (val r = ferramentas.getFerramentas()) {
+            val lista = when (val r = ferramentas.getFerramentas()) {
                 is ApiResult.Success -> r.data
                 is ApiResult.Error -> {
-                    _state.update { it.copy(isLoading = false, error = mensagem(r.error)) }
-                    return@launch
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            error = mensagem(r.error)
+                        )
+                    }; return@launch
                 }
             }
 
-            // get ferramentas em falta
-            val listaFerramentasEmFalta = when (val r = ferramentas.getEmFalta()) {
-                is ApiResult.Success -> r.data.size
+            val idsEmFalta = when (val r = ferramentas.getEmFalta()) {
+                is ApiResult.Success -> r.data.map { it.idFerramenta }.toSet()
                 is ApiResult.Error -> {
-                    _state.update { it.copy(isLoading = false, error = mensagem(r.error)) }
-                    return@launch
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            error = mensagem(r.error)
+                        )
+                    }; return@launch
                 }
             }
 
-            // estatisticas finais
             val stats = EstatisticasFerramentas(
-                disponiveis = listaFerramentas.count { it.disponibilidade == "Disponivel" },
-                requisitada = listaFerramentas.count { it.disponibilidade == "Requisitada" },
-                manutencao = listaFerramentas.count { it.disponibilidade == "Em Manutencao" },
-                emFalta = listaFerramentasEmFalta
+                disponiveis = lista.count { it.disponibilidade == "Disponivel" },
+                requisitada = lista.count { it.disponibilidade == "Requisitada" && it.idFerramenta !in idsEmFalta },
+                emFalta = lista.count { it.disponibilidade == "Requisitada" && it.idFerramenta in idsEmFalta },
+                manutencao = lista.count { it.disponibilidade == "Em Manutencao" }
             )
-
-            _state.update { it.copy(ferramentas = listaFerramentas, estatisticas = stats) }
+            _state.update { it.copy(ferramentas = lista, estatisticas = stats) }
 
             // armários
             when (val r = armarios.getArmarios()) {
