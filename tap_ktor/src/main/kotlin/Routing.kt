@@ -397,7 +397,7 @@ fun Application.configureRouting() {
                     }
                     val idTarefaGerada = keys.getInt(1)
 
-                    if (pedido.ferramentasPermitidasIds.isEmpty()) {
+                    if (pedido.ferramentasPermitidasIds.isNotEmpty()) {
                         val sqlFerramenta =
                             "INSERT INTO tarefa_ferramenta_permitida (idTarefa, codigo_tipo, nFerramenta) VALUES (?, ?, ?)"
                         val statementFerramenta = connection.prepareStatement(sqlFerramenta)

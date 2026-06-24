@@ -17,16 +17,18 @@ data class GestorUiState(
         0, 0, 0, 0
     ),
     val armarios: List<ArmarioUi> = emptyList(),
-    val alertas: List<AlertaUi> = emptyList()
+    val alertas: List<AlertaUi> = emptyList(),
+    val nomeGestor: String = "",
+    val turno: String = ""
 )
 
 data class EstatisticasFerramentas(
     val disponiveis: Int,
-    val emUso: Int,
+    val requisitada: Int,
     val emFalta: Int,
     val manutencao: Int
 ) {
-    val total get() = disponiveis + emUso + emFalta + manutencao
+    val total get() = disponiveis + requisitada + emFalta + manutencao
 }
 
 enum class EstadoArmario { ONLINE, ALERTA, OFFLINE }
@@ -37,7 +39,7 @@ data class ArmarioUi(
     val slotsTotal: Int,
     val trancado: Boolean,
     val emFalta: Int,
-    val online: EstadoArmario
+    val estadoArmario: EstadoArmario
 )
 
 enum class Gravidade { CRITICO, AVISO, }
