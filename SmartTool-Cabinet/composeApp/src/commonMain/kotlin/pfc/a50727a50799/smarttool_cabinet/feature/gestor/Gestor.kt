@@ -3,6 +3,8 @@ package pfc.a50727a50799.smarttool_cabinet.feature.gestor
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,31 +32,34 @@ import pfc.a50727a50799.smarttool_cabinet.ui.theme.TextSecondary
 private fun GestorScreenContent(
     state: GestorUiState
 ) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        when {
-            state.isLoading -> CircularProgressIndicator()
-            state.error != null -> Text(state.error, color = MaterialTheme.colorScheme.error)
-            else -> LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(ScreenBg),
-                verticalArrangement = Arrangement.spacedBy(20.dp)
-            ) {
-                item { TopBar("Dashboard", state.alertas.size, onMenu = {}) }
-                item { WelcomeCard(state.nomeGestor, state.turno) }
-                item { EstadoFerramentasCard(state.estatisticas) }
-                item { SectionHeader("Estado dos Armários", onVerTodos = {}) }
-                items(state.armarios) { ArmarioCard(it) }
-                item { SectionHeader("Alertas Recentes", onVerTodos = {}) }
-                items(state.alertas) {
-                    AlertaCard(it.gravidade, it.titulo, it.descricao, it.hora)
+    when {
+        state.isLoading ->
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+        state.error != null ->
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(state.error, color = MaterialTheme.colorScheme.error)
+            }
+        else ->
+            Column(Modifier.fillMaxSize().background(ScreenBg)) {
+
+                // FORA do scroll → ocupa o ecrã de ponta a ponta
+                TopBar("Dashboard", state.alertas.size, onMenu = {})
+
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(20.dp)
+                ) {
+                    item { WelcomeCard(state.nomeGestor, state.turno) }
+                    item { EstadoFerramentasCard(state.estatisticas) }
+                    item { SectionHeader("Estado dos Armários", onVerTodos = {}) }
+                    items(state.armarios) { ArmarioCard(it) }
+                    item { SectionHeader("Alertas Recentes", onVerTodos = {}) }
+                    items(state.alertas) { AlertaCard(it.gravidade, it.titulo, it.descricao, it.hora) }
                 }
             }
-        }
-
     }
 }
 
