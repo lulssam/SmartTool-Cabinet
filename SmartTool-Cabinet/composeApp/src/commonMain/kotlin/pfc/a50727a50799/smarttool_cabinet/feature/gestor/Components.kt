@@ -53,63 +53,57 @@ import smarttoolcabinet.composeapp.generated.resources.menu
 @Composable
 fun TopBar(
     titulo: String,
-    alertasAtivos: Int,
+    alertasAtivos: Int = 0,
+    mostrarAlertas: Boolean = true, //mostra os alertas
     onMenu: () -> Unit
 ) {
     Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(80.dp),
+        modifier = Modifier.fillMaxWidth().height(80.dp),
         color = Color.White,
         shadowElevation = 4.dp
     ) {
         Row(
-            modifier = Modifier.fillMaxSize()
-                .padding(horizontal = 20.dp),
+            modifier = Modifier.fillMaxSize().padding(horizontal = 20.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-
-            IconButton(
-                onClick = onMenu
-            ) {
-                Icon(
-                    painter = painterResource(Res.drawable.menu),
-                    contentDescription = "Menu",
-                )
+            IconButton(onClick = onMenu) {
+                Icon(painter = painterResource(Res.drawable.menu), contentDescription = "Menu")
             }
 
             Text(
                 text = titulo,
                 color = Color.Black,
                 fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.weight(1f).padding(start = 8.dp)
             )
-            Row(
-                modifier = Modifier
-                    .clip(PillShape)
-                    .background(TapAlert.copy(alpha = 0.15f))
-                    .padding(horizontal = 15.dp, vertical = 4.dp)
-            ) {
-                Icon(
-                    painter = painterResource(Res.drawable.alert_triangle),
-                    contentDescription = "Alertas",
-                    tint = TapAlert
 
-                )
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                Text(
-                    text = when {
-                        alertasAtivos > 1 -> "$alertasAtivos alertas ativo"
-                        alertasAtivos == 1 -> "$alertasAtivos alerta ativo"
-                        else -> "Nenhum alerta ativo"
-                    },
-                    color = TapAlert,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium
-                )
+            if (mostrarAlertas) {
+                Row(
+                    modifier = Modifier
+                        .clip(PillShape)
+                        .background(TapAlert.copy(alpha = 0.15f))
+                        .padding(horizontal = 15.dp, vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        painter = painterResource(Res.drawable.alert_triangle),
+                        contentDescription = "Alertas",
+                        tint = TapAlert
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = when {
+                            alertasAtivos > 1 -> "$alertasAtivos alertas ativo"
+                            alertasAtivos == 1 -> "$alertasAtivos alerta ativo"
+                            else -> "Nenhum alerta ativo"
+                        },
+                        color = TapAlert,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
             }
         }
     }
@@ -118,7 +112,8 @@ fun TopBar(
 @Composable
 fun WelcomeCard(
     nomeGestor: String,
-    turno: String
+    turno: String,
+    cargo: String = "Gestor de Armazém"
 ) {
     Column(
         modifier = Modifier
@@ -129,23 +124,9 @@ fun WelcomeCard(
             .padding(20.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(
-            text = "Bem-vindo de volta",
-            color = TapSurfaceGrey,
-            fontSize = 13.sp
-        )
-        Text(
-            text = nomeGestor,
-            color = Color.White,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold
-        )
-        Text(
-            text = "Gestor de Armazém - Turno: $turno",
-            color = Color.White,
-            fontSize = 13.sp
-        )
-
+        Text(text = "Bem-vindo de volta,", color = TapSurfaceGrey, fontSize = 13.sp)
+        Text(text = nomeGestor, color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+        Text(text = "$cargo - Turno: $turno", color = Color.White, fontSize = 13.sp)
     }
 }
 
