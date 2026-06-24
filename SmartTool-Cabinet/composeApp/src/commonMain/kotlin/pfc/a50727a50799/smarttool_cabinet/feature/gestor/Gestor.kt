@@ -3,6 +3,8 @@ package pfc.a50727a50799.smarttool_cabinet.feature.gestor
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,25 +30,34 @@ import pfc.a50727a50799.smarttool_cabinet.ui.theme.TextSecondary
 
 @Composable
 private fun GestorScreenContent(
-    ferramentas: List<FerramentaDto>,
-    isLoading: Boolean,
-    error: String?
+    state: GestorUiState
 ) {
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(ScreenBg),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
-        /*
-        item { TopBar(titulo = "Dashboard", alertasAtivos = state.alertas.size, onMenu = {}) }
-         item { WelcomeCard(state.nomeGestor, state.turno) }
-         item { EstadoFerramentasCard(state.estatisticas) }
-         item { SectionHeader("Estado dos Armários") { *//* ver todos *//* } }
-        items(state.armarios) { armario -> ArmarioCard(armario) }
-        item { SectionHeader("Alertas Recentes") { *//* ver todos *//* } }
-        items(state.alertas) { alerta -> AlertaCard(alerta) }
-    */
+    when {
+        state.isLoading ->
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+        state.error != null ->
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(state.error, color = MaterialTheme.colorScheme.error)
+            }
+        else ->
+            Column(Modifier.fillMaxSize().background(ScreenBg)) {
+                TopBar("Dashboard", state.alertas.size, onMenu = {})
+
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(20.dp)
+                ) {
+                    item { WelcomeCard(state.nomeGestor, state.turno) }
+                    item { EstadoFerramentasCard(state.estatisticas) }
+                    item { SectionHeader("Estado dos Armários", onVerTodos = {}) }
+                    items(state.armarios) { ArmarioCard(it) }
+                    item { SectionHeader("Alertas Recentes", onVerTodos = {}) }
+                    items(state.alertas) { AlertaCard(it.gravidade, it.titulo, it.descricao, it.hora) }
+                }
+            }
     }
 }
 
@@ -57,9 +68,7 @@ fun GestorScreen(
 ) {
     val state by viewModel.state.collectAsState()
     GestorScreenContent(
-        ferramentas = state.ferramentas,
-        isLoading = state.isLoading,
-        error = state.error
+        state = state
     )
 }
 
@@ -71,15 +80,46 @@ fun GestorScreen(
  */
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-private fun Preview() {
+fun Preview() {
     AppTheme {
         GestorScreenContent(
-            ferramentas = listOf(
-                FerramentaDto(1, "Chave de Fendas", "DISPONIVEL", "Pneumatico", "Arm.101"),
-                FerramentaDto(2, "Chave Inglesa", "EM_FALTA", "Pneumatico", "Arm.102")
-            ),
-            isLoading = false,
-            error = null
+            GestorUiState(
+                estatisticas = EstatisticasFerramentas(9, 3, 1, 2),
+                nomeGestor = "Gonçalo Charneca",
+                turno = "8:00-16:00",
+                armarios = listOf(
+                    ArmarioUi(
+                        "Armário 1 - Ferramentas Gerais",
+                        11,
+                        12,
+                        true,
+                        1,
+                        EstadoArmario.ONLINE
+                    ),
+                    ArmarioUi(
+                        "Armário 3 - Ferramentas Elétricas",
+                        10,
+                        12,
+                        false,
+                        2,
+                        EstadoArmario.ALERTA
+                    )
+                ),
+                alertas = listOf(
+                    AlertaUi(
+                        "Ferramentas em falta",
+                        "F-004 Chave de Fendas não devolvida",
+                        "16:34",
+                        Gravidade.CRITICO
+                    ),
+                    AlertaUi(
+                        "Ferramenta em mau estado",
+                        "F-005 Chave Inglesa para manutenção",
+                        "9:30",
+                        Gravidade.AVISO
+                    )
+                )
+            )
         )
     }
 }
