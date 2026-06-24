@@ -1,9 +1,11 @@
 package pfc.a50727a50799.smarttool_cabinet.feature.gestor
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -26,7 +28,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,6 +42,7 @@ import org.jetbrains.compose.resources.painterResource
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AlertOrange
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AlertOrangeText
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AppTheme
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.CardBorder
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.CardShape
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.InfoBoxBg
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.PillShape
@@ -45,6 +52,8 @@ import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapLightGreen
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapRedText
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapSurfaceGrey
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TextSecondary
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.ToolInUse
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.ToolMaintenance
 import smarttoolcabinet.composeapp.generated.resources.Res
 import smarttoolcabinet.composeapp.generated.resources.alert_triangle
 import smarttoolcabinet.composeapp.generated.resources.arrowleft
@@ -151,10 +160,139 @@ fun WelcomeCard(
     }
 }
 
+private data class Segmento(
+    val label: String,
+    val valor: Int,
+    val cor: Color
+)
+
 @Composable
 fun EstadoFerramentasCard(
     estatisticas: EstatisticasFerramentas
 ) {
+    val segmentos = listOf(
+        Segmento("Disponíveis", estatisticas.disponiveis, TapBrandDark),
+        Segmento("Em Uso", estatisticas.emUso, ToolInUse),
+        Segmento("Em Falta", estatisticas.emFalta, TapAlert),
+        Segmento("Manutenção", estatisticas.manutencao, ToolMaintenance)
+    )
+
+    val total = estatisticas.total
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = CardShape,
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        border = BorderStroke(1.dp, CardBorder)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Text(
+                text = "Estado das Ferramentas",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Donut(segmentos = segmentos, total = total)
+
+                Spacer(Modifier.width(16.dp))
+
+                // legenda
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    segmentos.forEach { LegendaRow(it, total) }
+                }
+            }
+        }
+
+    }
+}
+
+@Composable
+private fun LegendaRow(
+    segmento: Segmento,
+    total: Int
+) {
+    val percent =
+        if (total > 0) segmento.valor * 100 / total
+        else 0
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .size(15.dp)
+                .clip(RoundedCornerShape(4.dp))
+                .background(segmento.cor)
+        )
+
+        Spacer(Modifier.width(8.dp))
+        Text(
+            text = segmento.label,
+            fontSize = 11.sp,
+            color = Color.Black
+        )
+
+        Spacer(modifier = Modifier.weight(1f)) // empurrar numeros para a direita
+
+        Text("${segmento.valor}", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+        Spacer(Modifier.width(8.dp))
+        Text("$percent%", fontSize = 11.sp, color = TextSecondary)
+    }
+}
+
+@Composable
+private fun Donut(
+    segmentos: List<Segmento>, total: Int
+) {
+    Box(contentAlignment = Alignment.Center, modifier = Modifier.size(150.dp)) {
+
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val stroke = 28.dp.toPx()                 // espessura do aro
+            val arcSize = Size(size.width - stroke, size.height - stroke)
+            val topLeft = Offset(stroke / 2, stroke / 2)   // encolhe para o aro não sair do canvas
+
+            if (total == 0) {
+                // a app arranca com (0,0,0,0) → desenha só um aro cinza vazio
+                drawArc(
+                    color = ToolMaintenance.copy(alpha = 0.3f),
+                    startAngle = 0f, sweepAngle = 360f, useCenter = false,
+                    topLeft = topLeft, size = arcSize, style = Stroke(width = stroke)
+                )
+            } else {
+                var startAngle = -90f                  // começa no topo
+                segmentos.forEach { seg ->
+                    val sweep = 360f * seg.valor / total
+                    drawArc(
+                        color = seg.cor,
+                        startAngle = startAngle,
+                        sweepAngle = sweep,
+                        useCenter = false,             // aro, não pizza
+                        topLeft = topLeft,
+                        size = arcSize,
+                        style = Stroke(width = stroke)
+                    )
+                    startAngle += sweep                // próxima fatia começa aqui
+                }
+            }
+        }
+
+        // texto central, sobreposto ao Canvas (estão os dois dentro do Box)
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text("$total", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+            Text("total", fontSize = 11.sp, color = TextSecondary)
+        }
+    }
 }
 
 @Composable
@@ -435,7 +573,7 @@ private fun StatusPill(
 @Composable
 fun PreviewWelcomeCard() {
     AppTheme {
-        WelcomeCard("Luis", "Manhã")
+        WelcomeCard("Luísa Sampaio", "Manhã")
     }
 }
 
@@ -526,6 +664,16 @@ private fun AlertaCardAvisoPreview() {
             titulo = "Ferramenta 2 para manunteção",
             descricao = "A Luísa estragou a ferramenta numa coisa básica",
             horas = "13:10"
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewEstadoFerramentasCard() {
+    AppTheme {
+        EstadoFerramentasCard(
+            EstatisticasFerramentas(disponiveis = 9, emUso = 3, emFalta = 1, manutencao = 2)
         )
     }
 }
