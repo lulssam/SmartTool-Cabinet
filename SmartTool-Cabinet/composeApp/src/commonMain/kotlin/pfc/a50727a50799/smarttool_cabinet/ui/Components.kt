@@ -1,4 +1,4 @@
-package pfc.a50727a50799.smarttool_cabinet.feature.gestor
+package pfc.a50727a50799.smarttool_cabinet.ui
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
@@ -11,12 +11,17 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -38,6 +43,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.ArmarioUi
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.EstadoArmario
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.EstatisticasFerramentas
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.Gravidade
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AlertOrange
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AlertOrangeText
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AppTheme
@@ -68,13 +77,17 @@ fun TopBar(
 ) {
     Surface(
         modifier = Modifier
-            .fillMaxWidth()
-            .height(80.dp),
+            .fillMaxWidth(),
         color = Color.White,
         shadowElevation = 4.dp
     ) {
         Row(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxWidth()
+                .windowInsetsPadding(
+                    WindowInsets.safeDrawing.only(WindowInsetsSides.Top)
+                )
+                .height(80.dp)
                 .padding(horizontal = 20.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
