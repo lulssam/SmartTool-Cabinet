@@ -31,7 +31,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
@@ -115,7 +114,7 @@ fun TopBar(
                     text = when {
                         alertasAtivos > 1 -> "$alertasAtivos alertas ativos"
                         alertasAtivos == 1 -> "$alertasAtivos alerta ativo"
-                        else -> "Nenhum alerta ativo"
+                        else -> "Nenhum alerta ativo" // TODO: omitir se não houver alertas ativos
                     },
                     color = TapAlert,
                     fontSize = 14.sp,
@@ -172,7 +171,7 @@ fun EstadoFerramentasCard(
 ) {
     val segmentos = listOf(
         Segmento("Disponíveis", estatisticas.disponiveis, TapBrandDark),
-        Segmento("Em Uso", estatisticas.emUso, ToolInUse),
+        Segmento("Em Uso", estatisticas.requisitada, ToolInUse),
         Segmento("Em Falta", estatisticas.emFalta, TapAlert),
         Segmento("Manutenção", estatisticas.manutencao, ToolMaintenance)
     )
@@ -190,7 +189,7 @@ fun EstadoFerramentasCard(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
-                text = "Estado das Ferramentas",
+                text = "Disponibilidade das Ferramentas",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black
@@ -672,7 +671,7 @@ private fun AlertaCardAvisoPreview() {
 private fun PreviewEstadoFerramentasCard() {
     AppTheme {
         EstadoFerramentasCard(
-            EstatisticasFerramentas(disponiveis = 9, emUso = 3, emFalta = 1, manutencao = 2)
+            EstatisticasFerramentas(disponiveis = 9, requisitada = 3, emFalta = 1, manutencao = 2)
         )
     }
 }
