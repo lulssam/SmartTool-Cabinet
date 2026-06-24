@@ -58,9 +58,9 @@ CREATE TABLE ferramenta (
   idFerramenta INT AS (codigo_tipo * 100000 + nFerramenta) STORED, -- faz o calculo diretamente (ex: ct = 0001, nf = 00023 -> id = 000100023)
   estado VARCHAR(50) NOT NULL,
   disponibilidade VARCHAR(50) NOT NULL,
+  nome_tipo VARCHAR(100) NOT NULL,
   nArmario INT DEFAULT NULL,
   id_Armazem INT DEFAULT NULL,
-  nome_tipo VARCHAR(50) NOT NULL,
   PRIMARY KEY (codigo_tipo, nFerramenta),
   UNIQUE KEY (idFerramenta),
   FOREIGN KEY (codigo_tipo) REFERENCES tipo_ferramenta(codigo),
