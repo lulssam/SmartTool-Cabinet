@@ -43,8 +43,6 @@ private fun GestorScreenContent(
             }
         else ->
             Column(Modifier.fillMaxSize().background(ScreenBg)) {
-
-                // FORA do scroll → ocupa o ecrã de ponta a ponta
                 TopBar("Dashboard", state.alertas.size, onMenu = {})
 
                 LazyColumn(

@@ -24,11 +24,11 @@ data class GestorUiState(
 
 data class EstatisticasFerramentas(
     val disponiveis: Int,
-    val emUso: Int,
+    val requisitada: Int,
     val emFalta: Int,
     val manutencao: Int
 ) {
-    val total get() = disponiveis + emUso + emFalta + manutencao
+    val total get() = disponiveis + requisitada + emFalta + manutencao
 }
 
 enum class EstadoArmario { ONLINE, ALERTA, OFFLINE }
