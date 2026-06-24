@@ -37,7 +37,7 @@ data class ArmarioUi(
     val slotsTotal: Int,
     val trancado: Boolean,
     val emFalta: Int,
-    val online: EstadoArmario
+    val estadoArmario: EstadoArmario
 )
 
 enum class Gravidade { CRITICO, AVISO, }
