@@ -5,10 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
@@ -22,10 +19,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import pfc.a50727a50799.smarttool_cabinet.core.ferramenta.FerramentaDto
+import pfc.a50727a50799.smarttool_cabinet.ui.AlertaCard
+import pfc.a50727a50799.smarttool_cabinet.ui.ArmarioCard
+import pfc.a50727a50799.smarttool_cabinet.ui.EstadoFerramentasCard
+import pfc.a50727a50799.smarttool_cabinet.ui.SectionHeader
+import pfc.a50727a50799.smarttool_cabinet.ui.TopBar
+import pfc.a50727a50799.smarttool_cabinet.ui.WelcomeCard
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AppTheme
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.ScreenBg
-import pfc.a50727a50799.smarttool_cabinet.ui.theme.TextSecondary
 
 
 @Composable
@@ -55,7 +56,14 @@ private fun GestorScreenContent(
                     item { SectionHeader("Estado dos Armários", onVerTodos = {}) }
                     items(state.armarios) { ArmarioCard(it) }
                     item { SectionHeader("Alertas Recentes", onVerTodos = {}) }
-                    items(state.alertas) { AlertaCard(it.gravidade, it.titulo, it.descricao, it.hora) }
+                    items(state.alertas) {
+                        AlertaCard(
+                            it.gravidade,
+                            it.titulo,
+                            it.descricao,
+                            it.hora
+                        )
+                    }
                 }
             }
     }
