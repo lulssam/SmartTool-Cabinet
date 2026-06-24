@@ -112,8 +112,8 @@ private fun AppNavHost(
             val viewModel = viewModel { WelcomeViewModel(authRepository) }
             emailScreen(
                 viewModel = viewModel,
-                onBackClick = {navController.popBackStack()},
-                onAuthenticated = {role ->
+                onBackClick = { navController.popBackStack() },
+                onAuthenticated = { role ->
                     navController.navigate(routeForRole(role)) {
                         popUpTo(WelcomeRoute) { inclusive = true }
                     }
@@ -152,7 +152,12 @@ private fun AppNavHost(
         }
 
         composable<GestorRoute> {
-            val viewModel = viewModel { GestorViewModel(AppModule.ferramentaRemoteDataSource) }
+            val viewModel = viewModel {
+                GestorViewModel(
+                    ferramentas = AppModule.ferramentaRemoteDataSource,
+                    armarios = AppModule.armarioRemoteDataSource
+                )
+            }
             GestorScreen(viewModel = viewModel)
         }
 

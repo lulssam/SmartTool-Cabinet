@@ -8,5 +8,6 @@ data class FerramentaDto(
     val nome: String,
     val estado: String,
     val categoria: String,
+    val disponibilidade: String,
     val localizacao: String
 )
