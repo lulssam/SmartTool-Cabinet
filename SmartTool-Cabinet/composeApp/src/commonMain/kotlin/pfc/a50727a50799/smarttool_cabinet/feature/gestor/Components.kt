@@ -36,13 +36,13 @@ import org.jetbrains.compose.resources.painterResource
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AlertOrange
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AlertOrangeText
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AppTheme
-import pfc.a50727a50799.smarttool_cabinet.ui.theme.CardBorder
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.CardShape
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.InfoBoxBg
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.PillShape
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapAlert
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapBrandDark
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapLightGreen
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapRedText
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapSurfaceGrey
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TextSecondary
 import smarttoolcabinet.composeapp.generated.resources.Res
@@ -104,7 +104,7 @@ fun TopBar(
 
                 Text(
                     text = when {
-                        alertasAtivos > 1 -> "$alertasAtivos alertas ativo"
+                        alertasAtivos > 1 -> "$alertasAtivos alertas ativos"
                         alertasAtivos == 1 -> "$alertasAtivos alerta ativo"
                         else -> "Nenhum alerta ativo"
                     },
@@ -208,8 +208,8 @@ fun ArmarioCard(
 ) {
 
     val corBorda = when (armario.estadoArmario) {
-        EstadoArmario.ONLINE -> TapBrandDark
-        EstadoArmario.ALERTA -> TapAlert.copy(alpha = 0.25f)
+        EstadoArmario.ONLINE -> TapBrandDark.copy(alpha = 0.25f)
+        EstadoArmario.ALERTA -> AlertOrange.copy(alpha = 0.25f)
         EstadoArmario.OFFLINE -> TextSecondary
     }
 
@@ -277,6 +277,7 @@ fun ArmarioCard(
                     )
                 }
 
+                // em falta
                 InfoBox {
                     val cor = if (armario.emFalta > 0) TapAlert else TapBrandDark
                     Text(
@@ -293,6 +294,77 @@ fun ArmarioCard(
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun AlertaCard(
+    gravidade: Gravidade,
+    titulo: String,
+    descricao: String,
+    horas: String
+) {
+    val corBorda = when (gravidade) {
+        Gravidade.CRITICO -> TapAlert.copy(alpha = 0.25f)
+        Gravidade.AVISO -> AlertOrange.copy(alpha = 0.25f)
+    }
+
+    val corFundo = when (gravidade) {
+        Gravidade.CRITICO -> TapAlert.copy(alpha = 0.1f)
+        Gravidade.AVISO -> AlertOrange.copy(alpha = 0.1f)
+    }
+
+    val corTexto = when (gravidade) {
+        Gravidade.CRITICO -> TapRedText
+        Gravidade.AVISO -> AlertOrangeText
+    }
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = CardShape,
+        colors = CardDefaults.cardColors(containerColor = corFundo),
+        border = BorderStroke(1.dp, corBorda)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+
+                Icon(
+                    painter = painterResource(Res.drawable.alert_triangle),
+                    contentDescription = null,
+                    tint = corTexto,
+                    modifier = Modifier.size(20.dp)
+                )
+
+                Text(
+                    text = titulo,
+                    modifier = Modifier.weight(1f),
+                    fontSize = 15.sp,
+                    color = corTexto,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Text(
+                    text = horas,
+                    fontSize = 15.sp,
+                    color = TextSecondary,
+                    fontWeight = FontWeight.Normal
+                )
+            }
+
+            Text(
+                text = descricao,
+                fontSize = 15.sp,
+                color = TextSecondary,
+                fontWeight = FontWeight.Normal
+            )
         }
     }
 }
@@ -335,8 +407,17 @@ private fun StatusPill(
 ) {
     val (fundo, texto, label) = when (estado) {
         EstadoArmario.ONLINE -> Triple(TapLightGreen.copy(alpha = 0.2f), TapBrandDark, "Online")
-        EstadoArmario.ALERTA -> Triple(AlertOrange.copy(alpha = 0.2f), AlertOrangeText, "Alerta")
-        EstadoArmario.OFFLINE -> Triple(TextSecondary.copy(alpha = 0.2f), TextSecondary, "Offline")
+        EstadoArmario.ALERTA -> Triple(
+            AlertOrange.copy(alpha = 0.2f),
+            AlertOrangeText,
+            "Alerta"
+        )
+
+        EstadoArmario.OFFLINE -> Triple(
+            TextSecondary.copy(alpha = 0.2f),
+            TextSecondary,
+            "Offline"
+        )
     }
 
     Text(
@@ -401,7 +482,7 @@ private fun ArmarioCardAlertaPreview() {
     AppTheme {
         ArmarioCard(
             ArmarioUi(
-                nome = "Armário 3 - Ferramentas Elétricas",
+                nome = "Armário 2 - Ferramentas Elétricas",
                 slotsOcupados = 12, slotsTotal = 12,
                 trancado = false, emFalta = 0, estadoArmario = EstadoArmario.ALERTA
             )
@@ -419,6 +500,32 @@ private fun ArmarioCardOfflinePreview() {
                 slotsOcupados = 12, slotsTotal = 12,
                 trancado = false, emFalta = 0, estadoArmario = EstadoArmario.OFFLINE
             )
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AlertaCardCriticoPreview() {
+    AppTheme {
+        AlertaCard(
+            gravidade = Gravidade.CRITICO,
+            titulo = "Ferramenta 1 em falta",
+            descricao = "O Gonçalo não arrumou a porcaria da ferramenta antes de bazar",
+            horas = "16:32"
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AlertaCardAvisoPreview() {
+    AppTheme {
+        AlertaCard(
+            gravidade = Gravidade.AVISO,
+            titulo = "Ferramenta 2 para manunteção",
+            descricao = "A Luísa estragou a ferramenta numa coisa básica",
+            horas = "13:10"
         )
     }
 }
