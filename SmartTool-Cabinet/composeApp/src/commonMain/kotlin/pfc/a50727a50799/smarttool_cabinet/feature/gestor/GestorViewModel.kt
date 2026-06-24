@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import pfc.a50727a50799.smarttool_cabinet.core.armario.ArmarioRemoteDataSource
 import pfc.a50727a50799.smarttool_cabinet.core.armario.toUi
-import pfc.a50727a50799.smarttool_cabinet.core.ferramenta.data.FerramentaRemoteDataSource
+import pfc.a50727a50799.smarttool_cabinet.core.ferramenta.FerramentaRemoteDataSource
 import pfc.a50727a50799.smarttool_cabinet.core.network.ApiError
 import pfc.a50727a50799.smarttool_cabinet.core.network.ApiResult
 
@@ -36,22 +36,32 @@ class GestorViewModel(
             _state.update { it.copy(isLoading = true, error = null) }
 
             // get ferramentas
-            when (val r = ferramentas.getFerramentas()) {
-                is ApiResult.Success -> {
-                    val stats = EstatisticasFerramentas(
-                        disponiveis = r.data.count { it.disponibilidade == "Disponivel" },
-                        requisitada = r.data.count { it.disponibilidade == "Requisitada" },
-                        emFalta = r.data.count { it.disponibilidade == "Em Falta" },
-                        manutencao = r.data.count { it.disponibilidade == "Em Manutencao" }
-                    )
-                    _state.update { it.copy(ferramentas = r.data, estatisticas = stats) }
-                }
-
+            val listaFerramentas = when (val r = ferramentas.getFerramentas()) {
+                is ApiResult.Success -> r.data
                 is ApiResult.Error -> {
                     _state.update { it.copy(isLoading = false, error = mensagem(r.error)) }
                     return@launch
                 }
             }
+
+            // get ferramentas em falta
+            val listaFerramentasEmFalta = when (val r = ferramentas.getEmFalta()) {
+                is ApiResult.Success -> r.data.size
+                is ApiResult.Error -> {
+                    _state.update { it.copy(isLoading = false, error = mensagem(r.error)) }
+                    return@launch
+                }
+            }
+
+            // estatisticas finais
+            val stats = EstatisticasFerramentas(
+                disponiveis = listaFerramentas.count { it.disponibilidade == "Disponivel" },
+                requisitada = listaFerramentas.count { it.disponibilidade == "Requisitada" },
+                manutencao = listaFerramentas.count { it.disponibilidade == "Em Manutencao" },
+                emFalta = listaFerramentasEmFalta
+            )
+
+            _state.update { it.copy(ferramentas = listaFerramentas, estatisticas = stats) }
 
             // armários
             when (val r = armarios.getArmarios()) {
