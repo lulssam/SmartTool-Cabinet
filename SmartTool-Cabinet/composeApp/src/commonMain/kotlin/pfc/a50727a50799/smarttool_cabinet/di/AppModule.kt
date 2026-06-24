@@ -8,7 +8,7 @@ import kotlinx.serialization.json.Json
 import pfc.a50727a50799.smarttool_cabinet.core.armario.ArmarioRemoteDataSource
 import pfc.a50727a50799.smarttool_cabinet.core.auth.AuthRepository
 import pfc.a50727a50799.smarttool_cabinet.core.auth.data.funcionario.FuncionarioRemoteDataSource
-import pfc.a50727a50799.smarttool_cabinet.core.ferramenta.data.FerramentaRemoteDataSource
+import pfc.a50727a50799.smarttool_cabinet.core.ferramenta.FerramentaRemoteDataSource
 
 
 /**
