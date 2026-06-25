@@ -6,7 +6,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -19,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.AppTheme
 
 /**
  * A parte visual do login. Não sabe nada da lógica — só mostra o que recebe
@@ -36,7 +40,11 @@ fun LoginScreenContent(
     onLoginClick: () -> Unit
 ) {
     Column(
-        modifier = Modifier.fillMaxSize().padding(24.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .imePadding()
+            .verticalScroll(rememberScrollState())
+            .padding(24.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -92,9 +100,11 @@ fun LoginScreen(viewModel: LoginViewModel) {
 @Preview
 @Composable
 fun LoginPreview() {
-    LoginScreenContent(
-        email = "joao.silva@tap.pt", password = "123456",
-        isLoading = false, error = null, resultado = null,
-        onEmailChange = {}, onPasswordChange = {}, onLoginClick = {}
-    )
+    AppTheme {
+        LoginScreenContent(
+            email = "joao.silva@tap.pt", password = "123456",
+            isLoading = false, error = null, resultado = null,
+            onEmailChange = {}, onPasswordChange = {}, onLoginClick = {}
+        )
+    }
 }
