@@ -12,11 +12,14 @@ data class ArmarioDto(
     val trancado: Boolean
 )
 
-fun ArmarioDto.toUi() = ArmarioUi(
+fun ArmarioDto.toUi(
+    slotsOcupados: Int,
+    emFalta: Int
+) = ArmarioUi(
     nome = "Armário $nArmario",
     slotsTotal = capacidade,
-    slotsOcupados = 0, // TODO: mudar que ainda não vai buscar a api porque ela não devolve mesmo, tem que se calcular somehow, problema para mais tarde
-    emFalta = 0,
+    slotsOcupados = slotsOcupados,
+    emFalta = emFalta,
     trancado = trancado,
     estadoArmario = when (estado) {
         "Operacional" -> EstadoArmario.OPERACIONAL

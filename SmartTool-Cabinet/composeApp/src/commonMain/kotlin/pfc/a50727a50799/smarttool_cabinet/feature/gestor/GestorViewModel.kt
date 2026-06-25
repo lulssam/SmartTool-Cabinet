@@ -64,10 +64,17 @@ class GestorViewModel(
             )
             _state.update { it.copy(ferramentas = lista, estatisticas = stats) }
 
+            val ferramentasPorArmario = lista.groupBy { it.localizacao }
+
             // armários
             when (val r = armarios.getArmarios()) {
                 is ApiResult.Success ->
-                    _state.update { it.copy(armarios = r.data.map { dto -> dto.toUi() }) }
+                    _state.update { it.copy(armarios = r.data.map { dto ->
+                        val doArmario = ferramentasPorArmario["Arm. ${dto.nArmario}"].orEmpty()
+                        dto.toUi(
+                            slotsOcupados = doArmario.count {f -> f.disponibilidade == "Disponivel"},
+                            emFalta = doArmario.count {f -> f.disponibilidade == "Requisitada"}
+                        ) }) }
 
                 is ApiResult.Error -> {
                     _state.update { it.copy(isLoading = false, error = mensagem(r.error)) }
