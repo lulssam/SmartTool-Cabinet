@@ -31,11 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-
-// Importação do Componente Partilhado
-import pfc.a50727a50799.smarttool_cabinet.feature.gestor.TopBar
-
-// Importações do teu Tema
+import pfc.a50727a50799.smarttool_cabinet.ui.TopBar
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AppTheme
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.CardBorder
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.ScreenBg

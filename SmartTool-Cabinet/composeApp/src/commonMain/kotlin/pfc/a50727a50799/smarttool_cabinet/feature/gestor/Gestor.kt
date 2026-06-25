@@ -105,7 +105,7 @@ fun Preview() {
                         EstadoArmario.ONLINE
                     ),
                     ArmarioUi(
-                        "Armário 3 - Ferramentas Elétricas",
+                        "Armário 2 - Ferramentas Elétricas",
                         10,
                         12,
                         false,
