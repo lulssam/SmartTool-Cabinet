@@ -8,18 +8,23 @@ import pfc.a50727a50799.smarttool_cabinet.feature.gestor.EstadoArmario
 data class ArmarioDto(
     val nArmario: Int,
     val capacidade: Int,
-    val estado: String
+    val estado: String, // operacional, avariado
+    val trancado: Boolean
 )
 
-fun ArmarioDto.toUi() = ArmarioUi(
+fun ArmarioDto.toUi(
+    slotsOcupados: Int,
+    emFalta: Int
+) = ArmarioUi(
     nome = "Armário $nArmario",
     slotsTotal = capacidade,
-    slotsOcupados = 0, // TODO: mudar que ainda não vai buscar a api porque ela não devolve mesmo, tem que se calcular somehow, problema para mais tarde
-    emFalta = 0,
-    trancado = true,
-    estadoArmario = when (estado.uppercase()) {
-        "ONLINE" -> EstadoArmario.ONLINE
-        "ALERTA" -> EstadoArmario.ALERTA
-        else -> EstadoArmario.OFFLINE
+    slotsOcupados = slotsOcupados,
+    emFalta = emFalta,
+    trancado = trancado,
+    estadoArmario = when (estado) {
+        "Operacional" -> EstadoArmario.OPERACIONAL
+        "Alerta" -> EstadoArmario.ALERTA
+        else -> EstadoArmario.AVARIADO
     }
+
 )

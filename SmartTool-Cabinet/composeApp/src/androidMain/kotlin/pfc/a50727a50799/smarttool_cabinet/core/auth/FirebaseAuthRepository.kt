@@ -58,8 +58,17 @@ class FirebaseAuthRepository(
             is AuthResult.Success -> {
                 val role = result.data.toUserRole()
                     ?: return AuthResult.Error(AuthError.Unknown("tipo desconhecido: ${result.data.cargo}"))
-                AuthResult.Success(Session(uid = user.uid, email = email, role = role))
+                AuthResult.Success(
+                    data = Session(
+                        uid = user.uid,
+                        email = email,
+                        nome = result.data.nome,
+                        turno = result.data.turno,
+                        role = role
+                    )
+                )
             }
+
             is AuthResult.Error -> AuthResult.Error(result.error)
         }
     }

@@ -118,7 +118,7 @@ fun Application.configureRouting() {
                 val connection = DriverManager.getConnection(url, user, password)
 
                 try {
-                    val sql = "SELECT nArmario, capacidade, estado FROM armario"
+                    val sql = "SELECT nArmario, capacidade, estado, trancado FROM armario"
                     val statement = connection.createStatement()
                     val resultSet = statement.executeQuery(sql)
 
@@ -127,7 +127,8 @@ fun Application.configureRouting() {
                             ArmariosDTO(
                                 nArmario = resultSet.getInt("nArmario"),
                                 capacidade = resultSet.getInt("capacidade"),
-                                estado = resultSet.getString("estado")
+                                estado = resultSet.getString("estado"),
+                                trancado = resultSet.getBoolean("trancado")
                             )
                         )
                     }
