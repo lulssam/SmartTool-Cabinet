@@ -34,5 +34,7 @@ data class FerramentasUiState(
     val searchQuery: String = "",
     val filtroAtual: FiltroFerramenta = FiltroFerramenta.TODAS,
     val templates: List<TemplateDiarioUi> = emptyList(),
-    val ferramentas: List<FerramentaListaUi> = emptyList()
+    val ferramentas: List<FerramentaListaUi> = emptyList(),
+    val isLoading: Boolean = true, // Começa a true para mostrar o loader inicialmente
+    val error: String? = null
 )

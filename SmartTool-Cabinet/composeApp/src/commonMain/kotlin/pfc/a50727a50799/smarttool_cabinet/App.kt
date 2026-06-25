@@ -18,6 +18,8 @@ import pfc.a50727a50799.smarttool_cabinet.di.AppModule
 import pfc.a50727a50799.smarttool_cabinet.feature.email.emailScreen
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.GestorScreen
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.GestorViewModel
+import pfc.a50727a50799.smarttool_cabinet.feature.navigation.FerramentasTecnicoRoute
+import pfc.a50727a50799.smarttool_cabinet.feature.navigation.HistoricoTecnicoRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.LoginEmailRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.SSORoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.routeForRole
@@ -25,6 +27,11 @@ import pfc.a50727a50799.smarttool_cabinet.feature.session.SessionUiState
 import pfc.a50727a50799.smarttool_cabinet.feature.session.SessionViewModel
 import pfc.a50727a50799.smarttool_cabinet.feature.session.SplashScreen
 import pfc.a50727a50799.smarttool_cabinet.feature.sso.SSOScreen
+import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.FerramentasScreen
+import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.FerramentasViewModel
+import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.HistoricoScreen
+import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.HistoricoViewModel
+import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.TecnicoScreen
 import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.TecnicoViewModel
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AppTheme
 
@@ -171,14 +178,33 @@ private fun AppNavHost(
             // TODO
         }
 
-        // FIXME
+        // 1. Ecrã Principal do Técnico (Dashboard)
         composable<TecnicoRoute> {
             val viewModel = viewModel {
                 TecnicoViewModel(
-
+                    ferramentas = AppModule.ferramentaRemoteDataSource
                 )
             }
+            TecnicoScreen(viewModel = viewModel)
+        }
+
+        composable< FerramentasTecnicoRoute> {
+            val viewModel = viewModel {
+                FerramentasViewModel(
+                    ferramentas = AppModule.ferramentaRemoteDataSource
+                )
+            }
+            FerramentasScreen(viewModel = viewModel)
+        }
+
+        composable< HistoricoTecnicoRoute> {
+            val viewModel = viewModel {
+
+                HistoricoViewModel()
+
+            }
+            HistoricoScreen(viewModel = viewModel)
+        }
         }
     }
 
-}

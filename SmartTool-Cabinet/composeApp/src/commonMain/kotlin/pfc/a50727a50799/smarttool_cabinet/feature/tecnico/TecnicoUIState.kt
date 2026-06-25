@@ -1,11 +1,11 @@
 package pfc.a50727a50799.smarttool_cabinet.feature.tecnico
 
 data class TecnicoUiState(
-    val nomeTecnico: String = "Luísa Sampaio",
-    val cargo: String = "Técnica",
-    val turno: String = "8:00-16:00",
-    val ferramentasEmUso: Int = 2,
-    val ferramentasParaDevolver: Int = 1,
+    val nomeTecnico: String = "",
+    val cargo: String = "",
+    val turno: String = "",
+    val ferramentasEmUso: Int = 0,
+    val ferramentasParaDevolver: Int = 0,
     val minhasFerramentas: List<FerramentaTecnicoUi> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null
