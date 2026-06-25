@@ -156,7 +156,8 @@ private fun AppNavHost(
             val viewModel = viewModel {
                 GestorViewModel(
                     ferramentas = AppModule.ferramentaRemoteDataSource,
-                    armarios = AppModule.armarioRemoteDataSource
+                    armarios = AppModule.armarioRemoteDataSource,
+                    alertas = AppModule.alertaRemoteDataSource
                 )
             }
             GestorScreen(viewModel = viewModel)
