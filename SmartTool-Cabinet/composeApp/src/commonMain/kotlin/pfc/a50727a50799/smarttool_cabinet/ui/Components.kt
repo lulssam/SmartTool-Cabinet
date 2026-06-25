@@ -396,6 +396,7 @@ fun ArmarioCard(
                     modifier = Modifier.weight(1f)
                 )
                 StatusPill(estado = armario.estadoArmario)
+
             }
 
             // as 3 caixas

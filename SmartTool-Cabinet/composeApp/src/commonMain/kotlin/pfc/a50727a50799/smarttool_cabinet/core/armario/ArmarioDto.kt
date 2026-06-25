@@ -18,8 +18,10 @@ fun ArmarioDto.toUi() = ArmarioUi(
     slotsOcupados = 0, // TODO: mudar que ainda não vai buscar a api porque ela não devolve mesmo, tem que se calcular somehow, problema para mais tarde
     emFalta = 0,
     trancado = trancado,
-    estadoArmario = when (estado.uppercase()) {
+    estadoArmario = when (estado) {
         "Operacional" -> EstadoArmario.OPERACIONAL
+        "Alerta" -> EstadoArmario.ALERTA
         else -> EstadoArmario.AVARIADO
     }
+
 )
