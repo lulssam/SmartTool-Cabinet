@@ -55,6 +55,7 @@ import pfc.a50727a50799.smarttool_cabinet.ui.theme.CardShape
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.InfoBoxBg
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.PillShape
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapAlert
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapAlmostGreen
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapBrandDark
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapLightGreen
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapRedText
@@ -139,14 +140,15 @@ fun TopBar(
 fun WelcomeCard(
     nomeGestor: String,
     turno: String,
-    cargo: String = "Gestor de Armazém"
+    cargo: String = "Gestor de Armazém",
+    color: Color
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .height(110.dp)
             .clip(CardShape)
-            .background(TapBrandDark)
+            .background(color)
             .padding(20.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
@@ -568,7 +570,7 @@ private fun StatusPill(
 @Composable
 fun PreviewWelcomeCard() {
     AppTheme {
-        WelcomeCard("Luísa Sampaio", "Manhã")
+        WelcomeCard("Luísa Sampaio", "Manhã", color = TapAlmostGreen)
     }
 }
 
