@@ -24,6 +24,7 @@ import pfc.a50727a50799.smarttool_cabinet.feature.session.SessionUiState
 import pfc.a50727a50799.smarttool_cabinet.feature.session.SessionViewModel
 import pfc.a50727a50799.smarttool_cabinet.feature.session.SplashScreen
 import pfc.a50727a50799.smarttool_cabinet.feature.sso.SSOScreen
+import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.TecnicoViewModel
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AppTheme
 
 
@@ -165,8 +166,13 @@ private fun AppNavHost(
             // TODO
         }
 
+        // FIXME
         composable<TecnicoRoute> {
-            // TODO
+            val viewModel = viewModel {
+                TecnicoViewModel(
+
+                )
+            }
         }
     }
 
