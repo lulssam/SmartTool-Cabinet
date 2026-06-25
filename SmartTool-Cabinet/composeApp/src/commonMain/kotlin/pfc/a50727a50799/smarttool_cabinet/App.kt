@@ -13,6 +13,7 @@ import pfc.a50727a50799.smarttool_cabinet.feature.navigation.TecnicoRoute
 import androidx.navigation.compose.*
 import kotlinx.coroutines.launch
 import pfc.a50727a50799.smarttool_cabinet.core.auth.UserRole
+import pfc.a50727a50799.smarttool_cabinet.core.auth.data.SessionManager
 import pfc.a50727a50799.smarttool_cabinet.di.AppModule
 import pfc.a50727a50799.smarttool_cabinet.feature.email.emailScreen
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.GestorScreen
@@ -157,7 +158,10 @@ private fun AppNavHost(
                 GestorViewModel(
                     ferramentas = AppModule.ferramentaRemoteDataSource,
                     armarios = AppModule.armarioRemoteDataSource,
-                    alertas = AppModule.alertaRemoteDataSource
+                    alertas = AppModule.alertaRemoteDataSource,
+                    nomeGestor = SessionManager.atual?.nome ?: "",
+                    turno = SessionManager.atual?.turno ?: ""
+
                 )
             }
             GestorScreen(viewModel = viewModel)
