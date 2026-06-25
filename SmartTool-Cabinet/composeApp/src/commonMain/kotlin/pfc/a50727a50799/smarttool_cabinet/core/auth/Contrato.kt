@@ -12,11 +12,16 @@ enum class UserRole {
  *
  * @property uid Identificador único do user, dado pelo Firebase.
  * @property email Email do user.
- * @property role Cargo do user obtido a partir do nosso backend.*/
+ * @property nome Nome do funcionário, vindo do nosso backend.
+ * @property turno Turno do funcionário (MANHA/TARDE/NOITE), vindo do backend.
+ * @property role Cargo do user obtido a partir do nosso backend.
+ */
 data class Session(
     val uid: String,
     val email: String,
-    val role: UserRole
+    val nome: String,
+    val turno: String,
+    val role: UserRole,
 )
 
 /**
