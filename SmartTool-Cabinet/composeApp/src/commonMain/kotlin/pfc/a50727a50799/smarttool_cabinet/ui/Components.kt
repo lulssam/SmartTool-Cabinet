@@ -169,7 +169,7 @@ fun EstadoFerramentasCard(
     val segmentos = listOf(
         Segmento("Disponíveis", estatisticas.disponiveis, TapBrandDark),
         Segmento("Em Uso", estatisticas.requisitada, ToolInUse),
-        Segmento("Em Falta", estatisticas.emFalta, TapAlert),
+        Segmento("Indisponivel", estatisticas.indisponivel, TapAlert),
         Segmento("Manutenção", estatisticas.manutencao, ToolMaintenance)
     )
 
@@ -668,7 +668,7 @@ private fun AlertaCardAvisoPreview() {
 private fun PreviewEstadoFerramentasCard() {
     AppTheme {
         EstadoFerramentasCard(
-            EstatisticasFerramentas(disponiveis = 9, requisitada = 3, emFalta = 1, manutencao = 2)
+            EstatisticasFerramentas(disponiveis = 9, requisitada = 3, indisponivel = 1, manutencao = 2)
         )
     }
 }
