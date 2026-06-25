@@ -41,6 +41,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import pfc.a50727a50799.smarttool_cabinet.ui.TopBar
 
 // Importações a partir da pasta global
 import pfc.a50727a50799.smarttool_cabinet.ui.TopBar

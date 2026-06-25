@@ -9,7 +9,8 @@ import pfc.a50727a50799.smarttool_cabinet.core.auth.UserRole
 data class FuncionarioDto(
     val idFunc: Int,
     val nome: String,
-    val cargo: String
+    val cargo: String,
+    val turno: String
 )
 
 /**

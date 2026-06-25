@@ -39,20 +39,27 @@ private fun GestorScreenContent(
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
             }
+
         state.error != null ->
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(state.error, color = MaterialTheme.colorScheme.error)
             }
+
         else ->
             Column(Modifier.fillMaxSize().background(ScreenBg)) {
-                TopBar("Dashboard", state.alertas.size, onMenu = {})
+                TopBar(
+                    titulo = "Dashboard",
+                    alertasAtivos = state.alertas.size,
+                    mostrarAlertas = state.alertas.isNotEmpty(),
+                    onMenu = {}
+                )
 
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
-                    item { WelcomeCard(state.nomeGestor, state.turno, color = TapBrandDark) }
+                    item { WelcomeCard(nomeGestor = state.nomeGestor, turno = state.turno, cargo = "Gestor de Armazém", color = TapBrandDark) }
                     item { EstadoFerramentasCard(state.estatisticas) }
                     item { SectionHeader("Estado dos Armários", onVerTodos = {}) }
                     items(state.armarios) { ArmarioCard(it) }
@@ -103,7 +110,7 @@ fun Preview() {
                         12,
                         true,
                         1,
-                        EstadoArmario.ONLINE
+                        EstadoArmario.AVARIADO
                     ),
                     ArmarioUi(
                         "Armário 2 - Ferramentas Elétricas",
@@ -111,7 +118,7 @@ fun Preview() {
                         12,
                         false,
                         2,
-                        EstadoArmario.ALERTA
+                        EstadoArmario.OPERACIONAL
                     )
                 ),
                 alertas = listOf(
