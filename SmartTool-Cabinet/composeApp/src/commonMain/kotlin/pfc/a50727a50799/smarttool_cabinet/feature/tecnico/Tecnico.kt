@@ -32,11 +32,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-
-// Importações dos teus componentes partilhados
-import pfc.a50727a50799.smarttool_cabinet.feature.gestor.SectionHeader
-import pfc.a50727a50799.smarttool_cabinet.feature.gestor.TopBar
-import pfc.a50727a50799.smarttool_cabinet.feature.gestor.WelcomeCard
+import pfc.a50727a50799.smarttool_cabinet.ui.SectionHeader
+import pfc.a50727a50799.smarttool_cabinet.ui.TopBar
+import pfc.a50727a50799.smarttool_cabinet.ui.WelcomeCard
 
 // Importações oficiais do teu Tema!
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AlertOrange
