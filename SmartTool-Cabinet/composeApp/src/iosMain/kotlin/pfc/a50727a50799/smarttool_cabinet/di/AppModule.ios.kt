@@ -8,7 +8,7 @@ import pfc.a50727a50799.smarttool_cabinet.core.auth.iOSAuthRepository
  * No iOS o backend é alcançado pelo IP da máquina de desenvolvimento na rede local.
  * Este valor muda se mudares de rede ou de computador.
  */
-actual val baseUrl: String = "http://127.0.0.1:8080" // ip do computador a correr
+actual val baseUrl: String = "http://172.20.10.4:8080" // ip do computador a correr
 
 /**
  * No iOS ainda não há Firebase nativo, por isso usamos uma implementação stub

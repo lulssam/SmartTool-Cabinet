@@ -28,8 +28,13 @@ class iOSAuthRepository(
                     ?: return AuthResult.Error(
                         AuthError.Unknown("cargo desconhecido: ${resultado.data.cargo}")
                     )
-                Session(uid = email, email = email, role = role)
-                    .let { AuthResult.Success(it) }
+                Session(
+                    uid = email,
+                    email = email,
+                    nome = resultado.data.nome,
+                    turno = resultado.data.turno,
+                    role = role
+                ).let { AuthResult.Success(it) }
             }
 
             is AuthResult.Error -> resultado

@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -15,7 +16,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
@@ -39,7 +40,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
@@ -78,8 +81,7 @@ fun TopBar(
     onMenu: () -> Unit
 ) {
     Surface(
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         color = Color.White,
         shadowElevation = 4.dp
     ) {
@@ -89,12 +91,12 @@ fun TopBar(
                 .windowInsetsPadding(
                     WindowInsets.safeDrawing.only(WindowInsetsSides.Top)
                 )
-                .height(80.dp)
+                .heightIn(min = 80.dp)
                 .padding(horizontal = 20.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            IconButton(onClick = onMenu) {  
+            IconButton(onClick = onMenu) {
                 Icon(painter = painterResource(Res.drawable.menu), contentDescription = "Menu")
             }
 
@@ -103,6 +105,8 @@ fun TopBar(
                 color = Color.Black,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.weight(1f).padding(start = 8.dp)
             )
 
@@ -128,7 +132,8 @@ fun TopBar(
                         },
                         color = TapAlert,
                         fontSize = 14.sp,
-                        fontWeight = FontWeight.Medium
+                        fontWeight = FontWeight.Medium,
+                        maxLines = 1
                     )
                 }
             }
@@ -146,7 +151,7 @@ fun WelcomeCard(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(110.dp)
+            .heightIn(min = 110.dp)
             .clip(CardShape)
             .background(color)
             .padding(20.dp),
@@ -171,7 +176,7 @@ fun EstadoFerramentasCard(
     val segmentos = listOf(
         Segmento("Disponíveis", estatisticas.disponiveis, TapBrandDark),
         Segmento("Em Uso", estatisticas.requisitada, ToolInUse),
-        Segmento("Em Falta", estatisticas.emFalta, TapAlert),
+        Segmento("Indisponivel", estatisticas.indisponivel, TapAlert),
         Segmento("Manutenção", estatisticas.manutencao, ToolMaintenance)
     )
 
@@ -194,20 +199,27 @@ fun EstadoFerramentasCard(
                 color = Color.Black
             )
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Donut(segmentos = segmentos, total = total)
-
-                Spacer(Modifier.width(16.dp))
-
-                // legenda
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+            BoxWithConstraints {
+                val donutSize = (maxWidth * 0.38f).coerceIn(110.dp, 150.dp)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    segmentos.forEach { LegendaRow(it, total) }
+                    Donut(
+                        segmentos = segmentos,
+                        total = total,
+                        tamanho = donutSize
+                    )
+
+                    Spacer(Modifier.width(16.dp))
+
+                    // legenda
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        segmentos.forEach { LegendaRow(it, total) }
+                    }
                 }
             }
         }
@@ -235,15 +247,22 @@ private fun LegendaRow(
         )
 
         Spacer(Modifier.width(8.dp))
+
         Text(
             text = segmento.label,
             fontSize = 11.sp,
-            color = Color.Black
+            color = Color.Black,
+            maxLines = 1,
+            modifier = Modifier.weight(1f),
+            overflow = TextOverflow.Ellipsis
         )
 
-        Spacer(modifier = Modifier.weight(1f)) // empurrar numeros para a direita
-
-        Text("${segmento.valor}", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+        Text(
+            text = "${segmento.valor}",
+            fontSize = 11.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.Black,
+        )
         Spacer(Modifier.width(8.dp))
         Text("$percent%", fontSize = 11.sp, color = TextSecondary)
     }
@@ -251,12 +270,14 @@ private fun LegendaRow(
 
 @Composable
 private fun Donut(
-    segmentos: List<Segmento>, total: Int
+    segmentos: List<Segmento>,
+    total: Int,
+    tamanho: Dp = 150.dp
 ) {
-    Box(contentAlignment = Alignment.Center, modifier = Modifier.size(150.dp)) {
+    Box(contentAlignment = Alignment.Center, modifier = Modifier.size(tamanho)) {
 
         Canvas(modifier = Modifier.fillMaxSize()) {
-            val stroke = 28.dp.toPx()                 // espessura do aro
+            val stroke = size.minDimension * 0.18f               // espessura do aro
             val arcSize = Size(size.width - stroke, size.height - stroke)
             val topLeft = Offset(stroke / 2, stroke / 2)   // encolhe para o aro não sair do canvas
 
@@ -309,7 +330,10 @@ fun SectionHeader(
             text = titulo,
             color = Color.Black,
             fontWeight = FontWeight.Bold,
-            fontSize = 20.sp
+            fontSize = 20.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f)
         )
 
         Row(
@@ -343,9 +367,9 @@ fun ArmarioCard(
 ) {
 
     val corBorda = when (armario.estadoArmario) {
-        EstadoArmario.ONLINE -> TapBrandDark.copy(alpha = 0.25f)
+        EstadoArmario.OPERACIONAL -> TapBrandDark.copy(alpha = 0.25f)
         EstadoArmario.ALERTA -> AlertOrange.copy(alpha = 0.25f)
-        EstadoArmario.OFFLINE -> TextSecondary
+        EstadoArmario.AVARIADO -> TextSecondary.copy(alpha = 0.25f)
     }
 
     Card(
@@ -368,9 +392,13 @@ fun ArmarioCard(
                     text = armario.nome,
                     fontSize = 15.sp,
                     color = Color.Black,
-                    fontWeight = FontWeight.Medium
+                    maxLines = 2,
+                    fontWeight = FontWeight.Medium,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f)
                 )
                 StatusPill(estado = armario.estadoArmario)
+
             }
 
             // as 3 caixas
@@ -527,7 +555,7 @@ private fun RowScope.InfoBox(
     Column(
         modifier = Modifier
             .weight(1f)
-            .height(50.dp)
+            .heightIn(min = 50.dp)
             .background(InfoBoxBg, RoundedCornerShape(9.dp)),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -541,14 +569,14 @@ private fun StatusPill(
     estado: EstadoArmario
 ) {
     val (fundo, texto, label) = when (estado) {
-        EstadoArmario.ONLINE -> Triple(TapLightGreen.copy(alpha = 0.2f), TapBrandDark, "Online")
+        EstadoArmario.OPERACIONAL -> Triple(TapLightGreen.copy(alpha = 0.2f), TapBrandDark, "Online")
         EstadoArmario.ALERTA -> Triple(
             AlertOrange.copy(alpha = 0.2f),
             AlertOrangeText,
             "Alerta"
         )
 
-        EstadoArmario.OFFLINE -> Triple(
+        EstadoArmario.AVARIADO -> Triple(
             TextSecondary.copy(alpha = 0.2f),
             TextSecondary,
             "Offline"
@@ -605,7 +633,7 @@ private fun ArmarioCardOnlinePreview() {
             ArmarioUi(
                 nome = "Armário 1 - Ferramentas Gerais",
                 slotsOcupados = 11, slotsTotal = 12,
-                trancado = true, emFalta = 1, estadoArmario = EstadoArmario.ONLINE
+                trancado = true, emFalta = 1, estadoArmario = EstadoArmario.OPERACIONAL
             )
         )
     }
@@ -633,7 +661,7 @@ private fun ArmarioCardOfflinePreview() {
             ArmarioUi(
                 nome = "Armário 3 - Ferramentas Elétricas",
                 slotsOcupados = 12, slotsTotal = 12,
-                trancado = false, emFalta = 0, estadoArmario = EstadoArmario.OFFLINE
+                trancado = false, emFalta = 0, estadoArmario = EstadoArmario.AVARIADO
             )
         )
     }
@@ -670,7 +698,12 @@ private fun AlertaCardAvisoPreview() {
 private fun PreviewEstadoFerramentasCard() {
     AppTheme {
         EstadoFerramentasCard(
-            EstatisticasFerramentas(disponiveis = 9, requisitada = 3, emFalta = 1, manutencao = 2)
+            EstatisticasFerramentas(
+                disponiveis = 9,
+                requisitada = 3,
+                indisponivel = 1,
+                manutencao = 2
+            )
         )
     }
 }
