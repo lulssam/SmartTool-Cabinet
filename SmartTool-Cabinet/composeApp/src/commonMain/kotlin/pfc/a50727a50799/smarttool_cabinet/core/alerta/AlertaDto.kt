@@ -22,6 +22,7 @@ fun AlertaDto.toUi(): AlertaUi = AlertaUi(
         "ARMARIO_DESTRANCADO" -> "Armário destrancado"
         "FERRAMENTAS_EM_MAU_ESTADO" -> "Ferramenta em mau estado"
         else -> "Erro desconhecido"
+        // todo: adicionar mais tipos
     },
     descricao = descricao,
     hora = "",

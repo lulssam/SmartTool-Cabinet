@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import pfc.a50727a50799.smarttool_cabinet.core.auth.AuthError
 import pfc.a50727a50799.smarttool_cabinet.core.auth.AuthRepository
 import pfc.a50727a50799.smarttool_cabinet.core.auth.AuthResult
+import pfc.a50727a50799.smarttool_cabinet.core.auth.data.SessionManager
 
 /**
  * Trata da lógica do login. Fala com o [AuthRepository] (a interface),
@@ -31,11 +32,9 @@ class WelcomeViewModel(
             _state.update { it.copy(isLoading = true, error = null, sessao = null) }
             val atual = _state.value
             when (val r = authRepository.loginEmail(atual.email, atual.password)) {
-                is AuthResult.Success -> _state.update {
-                    it.copy(
-                        isLoading = false,
-                        sessao = r.data
-                    )
+                is AuthResult.Success -> {
+                    SessionManager.atual = r.data
+                    _state.update { it.copy(isLoading = false, sessao = r.data) }
                 }
 
                 is AuthResult.Error -> _state.update {
@@ -54,12 +53,11 @@ class WelcomeViewModel(
             _state.update { it.copy(isLoading = true, error = null, sessao = null) }
 
             when (val r = authRepository.loginGoogle(idToken = idToken)) {
-                is AuthResult.Success -> _state.update {
-                    it.copy(
-                        isLoading = false,
-                        sessao = r.data
-                    )
+                is AuthResult.Success -> {
+                    SessionManager.atual = r.data
+                    _state.update { it.copy(isLoading = false, sessao = r.data) }
                 }
+
                 is AuthResult.Error -> _state.update {
                     it.copy(
                         isLoading = false,

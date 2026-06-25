@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import pfc.a50727a50799.smarttool_cabinet.core.auth.AuthRepository
 import pfc.a50727a50799.smarttool_cabinet.core.auth.AuthResult
+import pfc.a50727a50799.smarttool_cabinet.core.auth.data.SessionManager
 
 /**
  * Decide, no arranque da aplicação, se já existe alguém com sessão iniciada.
@@ -28,7 +29,10 @@ class SessionViewModel(
         viewModelScope.launch {
             _state.value = when (val r = authRepository.getSession()) {
                 is AuthResult.Success ->
-                    if (r.data != null) SessionUiState.Authenticated(r.data)
+                    if (r.data != null){
+                        SessionManager.atual = r.data
+                        SessionUiState.Authenticated(r.data)
+                    }
                     else SessionUiState.NoSession
 
                 is AuthResult.Error -> SessionUiState.NoSession

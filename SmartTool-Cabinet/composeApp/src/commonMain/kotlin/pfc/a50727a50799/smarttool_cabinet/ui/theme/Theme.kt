@@ -10,7 +10,7 @@ import androidx.compose.ui.unit.dp
 
 private val SmartToolColors = lightColorScheme(
     primary = TapBrandDark,        onPrimary = Color.White,
-    secondary = TapBrandGreen,     onSecondary = Color.White, // TODO ver se fica melhor preto
+    secondary = TapBrandGreen,     onSecondary = Color.White,
     tertiary = TapAccent,
     error = TapAlert,              onError = Color.White,
     background = Color.White,      onBackground = TextTitle,

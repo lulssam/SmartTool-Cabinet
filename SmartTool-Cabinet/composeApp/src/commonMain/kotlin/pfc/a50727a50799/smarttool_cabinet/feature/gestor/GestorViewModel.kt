@@ -16,18 +16,24 @@ import pfc.a50727a50799.smarttool_cabinet.core.network.ApiError
 import pfc.a50727a50799.smarttool_cabinet.core.network.ApiResult
 
 /**
- * Trata da lógica do ecrã do Gestor: vai buscar as ferramentas ao backend
- * e guarda o resultado no estado para o ecrã mostrar.
+ * Trata da lógica do ecrã do Gestor: vai buscar ao backend as ferramentas,
+ * os armários e os alertas, e guarda tudo no estado para o ecrã mostrar.
  *
- * @param ferramentas A fonte que sabe ir buscar as ferramentas ao backend.
+ * @param ferramentas Fonte das ferramentas (estatísticas).
+ * @param armarios Fonte dos armários.
+ * @param alertas Fonte dos alertas.
+ * @param nomeGestor Nome de quem tem sessão (vem do SessionManager).
+ * @param turno Turno de quem tem sessão (vem do SessionManager).
  */
 class GestorViewModel(
     private val ferramentas: FerramentaRemoteDataSource,
     private val armarios: ArmarioRemoteDataSource,
     private val alertas: AlertaRemoteDataSource,
+    nomeGestor: String,
+    turno: String
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(GestorUiState())
+    private val _state = MutableStateFlow(GestorUiState(nomeGestor = nomeGestor, turno = turno))
     val state: StateFlow<GestorUiState> = _state.asStateFlow()
 
     init {
@@ -37,10 +43,6 @@ class GestorViewModel(
     fun carregar() {
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }
-
-            // TODO: nome
-
-
             // ferramentas
             val lista = when (val r = ferramentas.getFerramentas()) {
                 is ApiResult.Success -> r.data
