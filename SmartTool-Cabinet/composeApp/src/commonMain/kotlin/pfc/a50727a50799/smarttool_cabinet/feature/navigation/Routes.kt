@@ -19,6 +19,9 @@ import pfc.a50727a50799.smarttool_cabinet.core.auth.UserRole
 /** Rota do ecrã principal do Técnico. */
 @Serializable data object TecnicoRoute
 
+@Serializable data object HistoricoTecnicoRoute
+
+@Serializable data object FerramentasTecnicoRoute
 /**
  * Indica qual é o ecrã inicial de cada cargo, para a app saber para onde enviar
  * o utilizador logo a seguir ao login (ou no arranque, se já tiver sessão).

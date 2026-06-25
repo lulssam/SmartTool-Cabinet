@@ -27,6 +27,7 @@ import pfc.a50727a50799.smarttool_cabinet.ui.TopBar
 import pfc.a50727a50799.smarttool_cabinet.ui.WelcomeCard
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AppTheme
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.ScreenBg
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapBrandDark
 
 
 @Composable
@@ -51,7 +52,7 @@ private fun GestorScreenContent(
                     contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
-                    item { WelcomeCard(state.nomeGestor, state.turno) }
+                    item { WelcomeCard(state.nomeGestor, state.turno, color = TapBrandDark) }
                     item { EstadoFerramentasCard(state.estatisticas) }
                     item { SectionHeader("Estado dos Armários", onVerTodos = {}) }
                     items(state.armarios) { ArmarioCard(it) }
