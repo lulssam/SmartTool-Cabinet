@@ -109,7 +109,7 @@ fun Preview() {
                         12,
                         true,
                         1,
-                        EstadoArmario.ONLINE
+                        EstadoArmario.AVARIADO
                     ),
                     ArmarioUi(
                         "Armário 3 - Ferramentas Elétricas",
@@ -117,7 +117,7 @@ fun Preview() {
                         12,
                         false,
                         2,
-                        EstadoArmario.ALERTA
+                        EstadoArmario.OPERACIONAL
                     )
                 ),
                 alertas = listOf(
