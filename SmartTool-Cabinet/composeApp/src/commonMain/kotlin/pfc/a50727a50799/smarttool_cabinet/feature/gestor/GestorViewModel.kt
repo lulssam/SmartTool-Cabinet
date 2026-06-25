@@ -47,23 +47,11 @@ class GestorViewModel(
                 }
             }
 
-            val idsEmFalta = when (val r = ferramentas.getEmFalta()) {
-                is ApiResult.Success -> r.data.map { it.idFerramenta }.toSet()
-                is ApiResult.Error -> {
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            error = mensagem(r.error)
-                        )
-                    }; return@launch
-                }
-            }
-
             val stats = EstatisticasFerramentas(
                 disponiveis = lista.count { it.disponibilidade == "Disponivel" },
-                requisitada = lista.count { it.disponibilidade == "Requisitada" && it.idFerramenta !in idsEmFalta },
-                emFalta = lista.count { it.disponibilidade == "Requisitada" && it.idFerramenta in idsEmFalta },
-                manutencao = lista.count { it.disponibilidade == "Em Manutencao" }
+                requisitada = lista.count { it.disponibilidade == "Requisitada" },
+                manutencao = lista.count { it.disponibilidade == "Em Manutencao" },
+                indisponivel = lista.count { it.disponibilidade == "Indisponivel" }
             )
             _state.update { it.copy(ferramentas = lista, estatisticas = stats) }
 
