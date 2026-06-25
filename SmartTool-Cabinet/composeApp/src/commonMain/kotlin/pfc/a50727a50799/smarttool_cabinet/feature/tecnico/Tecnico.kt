@@ -19,6 +19,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -32,106 +34,107 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+
+// Importações a partir da tua nova pasta UI global
 import pfc.a50727a50799.smarttool_cabinet.ui.SectionHeader
 import pfc.a50727a50799.smarttool_cabinet.ui.TopBar
 import pfc.a50727a50799.smarttool_cabinet.ui.WelcomeCard
 
-// Importações oficiais do teu Tema!
+// Importações do Tema
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AlertOrange
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AlertOrangeText
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AppTheme
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.CardBorder
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.PillShape
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.ScreenBg
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapAlert
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapAlmostGreen
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapGreenishBlue
+
+@Composable
+private fun TecnicoScreenContent(
+    state: TecnicoUiState
+) {
+    // Bloco `when` de Loading, Erro e UI normal, EXATAMENTE igual ao Gestor
+    when {
+        state.isLoading ->
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+
+        state.error != null ->
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(state.error, color = MaterialTheme.colorScheme.error)
+            }
+
+        else ->
+            Column(Modifier.fillMaxSize().background(ScreenBg)) {
+                // TopBar global
+                TopBar(
+                    titulo = "Dashboard",
+                    alertasAtivos = 0, // Técnico não tem contador na TopBar no Figma
+                    mostrarAlertas = false,
+                    onMenu = {}
+                )
+
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(20.dp)
+                ) {
+                    item {
+                        WelcomeCard(state.nomeTecnico, state.turno, state.cargo, color = TapGreenishBlue)
+                    }
+
+                    item {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            EstatisticaCard(
+                                titulo = "Ferramentas em uso",
+                                valor = state.ferramentasEmUso.toString(),
+                                rodapeTexto = "Minhas",
+                                rodapeBgColor = AlertOrange.copy(alpha = 0.15f),
+                                rodapeTextColor = AlertOrangeText,
+                                modifier = Modifier.weight(1f)
+                            )
+                            EstatisticaCard(
+                                titulo = "Para devolver",
+                                valor = state.ferramentasParaDevolver.toString(),
+                                rodapeTexto = "Prazo hoje",
+                                rodapeBgColor = TapAlert.copy(alpha = 0.12f),
+                                rodapeTextColor = TapAlert,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                    }
+
+                    item {
+                        SectionHeader("As minhas ferramentas", onVerTodos = {})
+                    }
+
+                    items(state.minhasFerramentas) { ferramenta ->
+                        FerramentaTecnicoCard(ferramenta)
+                    }
+                }
+            }
+    }
+}
 
 @Composable
 fun TecnicoScreen(
     viewModel: TecnicoViewModel = viewModel()
 ) {
     val state by viewModel.state.collectAsState()
-
     TecnicoScreenContent(
-        state = state,
-        onMenuClick = { },
-        onVerTodosClick = { }
+        state = state
     )
 }
 
-@Composable
-fun TecnicoScreenContent(
-    state: TecnicoUiState,
-    onMenuClick: () -> Unit,
-    onVerTodosClick: () -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(ScreenBg)
-    ) {
-        TopBar(
-            titulo = "Dashboard",
-            mostrarAlertas = false, // Esconde a pill de alertas para o Técnico
-            onMenu = onMenuClick
-        )
-
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(bottom = 20.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
-        ) {
-
-            item {
-                Box(Modifier.padding(horizontal = 20.dp, vertical = 16.dp)) {
-                    WelcomeCard(
-                        nomeGestor = state.nomeTecnico,
-                        cargo = state.cargo,
-                        turno = state.turno
-                    )
-                }
-            }
-
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    // Cartão "Ferramentas em Uso" (Laranja)
-                    EstatisticaCard(
-                        titulo = "Ferramentas em uso",
-                        valor = state.ferramentasEmUso.toString(),
-                        rodapeTexto = "Minhas",
-                        rodapeBgColor = AlertOrange.copy(alpha = 0.15f), // Usa as cores do teu tema com opacidade
-                        rodapeTextColor = AlertOrangeText,
-                        modifier = Modifier.weight(1f)
-                    )
-                    // Cartão "Para Devolver" (Vermelho/Rosa)
-                    EstatisticaCard(
-                        titulo = "Para devolver",
-                        valor = state.ferramentasParaDevolver.toString(),
-                        rodapeTexto = "Prazo hoje",
-                        rodapeBgColor = TapAlert.copy(alpha = 0.12f), // TapAlert com opacidade fica o rosa clarinho
-                        rodapeTextColor = TapAlert,
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-            }
-
-            item {
-                SectionHeader(
-                    titulo = "As minhas ferramentas",
-                    onVerTodos = onVerTodosClick
-                )
-            }
-
-            items(state.minhasFerramentas) { ferramenta ->
-                Box(Modifier.padding(horizontal = 20.dp)) {
-                    FerramentaTecnicoCard(ferramenta)
-                }
-            }
-        }
-    }
-}
+// ==========================================
+// COMPONENTES EXCLUSIVOS DO ECRÃ DO TÉCNICO
+// ==========================================
 
 @Composable
 fun EstatisticaCard(
@@ -152,9 +155,9 @@ fun EstatisticaCard(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(6.dp))
+                    .clip(PillShape)
                     .background(rodapeBgColor)
-                    .padding(horizontal = 8.dp, vertical = 4.dp),
+                    .padding(horizontal = 8.dp, vertical = 1.dp),
             ) {
                 Text(text = rodapeTexto, color = rodapeTextColor, fontSize = 9.sp, fontWeight = FontWeight.Bold)
             }
@@ -174,16 +177,10 @@ fun FerramentaTecnicoCard(ferramenta: FerramentaTecnicoUi) {
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Quadrado de fundo do ícone (Usa o verde da TAP com opacidade muito baixa)
             Box(
-                modifier = Modifier
-                    .size(42.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(TapGreenishBlue.copy(alpha = 0.08f)),
+                modifier = Modifier.size(42.dp).clip(RoundedCornerShape(8.dp)).background(TapGreenishBlue.copy(alpha = 0.08f)),
                 contentAlignment = Alignment.Center
-            ) {
-                Text("🔧", fontSize = 18.sp)
-            }
+            ) { Text("🔧", fontSize = 18.sp) }
 
             Spacer(modifier = Modifier.width(12.dp))
 
@@ -192,12 +189,8 @@ fun FerramentaTecnicoCard(ferramenta: FerramentaTecnicoUi) {
                 Text(text = ferramenta.detalhes, fontSize = 11.sp, color = Color.Gray)
             }
 
-            // Etiqueta "Em Uso" com as tuas cores do tema
             Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(AlertOrange.copy(alpha = 0.15f))
-                    .padding(horizontal = 12.dp, vertical = 6.dp)
+                modifier = Modifier.clip(PillShape).background(AlertOrange.copy(alpha = 0.15f)).padding(horizontal = 12.dp, vertical = 2.dp)
             ) {
                 Text(text = ferramenta.estado, color = AlertOrangeText, fontSize = 10.sp, fontWeight = FontWeight.Bold)
             }
@@ -205,12 +198,22 @@ fun FerramentaTecnicoCard(ferramenta: FerramentaTecnicoUi) {
     }
 }
 
-@Preview(showBackground = true)
+/**
+ * Preview do ecrã Técnico para visualização no Android Studio.
+ */
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
-private fun PreviewTecnicoFigma() {
+private fun Preview() {
     AppTheme {
         TecnicoScreenContent(
-            state = TecnicoUiState(
+            TecnicoUiState(
+                isLoading = false,
+                error = null,
+                nomeTecnico = "Luísa Sampaio",
+                cargo = "Técnica",
+                turno = "8:00-16:00",
+                ferramentasEmUso = 2,
+                ferramentasParaDevolver = 1,
                 minhasFerramentas = listOf(
                     FerramentaTecnicoUi(
                         id = 1,
@@ -219,9 +222,7 @@ private fun PreviewTecnicoFigma() {
                         estado = "Em Uso"
                     )
                 )
-            ),
-            onMenuClick = {},
-            onVerTodosClick = {}
+            )
         )
     }
 }

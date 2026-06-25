@@ -21,5 +21,6 @@ data class SecaoHistoricoUi(
 
 data class HistoricoUiState(
     val secoes: List<SecaoHistoricoUi> = emptyList(),
-    val isLoading: Boolean = false
+    val isLoading: Boolean = true, // Começa a true para o loading inicial
+    val error: String? = null
 )

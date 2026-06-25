@@ -23,6 +23,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -41,7 +43,10 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import pfc.a50727a50799.smarttool_cabinet.ui.TopBar
 
+// Importações a partir da pasta global
 import pfc.a50727a50799.smarttool_cabinet.ui.TopBar
+
+// Importações do Tema
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AlertOrange
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AlertOrangeText
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AppTheme
@@ -53,6 +58,87 @@ import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapBrandGreen
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapLightGreen
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TextSecondary
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TextTitle
+
+@Composable
+private fun FerramentasScreenContent(
+    state: FerramentasUiState,
+    onMenuClick: () -> Unit,
+    onSearchChange: (String) -> Unit,
+    onFiltroChange: (FiltroFerramenta) -> Unit,
+    onTemplateClick: (Int) -> Unit
+) {
+    // Bloco exactly igual ao estilo do Gestor
+    when {
+        state.isLoading ->
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+
+        state.error != null ->
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(state.error, color = MaterialTheme.colorScheme.error)
+            }
+
+        else ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(ScreenBg)
+            ) {
+                TopBar(
+                    titulo = "Ferramentas",
+                    mostrarAlertas = false,
+                    alertasAtivos = 0,
+                    onMenu = onMenuClick
+                )
+
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(20.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    item {
+                        Column {
+                            Text(text = "Ferramentas", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = TextTitle)
+                            Text(text = "Consulte e gira as suas ferramentas", fontSize = 14.sp, color = TextSecondary)
+                        }
+                    }
+
+                    item {
+                        Text(text = "Templates diários", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = TextTitle, modifier = Modifier.padding(top = 8.dp))
+                    }
+
+                    items(state.templates) { template ->
+                        TemplateCard(template = template, onClick = { onTemplateClick(template.id) })
+                    }
+
+                    item {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        BarraPesquisa(query = state.searchQuery, onQueryChange = onSearchChange)
+                    }
+
+                    item {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            FiltroFerramenta.entries.forEach { filtro ->
+                                FilterChip(
+                                    label = filtro.label,
+                                    isSelected = state.filtroAtual == filtro,
+                                    onClick = { onFiltroChange(filtro) }
+                                )
+                            }
+                        }
+                    }
+
+                    items(state.ferramentas) { ferramenta ->
+                        FerramentaItemCard(ferramenta = ferramenta)
+                    }
+                }
+            }
+    }
+}
 
 @Composable
 fun FerramentasScreen(
@@ -67,72 +153,6 @@ fun FerramentasScreen(
         onFiltroChange = viewModel::onFiltroChange,
         onTemplateClick = viewModel::toggleTemplate
     )
-}
-
-@Composable
-fun FerramentasScreenContent(
-    state: FerramentasUiState,
-    onMenuClick: () -> Unit,
-    onSearchChange: (String) -> Unit,
-    onFiltroChange: (FiltroFerramenta) -> Unit,
-    onTemplateClick: (Int) -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(ScreenBg)
-    ) {
-        TopBar(
-            titulo = "Ferramentas",
-            mostrarAlertas = false,
-            onMenu = onMenuClick
-        )
-
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(20.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            item {
-                Column {
-                    Text(text = "Ferramentas", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = TextTitle)
-                    Text(text = "Consulte e gira as suas ferramentas", fontSize = 14.sp, color = TextSecondary)
-                }
-            }
-
-            item {
-                Text(text = "Templates diários", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = TextTitle, modifier = Modifier.padding(top = 8.dp))
-            }
-
-            items(state.templates) { template ->
-                TemplateCard(template = template, onClick = { onTemplateClick(template.id) })
-            }
-
-            item {
-                Spacer(modifier = Modifier.height(8.dp))
-                BarraPesquisa(query = state.searchQuery, onQueryChange = onSearchChange)
-            }
-
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    FiltroFerramenta.entries.forEach { filtro ->
-                        FilterChip(
-                            label = filtro.label,
-                            isSelected = state.filtroAtual == filtro,
-                            onClick = { onFiltroChange(filtro) }
-                        )
-                    }
-                }
-            }
-
-            items(state.ferramentas) { ferramenta ->
-                FerramentaItemCard(ferramenta = ferramenta)
-            }
-        }
-    }
 }
 
 // ==========================================
@@ -160,7 +180,6 @@ fun TemplateCard(template: TemplateDiarioUi, onClick: () -> Unit) {
                     Text(text = "${template.totalFerramentas} ferramentas", fontSize = 12.sp, color = TextSecondary)
                 }
 
-                // Setinha feita com texto para não causar erro de import
                 Text(
                     text = if (template.isExpanded) "▲" else "▼",
                     color = TextSecondary,
@@ -204,7 +223,6 @@ fun BarraPesquisa(query: String, onQueryChange: (String) -> Unit) {
         value = query,
         onValueChange = onQueryChange,
         placeholder = { Text("Pesquisar ferramentas...", color = TextSecondary) },
-        // Lupa de texto provisória
         leadingIcon = {
             Text("🔍", fontSize = 16.sp, modifier = Modifier.padding(start = 12.dp))
         },
@@ -312,11 +330,40 @@ fun FerramentaItemCard(ferramenta: FerramentaListaUi) {
     }
 }
 
+// O Preview injeta os dados mock no Content, deixando o ViewModel totalmente isolado!
 @Preview(showBackground = true)
 @Composable
-private fun PreviewFerramentas() {
+private fun Preview() {
     AppTheme {
-        val mockViewModel = FerramentasViewModel()
-        FerramentasScreen(viewModel = mockViewModel)
+        FerramentasScreenContent(
+            state = FerramentasUiState(
+                isLoading = false,
+                error = null,
+                templates = listOf(
+                    TemplateDiarioUi(1, "Inspeção de Rotina A320", 4),
+                    TemplateDiarioUi(
+                        id = 2,
+                        nome = "Manutenção Aviónicos",
+                        totalFerramentas = 3,
+                        ferramentas = listOf("Torquimetro 60Nm", "Pistola de Calor", "Alicate de Corte"),
+                        isExpanded = true
+                    )
+                ),
+                ferramentas = listOf(
+                    FerramentaListaUi(
+                        id = 1, nome = "Chave de Caixa 10mm", detalhes = "F-001 · Chaves · Arm. 1",
+                        estado = EstadoFerramentaLista.DISPONIVEL
+                    ),
+                    FerramentaListaUi(
+                        id = 2, nome = "Alicate de Bico", detalhes = "F-002 · Alicates · Arm. 2",
+                        estado = EstadoFerramentaLista.EM_USO, showDevolverButtons = true
+                    )
+                )
+            ),
+            onMenuClick = {},
+            onSearchChange = {},
+            onFiltroChange = {},
+            onTemplateClick = {}
+        )
     }
 }
