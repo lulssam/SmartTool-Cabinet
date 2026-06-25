@@ -367,7 +367,7 @@ fun ArmarioCard(
     val corBorda = when (armario.estadoArmario) {
         EstadoArmario.OPERACIONAL -> TapBrandDark.copy(alpha = 0.25f)
         EstadoArmario.ALERTA -> AlertOrange.copy(alpha = 0.25f)
-        EstadoArmario.AVARIADO -> TextSecondary
+        EstadoArmario.AVARIADO -> TextSecondary.copy(alpha = 0.25f)
     }
 
     Card(
