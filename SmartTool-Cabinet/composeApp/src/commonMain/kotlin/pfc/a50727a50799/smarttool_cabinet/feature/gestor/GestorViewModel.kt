@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import pfc.a50727a50799.smarttool_cabinet.core.alerta.AlertaRemoteDataSource
+import pfc.a50727a50799.smarttool_cabinet.core.alerta.toUi
 import pfc.a50727a50799.smarttool_cabinet.core.armario.ArmarioRemoteDataSource
 import pfc.a50727a50799.smarttool_cabinet.core.armario.toUi
 import pfc.a50727a50799.smarttool_cabinet.core.ferramenta.FerramentaRemoteDataSource
@@ -21,7 +23,8 @@ import pfc.a50727a50799.smarttool_cabinet.core.network.ApiResult
  */
 class GestorViewModel(
     private val ferramentas: FerramentaRemoteDataSource,
-    private val armarios: ArmarioRemoteDataSource
+    private val armarios: ArmarioRemoteDataSource,
+    private val alertas: AlertaRemoteDataSource,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(GestorUiState())
@@ -35,6 +38,10 @@ class GestorViewModel(
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }
 
+            // TODO: nome
+
+
+            // ferramentas
             val lista = when (val r = ferramentas.getFerramentas()) {
                 is ApiResult.Success -> r.data
                 is ApiResult.Error -> {
@@ -59,6 +66,17 @@ class GestorViewModel(
             when (val r = armarios.getArmarios()) {
                 is ApiResult.Success ->
                     _state.update { it.copy(armarios = r.data.map { dto -> dto.toUi() }) }
+
+                is ApiResult.Error -> {
+                    _state.update { it.copy(isLoading = false, error = mensagem(r.error)) }
+                    return@launch
+                }
+            }
+
+            // alertas
+            when (val r = alertas.getAlertas()) {
+                is ApiResult.Success ->
+                    _state.update { it.copy(alertas = r.data.map { dto -> dto.toUi() }) }
 
                 is ApiResult.Error -> {
                     _state.update { it.copy(isLoading = false, error = mensagem(r.error)) }

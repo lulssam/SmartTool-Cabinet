@@ -5,6 +5,7 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import pfc.a50727a50799.smarttool_cabinet.core.alerta.AlertaRemoteDataSource
 import pfc.a50727a50799.smarttool_cabinet.core.armario.ArmarioRemoteDataSource
 import pfc.a50727a50799.smarttool_cabinet.core.auth.AuthRepository
 import pfc.a50727a50799.smarttool_cabinet.core.auth.data.funcionario.FuncionarioRemoteDataSource
@@ -57,5 +58,8 @@ object AppModule {
 
     /** A fonte que vai ao backend buscar os armários (usa o [httpClient]). */
     val armarioRemoteDataSource by lazy { ArmarioRemoteDataSource(httpClient) }
+
+    /** A fonte que vai ao backend buscar os alertas (usa o [httpClient]). */
+    val alertaRemoteDataSource by lazy { AlertaRemoteDataSource(httpClient) }
 
 }
