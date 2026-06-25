@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
@@ -72,7 +71,6 @@ import smarttoolcabinet.composeapp.generated.resources.arrowleft
 import smarttoolcabinet.composeapp.generated.resources.lock
 import smarttoolcabinet.composeapp.generated.resources.menu
 import smarttoolcabinet.composeapp.generated.resources.unlock
-import kotlin.math.max
 
 @Composable
 fun TopBar(
@@ -367,9 +365,9 @@ fun ArmarioCard(
 ) {
 
     val corBorda = when (armario.estadoArmario) {
-        EstadoArmario.ONLINE -> TapBrandDark.copy(alpha = 0.25f)
+        EstadoArmario.OPERACIONAL -> TapBrandDark.copy(alpha = 0.25f)
         EstadoArmario.ALERTA -> AlertOrange.copy(alpha = 0.25f)
-        EstadoArmario.OFFLINE -> TextSecondary
+        EstadoArmario.AVARIADO -> TextSecondary
     }
 
     Card(
@@ -568,14 +566,14 @@ private fun StatusPill(
     estado: EstadoArmario
 ) {
     val (fundo, texto, label) = when (estado) {
-        EstadoArmario.ONLINE -> Triple(TapLightGreen.copy(alpha = 0.2f), TapBrandDark, "Online")
+        EstadoArmario.OPERACIONAL -> Triple(TapLightGreen.copy(alpha = 0.2f), TapBrandDark, "Online")
         EstadoArmario.ALERTA -> Triple(
             AlertOrange.copy(alpha = 0.2f),
             AlertOrangeText,
             "Alerta"
         )
 
-        EstadoArmario.OFFLINE -> Triple(
+        EstadoArmario.AVARIADO -> Triple(
             TextSecondary.copy(alpha = 0.2f),
             TextSecondary,
             "Offline"
@@ -632,7 +630,7 @@ private fun ArmarioCardOnlinePreview() {
             ArmarioUi(
                 nome = "Armário 1 - Ferramentas Gerais",
                 slotsOcupados = 11, slotsTotal = 12,
-                trancado = true, emFalta = 1, estadoArmario = EstadoArmario.ONLINE
+                trancado = true, emFalta = 1, estadoArmario = EstadoArmario.OPERACIONAL
             )
         )
     }
@@ -660,7 +658,7 @@ private fun ArmarioCardOfflinePreview() {
             ArmarioUi(
                 nome = "Armário 3 - Ferramentas Elétricas",
                 slotsOcupados = 12, slotsTotal = 12,
-                trancado = false, emFalta = 0, estadoArmario = EstadoArmario.OFFLINE
+                trancado = false, emFalta = 0, estadoArmario = EstadoArmario.AVARIADO
             )
         )
     }

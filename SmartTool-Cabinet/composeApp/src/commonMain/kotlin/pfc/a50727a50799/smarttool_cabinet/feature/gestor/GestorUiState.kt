@@ -31,7 +31,7 @@ data class EstatisticasFerramentas(
     val total get() = disponiveis + requisitada + indisponivel + manutencao
 }
 
-enum class EstadoArmario { ONLINE, ALERTA, OFFLINE }
+enum class EstadoArmario { OPERACIONAL, AVARIADO, ALERTA }
 
 data class ArmarioUi(
     val nome: String,
