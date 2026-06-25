@@ -38,13 +38,20 @@ private fun GestorScreenContent(
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
             }
+
         state.error != null ->
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(state.error, color = MaterialTheme.colorScheme.error)
             }
+
         else ->
             Column(Modifier.fillMaxSize().background(ScreenBg)) {
-                TopBar("Dashboard", state.alertas.size, onMenu = {})
+                TopBar(
+                    titulo = "Dashboard",
+                    alertasAtivos = state.alertas.size,
+                    mostrarAlertas = state.alertas.isNotEmpty(),
+                    onMenu = {}
+                )
 
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
