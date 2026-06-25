@@ -41,7 +41,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import pfc.a50727a50799.smarttool_cabinet.ui.TopBar
 
-// Importações do teu Tema e Componentes partilhados
+import pfc.a50727a50799.smarttool_cabinet.ui.TopBar
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AlertOrange
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AlertOrangeText
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AppTheme
