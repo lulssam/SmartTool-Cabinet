@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
@@ -71,6 +72,7 @@ import smarttoolcabinet.composeapp.generated.resources.arrowleft
 import smarttoolcabinet.composeapp.generated.resources.lock
 import smarttoolcabinet.composeapp.generated.resources.menu
 import smarttoolcabinet.composeapp.generated.resources.unlock
+import kotlin.math.max
 
 @Composable
 fun TopBar(
@@ -80,8 +82,7 @@ fun TopBar(
     onMenu: () -> Unit
 ) {
     Surface(
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         color = Color.White,
         shadowElevation = 4.dp
     ) {
@@ -91,7 +92,7 @@ fun TopBar(
                 .windowInsetsPadding(
                     WindowInsets.safeDrawing.only(WindowInsetsSides.Top)
                 )
-                .height(80.dp)
+                .heightIn(min = 80.dp)
                 .padding(horizontal = 20.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
@@ -105,6 +106,8 @@ fun TopBar(
                 color = Color.Black,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.weight(1f).padding(start = 8.dp)
             )
 
@@ -130,7 +133,8 @@ fun TopBar(
                         },
                         color = TapAlert,
                         fontSize = 14.sp,
-                        fontWeight = FontWeight.Medium
+                        fontWeight = FontWeight.Medium,
+                        maxLines = 1
                     )
                 }
             }
@@ -142,12 +146,12 @@ fun TopBar(
 fun WelcomeCard(
     nomeGestor: String,
     turno: String,
-    cargo: String = "Gestor de Armazém"
+    cargo: String,
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(110.dp)
+            .heightIn(min = 110.dp)
             .clip(CardShape)
             .background(TapBrandDark)
             .padding(20.dp),
@@ -326,7 +330,10 @@ fun SectionHeader(
             text = titulo,
             color = Color.Black,
             fontWeight = FontWeight.Bold,
-            fontSize = 20.sp
+            fontSize = 20.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f)
         )
 
         Row(
@@ -385,7 +392,10 @@ fun ArmarioCard(
                     text = armario.nome,
                     fontSize = 15.sp,
                     color = Color.Black,
-                    fontWeight = FontWeight.Medium
+                    maxLines = 2,
+                    fontWeight = FontWeight.Medium,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f)
                 )
                 StatusPill(estado = armario.estadoArmario)
             }
@@ -544,7 +554,7 @@ private fun RowScope.InfoBox(
     Column(
         modifier = Modifier
             .weight(1f)
-            .height(50.dp)
+            .heightIn(min = 50.dp)
             .background(InfoBoxBg, RoundedCornerShape(9.dp)),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -587,7 +597,7 @@ private fun StatusPill(
 @Composable
 fun PreviewWelcomeCard() {
     AppTheme {
-        WelcomeCard("Luísa Sampaio", "Manhã")
+        WelcomeCard("Luísa Sampaio", "Manhã", "Gestora de Armazém")
     }
 }
 
