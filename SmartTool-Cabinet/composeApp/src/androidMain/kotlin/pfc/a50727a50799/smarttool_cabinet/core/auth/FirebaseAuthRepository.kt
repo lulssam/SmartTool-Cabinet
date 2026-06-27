@@ -64,7 +64,8 @@ class FirebaseAuthRepository(
                         email = email,
                         nome = result.data.nome,
                         turno = result.data.turno,
-                        role = role
+                        role = role,
+                        idFunc = result.data.idFunc
                     )
                 )
             }

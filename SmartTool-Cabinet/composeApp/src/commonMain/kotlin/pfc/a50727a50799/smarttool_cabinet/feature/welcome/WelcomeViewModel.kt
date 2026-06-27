@@ -34,6 +34,7 @@ class WelcomeViewModel(
             when (val r = authRepository.loginEmail(atual.email, atual.password)) {
                 is AuthResult.Success -> {
                     SessionManager.atual = r.data
+                    println("LOGIN OK -> idFunc=${r.data.idFunc}, nome=${r.data.nome}, role=${r.data.role}")
                     _state.update { it.copy(isLoading = false, sessao = r.data) }
                 }
 

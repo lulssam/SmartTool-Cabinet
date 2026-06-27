@@ -187,7 +187,10 @@ private fun AppNavHost(
         composable<TecnicoRoute> {
             val viewModel = viewModel {
                 TecnicoViewModel(
-                    ferramentas = AppModule.ferramentaRemoteDataSource
+                    ferramentas = AppModule.ferramentaRemoteDataSource,
+                    idTecnico = SessionManager.atual?.idFunc ?: -1,
+                    nomeTecnico = SessionManager.atual?.nome ?: "",
+                    turno = SessionManager.atual?.turno ?: ""
                 )
             }
             TecnicoScreen(viewModel = viewModel)
