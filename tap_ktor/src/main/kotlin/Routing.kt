@@ -283,6 +283,48 @@ fun Application.configureRouting() {
             }
         }
 
+        get("/api/tecnicos/{id}/ferramentas") {
+            val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
+
+            val idTecnico = call.parameters["id"]?.toIntOrNull()
+            if (idTecnico == null) {
+                call.respond(HttpStatusCode.BadRequest, "id inválido")
+                return@get
+            }
+
+            val lista = mutableListOf<FerramentaDTO>()
+
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver")
+                val connection = DriverManager.getConnection(url, USER, PASSWORD)
+                try {
+                    val sql = "SELECT idFerramenta, nome, categoria, estado, disponibilidade, Armario " +
+                            "FROM View_Ferramentas_Tecnico WHERE id_tecnico = ?"
+                    val statement = connection.prepareStatement(sql)
+                    statement.setInt(1, idTecnico)
+                    val resultSet = statement.executeQuery()
+
+                    while (resultSet.next()) {
+                        lista.add(
+                            FerramentaDTO(
+                                idFerramenta = resultSet.getInt("idFerramenta"),
+                                nome = resultSet.getString("nome"),
+                                categoria = resultSet.getString("categoria"),
+                                estado = resultSet.getString("estado"),
+                                disponibilidade = resultSet.getString("disponibilidade"),
+                                localizacao = "Arm. ${resultSet.getString("Armario")}" // não sei o que meter
+                            )
+                        )
+                    }
+                } finally {
+                    connection.close()
+                }
+                call.respond(lista)
+            } catch (e: Exception) {
+                call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain)
+            }
+        }
+
         // ====== POSTS ======
         // técnico requisita ferramenta
         post("/api/requisicoes") {
