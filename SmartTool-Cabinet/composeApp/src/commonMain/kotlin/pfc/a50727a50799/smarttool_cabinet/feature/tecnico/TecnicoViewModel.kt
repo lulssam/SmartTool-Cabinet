@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import pfc.a50727a50799.smarttool_cabinet.core.ferramenta.FerramentaRemoteDataSource
+import pfc.a50727a50799.smarttool_cabinet.core.ferramenta.toTecnicoUi
 import pfc.a50727a50799.smarttool_cabinet.core.network.ApiError
 import pfc.a50727a50799.smarttool_cabinet.core.network.ApiResult
 
@@ -17,7 +18,10 @@ import pfc.a50727a50799.smarttool_cabinet.core.network.ApiResult
  * (No futuro, injetas aqui o teu FerramentaRemoteDataSource igual ao do Gestor)
  */
 class TecnicoViewModel(
-    private val ferramentas: FerramentaRemoteDataSource
+    private val ferramentas: FerramentaRemoteDataSource,
+    private val idTecnico: Int,
+    nomeTecnico: String,
+    turno: String
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(TecnicoUiState())
@@ -29,8 +33,25 @@ class TecnicoViewModel(
 
     fun carregar() {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = false, error = null) }
+            _state.update { it.copy(isLoading = true, error = null) }
 
+            when (val r = ferramentas.getFerramentaTecnico(idTecnico)) {
+                is ApiResult.Success -> {
+                    val lista = r.data.map { it.toTecnicoUi() }
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            minhasFerramentas = lista,
+                            ferramentasEmUso = lista.size,
+                            ferramentasParaDevolver = lista.size
+                        )
+                    }
+                }
+
+                is ApiResult.Error -> _state.update {
+                    it.copy(isLoading = false, error = mensagem(r.error))
+                }
+            }
         }
     }
 

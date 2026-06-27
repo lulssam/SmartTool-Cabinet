@@ -15,6 +15,7 @@ enum class UserRole {
  * @property nome Nome do funcionário, vindo do nosso backend.
  * @property turno Turno do funcionário (MANHA/TARDE/NOITE), vindo do backend.
  * @property role Cargo do user obtido a partir do nosso backend.
+ * @property idFunc Id do funcionário, vindo do nosso backend.
  */
 data class Session(
     val uid: String,
@@ -22,6 +23,7 @@ data class Session(
     val nome: String,
     val turno: String,
     val role: UserRole,
+    val idFunc: Int
 )
 
 /**

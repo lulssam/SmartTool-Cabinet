@@ -33,7 +33,8 @@ class iOSAuthRepository(
                     email = email,
                     nome = resultado.data.nome,
                     turno = resultado.data.turno,
-                    role = role
+                    role = role,
+                    idFunc = resultado.data.idFunc
                 ).let { AuthResult.Success(it) }
             }
 
