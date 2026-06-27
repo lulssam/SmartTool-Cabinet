@@ -42,3 +42,20 @@ JOIN    funcionario f          ON r.id_tecnico   = f.id_func
 JOIN    requisicao_ferramenta rf ON r.idRequisicao = rf.idRequisicao
 JOIN    ferramenta fe          ON rf.codigo_tipo = fe.codigo_tipo
                               AND rf.nFerramenta = fe.nFerramenta;
+                              
+                              
+-- View usada pelo endpoint das ferramentas que um técnico tem em uso (ainda não devolvidas)
+CREATE VIEW View_Ferramentas_Tecnico AS
+SELECT  r.id_tecnico,
+        fe.idFerramenta,
+        fe.nome_tipo        AS nome,
+        fe.estado,
+        fe.disponibilidade,
+        tf.categoria        AS categoria,
+        fe.nArmario         AS Armario
+FROM    requisicao r
+JOIN    requisicao_ferramenta rf ON r.idRequisicao  = rf.idRequisicao
+JOIN    ferramenta fe            ON rf.codigo_tipo  = fe.codigo_tipo
+                                AND rf.nFerramenta  = fe.nFerramenta
+JOIN    tipo_ferramenta tf       ON fe.codigo_tipo  = tf.codigo
+WHERE   r.dhDevolucao IS NULL;
