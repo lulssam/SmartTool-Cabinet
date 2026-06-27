@@ -15,6 +15,8 @@ import kotlinx.coroutines.launch
 import pfc.a50727a50799.smarttool_cabinet.core.auth.UserRole
 import pfc.a50727a50799.smarttool_cabinet.core.auth.data.SessionManager
 import pfc.a50727a50799.smarttool_cabinet.di.AppModule
+import pfc.a50727a50799.smarttool_cabinet.feature.backoffice.BODashboardScreen
+import pfc.a50727a50799.smarttool_cabinet.feature.backoffice.BODashboardViewModel
 import pfc.a50727a50799.smarttool_cabinet.feature.email.emailScreen
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.GestorScreen
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.GestorViewModel
@@ -175,10 +177,13 @@ private fun AppNavHost(
         }
 
         composable<BackOfficeRoute> {
-            // TODO
+            val viewModel = viewModel {
+                BODashboardViewModel()
+            }
+            BODashboardScreen(viewModel = viewModel)
         }
 
-        // 1. Ecrã Principal do Técnico (Dashboard)
+
         composable<TecnicoRoute> {
             val viewModel = viewModel {
                 TecnicoViewModel(
@@ -188,7 +193,7 @@ private fun AppNavHost(
             TecnicoScreen(viewModel = viewModel)
         }
 
-        composable< FerramentasTecnicoRoute> {
+        composable<FerramentasTecnicoRoute> {
             val viewModel = viewModel {
                 FerramentasViewModel(
                     ferramentas = AppModule.ferramentaRemoteDataSource
@@ -197,7 +202,7 @@ private fun AppNavHost(
             FerramentasScreen(viewModel = viewModel)
         }
 
-        composable< HistoricoTecnicoRoute> {
+        composable<HistoricoTecnicoRoute> {
             val viewModel = viewModel {
 
                 HistoricoViewModel()
@@ -205,6 +210,6 @@ private fun AppNavHost(
             }
             HistoricoScreen(viewModel = viewModel)
         }
-        }
     }
+}
 
