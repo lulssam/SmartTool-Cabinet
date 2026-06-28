@@ -82,6 +82,8 @@ class ArmariosViewModel(
                     return@launch
                 }
             }
+
+            _state.update { it.copy(isLoading = false) }
         }
     }
 
