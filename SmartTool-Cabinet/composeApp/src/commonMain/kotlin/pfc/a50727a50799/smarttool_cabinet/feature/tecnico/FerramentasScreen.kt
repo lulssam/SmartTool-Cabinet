@@ -41,6 +41,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import pfc.a50727a50799.smarttool_cabinet.ui.BarraPesquisa
+import pfc.a50727a50799.smarttool_cabinet.ui.FilterChip
 import pfc.a50727a50799.smarttool_cabinet.ui.TopBar
 
 // Importações a partir da pasta global
@@ -99,22 +101,43 @@ private fun FerramentasScreenContent(
                 ) {
                     item {
                         Column {
-                            Text(text = "Ferramentas", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = TextTitle)
-                            Text(text = "Consulte e gira as suas ferramentas", fontSize = 14.sp, color = TextSecondary)
+                            Text(
+                                text = "Ferramentas",
+                                fontSize = 24.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = TextTitle
+                            )
+                            Text(
+                                text = "Consulte e gira as suas ferramentas",
+                                fontSize = 14.sp,
+                                color = TextSecondary
+                            )
                         }
                     }
 
                     item {
-                        Text(text = "Templates diários", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = TextTitle, modifier = Modifier.padding(top = 8.dp))
+                        Text(
+                            text = "Templates diários",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = TextTitle,
+                            modifier = Modifier.padding(top = 8.dp)
+                        )
                     }
 
                     items(state.templates) { template ->
-                        TemplateCard(template = template, onClick = { onTemplateClick(template.id) })
+                        TemplateCard(
+                            template = template,
+                            onClick = { onTemplateClick(template.id) })
                     }
 
                     item {
                         Spacer(modifier = Modifier.height(8.dp))
-                        BarraPesquisa(query = state.searchQuery, onQueryChange = onSearchChange)
+                        BarraPesquisa(
+                            label = "Pesquisar ferramentas...",
+                            query = state.searchQuery,
+                            onQueryChange = onSearchChange
+                        )
                     }
 
                     item {
@@ -169,15 +192,25 @@ fun TemplateCard(template: TemplateDiarioUi, onClick: () -> Unit) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Box(
-                    modifier = Modifier.size(40.dp).clip(RoundedCornerShape(8.dp)).background(TapLightGreen.copy(alpha = 0.15f)),
+                    modifier = Modifier.size(40.dp).clip(RoundedCornerShape(8.dp))
+                        .background(TapLightGreen.copy(alpha = 0.15f)),
                     contentAlignment = Alignment.Center
                 ) { Text("🔧", fontSize = 16.sp) }
 
                 Spacer(modifier = Modifier.width(12.dp))
 
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(text = template.nome, fontWeight = FontWeight.Bold, fontSize = 15.sp, color = TextTitle)
-                    Text(text = "${template.totalFerramentas} ferramentas", fontSize = 12.sp, color = TextSecondary)
+                    Text(
+                        text = template.nome,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 15.sp,
+                        color = TextTitle
+                    )
+                    Text(
+                        text = "${template.totalFerramentas} ferramentas",
+                        fontSize = 12.sp,
+                        color = TextSecondary
+                    )
                 }
 
                 Text(
@@ -189,15 +222,24 @@ fun TemplateCard(template: TemplateDiarioUi, onClick: () -> Unit) {
             }
 
             AnimatedVisibility(visible = template.isExpanded) {
-                Column(modifier = Modifier.padding(top = 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Column(
+                    modifier = Modifier.padding(top = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
                     template.ferramentas.forEach { nomeFerramenta ->
                         Row(
-                            modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(6.dp)).background(FieldBg).padding(12.dp),
+                            modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(6.dp))
+                                .background(FieldBg).padding(12.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text("🔧", fontSize = 12.sp)
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text(text = nomeFerramenta, fontSize = 13.sp, fontWeight = FontWeight.Medium, color = TextTitle)
+                            Text(
+                                text = nomeFerramenta,
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = TextTitle
+                            )
                         }
                     }
 
@@ -218,44 +260,6 @@ fun TemplateCard(template: TemplateDiarioUi, onClick: () -> Unit) {
 }
 
 @Composable
-fun BarraPesquisa(query: String, onQueryChange: (String) -> Unit) {
-    TextField(
-        value = query,
-        onValueChange = onQueryChange,
-        placeholder = { Text("Pesquisar ferramentas...", color = TextSecondary) },
-        leadingIcon = {
-            Text("🔍", fontSize = 16.sp, modifier = Modifier.padding(start = 12.dp))
-        },
-        singleLine = true,
-        colors = TextFieldDefaults.colors(
-            focusedContainerColor = FieldBg,
-            unfocusedContainerColor = FieldBg,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent
-        ),
-        shape = RoundedCornerShape(12.dp),
-        modifier = Modifier.fillMaxWidth()
-    )
-}
-
-@Composable
-fun FilterChip(label: String, isSelected: Boolean, onClick: () -> Unit) {
-    val bgColor = if (isSelected) TapLightGreen.copy(alpha = 0.15f) else Color.White
-    val borderColor = if (isSelected) TapBrandDark else CardBorder
-    val textColor = if (isSelected) TapBrandDark else TextSecondary
-
-    Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(20.dp))
-            .background(bgColor)
-            .clickable { onClick() }
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-    ) {
-        Text(text = label, color = textColor, fontSize = 13.sp, fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium)
-    }
-}
-
-@Composable
 fun FerramentaItemCard(ferramenta: FerramentaListaUi) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -266,27 +270,49 @@ fun FerramentaItemCard(ferramenta: FerramentaListaUi) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Box(
-                    modifier = Modifier.size(42.dp).clip(RoundedCornerShape(8.dp)).background(FieldBg),
+                    modifier = Modifier.size(42.dp).clip(RoundedCornerShape(8.dp))
+                        .background(FieldBg),
                     contentAlignment = Alignment.Center
                 ) { Text("🔧", fontSize = 18.sp) }
 
                 Spacer(modifier = Modifier.width(12.dp))
 
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(text = ferramenta.nome, fontWeight = FontWeight.Bold, fontSize = 14.sp, color = TextTitle)
+                    Text(
+                        text = ferramenta.nome,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp,
+                        color = TextTitle
+                    )
                     Text(text = ferramenta.detalhes, fontSize = 11.sp, color = TextSecondary)
                 }
 
                 val (bgColor, textColor, label) = when (ferramenta.estado) {
-                    EstadoFerramentaLista.DISPONIVEL -> Triple(TapLightGreen.copy(alpha = 0.2f), TapBrandDark, "Disponível")
-                    EstadoFerramentaLista.EM_USO -> Triple(AlertOrange.copy(alpha = 0.15f), AlertOrangeText, "Em Uso")
+                    EstadoFerramentaLista.DISPONIVEL -> Triple(
+                        TapLightGreen.copy(alpha = 0.2f),
+                        TapBrandDark,
+                        "Disponível"
+                    )
+
+                    EstadoFerramentaLista.EM_USO -> Triple(
+                        AlertOrange.copy(alpha = 0.15f),
+                        AlertOrangeText,
+                        "Em Uso"
+                    )
+
                     EstadoFerramentaLista.MANUTENCAO -> Triple(FieldBg, TextSecondary, "Manutenção")
                 }
 
                 Box(
-                    modifier = Modifier.clip(RoundedCornerShape(12.dp)).background(bgColor).padding(horizontal = 10.dp, vertical = 4.dp)
+                    modifier = Modifier.clip(RoundedCornerShape(12.dp)).background(bgColor)
+                        .padding(horizontal = 10.dp, vertical = 4.dp)
                 ) {
-                    Text(text = label, color = textColor, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                    Text(
+                        text = label,
+                        color = textColor,
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             }
 
@@ -297,7 +323,11 @@ fun FerramentaItemCard(ferramenta: FerramentaListaUi) {
                         onClick = { },
                         modifier = Modifier.weight(1f).height(44.dp),
                         shape = RoundedCornerShape(8.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(containerColor = TapLightGreen.copy(alpha = 0.15f)),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            containerColor = TapLightGreen.copy(
+                                alpha = 0.15f
+                            )
+                        ),
                         border = BorderStroke(1.dp, TapBrandGreen)
                     ) {
                         Text("Devolver", color = TapBrandDark, fontWeight = FontWeight.Bold)
@@ -307,7 +337,11 @@ fun FerramentaItemCard(ferramenta: FerramentaListaUi) {
                         onClick = { },
                         modifier = Modifier.weight(1f).height(44.dp),
                         shape = RoundedCornerShape(8.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(containerColor = AlertOrange.copy(alpha = 0.1f)),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            containerColor = AlertOrange.copy(
+                                alpha = 0.1f
+                            )
+                        ),
                         border = BorderStroke(1.dp, AlertOrange)
                     ) {
                         Text("Mau estado", color = AlertOrangeText, fontWeight = FontWeight.Bold)
@@ -345,7 +379,11 @@ private fun Preview() {
                         id = 2,
                         nome = "Manutenção Aviónicos",
                         totalFerramentas = 3,
-                        ferramentas = listOf("Torquimetro 60Nm", "Pistola de Calor", "Alicate de Corte"),
+                        ferramentas = listOf(
+                            "Torquimetro 60Nm",
+                            "Pistola de Calor",
+                            "Alicate de Corte"
+                        ),
                         isExpanded = true
                     )
                 ),

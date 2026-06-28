@@ -18,8 +18,8 @@ import pfc.a50727a50799.smarttool_cabinet.di.AppModule
 import pfc.a50727a50799.smarttool_cabinet.feature.backoffice.BODashboardScreen
 import pfc.a50727a50799.smarttool_cabinet.feature.backoffice.BODashboardViewModel
 import pfc.a50727a50799.smarttool_cabinet.feature.email.emailScreen
-import pfc.a50727a50799.smarttool_cabinet.feature.gestor.GestorScreen
-import pfc.a50727a50799.smarttool_cabinet.feature.gestor.GestorViewModel
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard.GestorScreen
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard.GestorViewModel
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.FerramentasTecnicoRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.HistoricoTecnicoRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.LoginEmailRoute

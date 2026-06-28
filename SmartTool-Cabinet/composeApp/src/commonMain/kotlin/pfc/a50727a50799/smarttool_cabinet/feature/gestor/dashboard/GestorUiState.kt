@@ -1,4 +1,4 @@
-package pfc.a50727a50799.smarttool_cabinet.feature.gestor
+package pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard
 
 import pfc.a50727a50799.smarttool_cabinet.core.ferramenta.FerramentaDto
 
