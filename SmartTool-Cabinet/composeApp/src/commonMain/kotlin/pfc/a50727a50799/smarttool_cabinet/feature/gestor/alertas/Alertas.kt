@@ -1,4 +1,4 @@
-package pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard
+package pfc.a50727a50799.smarttool_cabinet.feature.gestor.alertas
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,25 +16,24 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.armarios.ArmariosViewModel
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard.AlertaUi
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard.Gravidade
 import pfc.a50727a50799.smarttool_cabinet.ui.AlertaCard
-import pfc.a50727a50799.smarttool_cabinet.ui.ArmarioCard
-import pfc.a50727a50799.smarttool_cabinet.ui.EstadoFerramentasCard
-import pfc.a50727a50799.smarttool_cabinet.ui.SectionHeader
 import pfc.a50727a50799.smarttool_cabinet.ui.TopBar
-import pfc.a50727a50799.smarttool_cabinet.ui.WelcomeCard
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AppTheme
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.ScreenBg
-import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapBrandDark
-
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.TextSecondary
 
 @Composable
-private fun GestorScreenContent(
-    state: GestorUiState,
-    onVerArmarios: () -> Unit,
-    onVerAlertas: () -> Unit
+private fun AlertasScreenContent(
+    state: AlertasUiState,
 ) {
     when {
         state.isLoading ->
@@ -48,11 +47,13 @@ private fun GestorScreenContent(
             }
 
         else ->
-            Column(Modifier.fillMaxSize().background(ScreenBg)) {
+            Column(
+                modifier = Modifier.fillMaxSize().background(ScreenBg)
+            ) {
                 TopBar(
-                    titulo = "Dashboard",
-                    alertasAtivos = state.alertas.size,
-                    mostrarAlertas = state.alertas.isNotEmpty(),
+                    titulo = "Alertas",
+                    alertasAtivos = state.alertasAtivos,
+                    mostrarAlertas = false,
                     onMenu = {}
                 )
 
@@ -61,79 +62,54 @@ private fun GestorScreenContent(
                     contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
+                    // titulo
                     item {
-                        WelcomeCard(
-                            nomeGestor = state.nomeGestor,
-                            turno = state.turno,
-                            cargo = "Gestor de Armazém",
-                            color = TapBrandDark
+                        Text(
+                            text = "Alertas",
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black,
+                            fontSize = 28.sp,
+                        )
+
+                        Text(
+                            text = "Ocorrências que requerem atenção.",
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 14.sp,
+                            color = TextSecondary
                         )
                     }
-                    item { EstadoFerramentasCard(state.estatisticas) }
-                    item { SectionHeader("Estado dos Armários", onVerTodos = onVerArmarios) }
-                    items(state.armarios) { ArmarioCard(it) }
-                    item { SectionHeader("Alertas Recentes", onVerTodos = onVerAlertas) }
+
+                    // alertas
                     items(state.alertas) {
                         AlertaCard(
-                            it.gravidade,
-                            it.titulo,
-                            it.descricao,
-                            it.hora
+                            gravidade = it.gravidade,
+                            titulo = it.titulo,
+                            descricao = it.descricao,
+                            horas = it.hora
                         )
                     }
                 }
             }
+
     }
 }
 
-
 @Composable
-fun GestorScreen(
-    viewModel: GestorViewModel = viewModel(),
-    onVerArmarios: () -> Unit,
-    onVerAlertas: () -> Unit
+fun AlertasScreen(
+    viewModel: AlertasViewModel = viewModel()
 ) {
     val state by viewModel.state.collectAsState()
-    GestorScreenContent(
-        state = state,
-        onVerArmarios = onVerArmarios,
-        onVerAlertas = onVerAlertas
+    AlertasScreenContent(
+        state = state
     )
 }
 
-/**
- * Preview do ecrã Gestor para visualização no Android Studio.
- *
- * Utiliza o tema do projeto e um estado por defeito para
- * permitir a pré-visualização durante o desenvolvimento.
- */
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun Preview() {
+private fun Preview() {
     AppTheme {
-        GestorScreenContent(
-            GestorUiState(
-                estatisticas = EstatisticasFerramentas(9, 3, 1, 2),
-                nomeGestor = "Gonçalo Charneca",
-                turno = "8:00-16:00",
-                armarios = listOf(
-                    ArmarioUi(
-                        "Armário 1 - Ferramentas Gerais",
-                        11,
-                        12,
-                        true,
-                        1,
-                        EstadoArmario.AVARIADO
-                    ),
-                    ArmarioUi(
-                        "Armário 2 - Ferramentas Elétricas",
-                        10,
-                        12,
-                        false,
-                        2,
-                        EstadoArmario.OPERACIONAL
-                    )
-                ),
+        AlertasScreenContent(
+            AlertasUiState(
                 alertas = listOf(
                     AlertaUi(
                         "Ferramentas em falta",
@@ -148,9 +124,7 @@ fun Preview() {
                         Gravidade.AVISO
                     )
                 ),
-            ),
-            onVerArmarios = {},
-            onVerAlertas = {}
+            )
         )
     }
 }
