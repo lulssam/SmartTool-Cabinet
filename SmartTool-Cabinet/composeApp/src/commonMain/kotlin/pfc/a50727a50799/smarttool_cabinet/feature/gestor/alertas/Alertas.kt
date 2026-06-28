@@ -1,0 +1,116 @@
+package pfc.a50727a50799.smarttool_cabinet.feature.gestor.alertas
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard.AlertaUi
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard.Gravidade
+import pfc.a50727a50799.smarttool_cabinet.ui.AlertaCard
+import pfc.a50727a50799.smarttool_cabinet.ui.TopBar
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.AppTheme
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.ScreenBg
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.TextSecondary
+
+@Composable
+private fun AlertasScreenContent(
+    state: AlertasUiState,
+) {
+    when {
+        state.isLoading ->
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+
+        state.error != null ->
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(state.error, color = MaterialTheme.colorScheme.error)
+            }
+
+        else ->
+            Column(
+                modifier = Modifier.fillMaxSize().background(ScreenBg)
+            ) {
+                TopBar(
+                    titulo = "Alertas",
+                    alertasAtivos = state.alertasAtivos,
+                    mostrarAlertas = true,
+                    onMenu = {}
+                )
+
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(20.dp)
+                ) {
+                    // titulo
+                    item {
+                        Text(
+                            text = "Alertas",
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black,
+                            fontSize = 28.sp,
+                        )
+
+                        Text(
+                            text = "Ocorrências que requerem atenção.",
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 14.sp,
+                            color = TextSecondary
+                        )
+                    }
+
+                    // alertas
+                    items(state.alertas) {
+                        AlertaCard(
+                            gravidade = it.gravidade,
+                            titulo = it.titulo,
+                            descricao = it.descricao,
+                            horas = it.hora
+                        )
+                    }
+                }
+            }
+
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+private fun Preview() {
+    AppTheme {
+        AlertasScreenContent(
+            AlertasUiState(
+                alertas = listOf(
+                    AlertaUi(
+                        "Ferramentas em falta",
+                        "F-004 Chave de Fendas não devolvida",
+                        "16:34",
+                        Gravidade.CRITICO
+                    ),
+                    AlertaUi(
+                        "Ferramenta em mau estado",
+                        "F-005 Chave Inglesa para manutenção",
+                        "9:30",
+                        Gravidade.AVISO
+                    )
+                ),
+            )
+        )
+    }
+}
