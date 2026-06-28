@@ -15,8 +15,9 @@ import java.sql.Statement
  * mudar user e password consoante a pessoa a correr*/
 fun Application.configureRouting() {
 
-    val USER = "root"
-    val PASSWORD = "rootpass"
+    val URL = environment.config.property("storage.jdbcUrl").getString()
+    val USER = environment.config.property("storage.user").getString()
+    val PASSWORD = environment.config.property("storage.password").getString()
 
     routing {
 
