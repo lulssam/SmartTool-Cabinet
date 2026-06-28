@@ -18,8 +18,11 @@ import pfc.a50727a50799.smarttool_cabinet.di.AppModule
 import pfc.a50727a50799.smarttool_cabinet.feature.backoffice.BODashboardScreen
 import pfc.a50727a50799.smarttool_cabinet.feature.backoffice.BODashboardViewModel
 import pfc.a50727a50799.smarttool_cabinet.feature.email.emailScreen
-import pfc.a50727a50799.smarttool_cabinet.feature.gestor.GestorScreen
-import pfc.a50727a50799.smarttool_cabinet.feature.gestor.GestorViewModel
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.armarios.ArmariosScreen
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.armarios.ArmariosViewModel
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard.GestorScreen
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard.GestorViewModel
+import pfc.a50727a50799.smarttool_cabinet.feature.navigation.ArmariosGestorRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.FerramentasTecnicoRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.HistoricoTecnicoRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.LoginEmailRoute
@@ -173,7 +176,9 @@ private fun AppNavHost(
 
                 )
             }
-            GestorScreen(viewModel = viewModel)
+            GestorScreen(
+                viewModel = viewModel
+            )
         }
 
         composable<BackOfficeRoute> {
@@ -213,6 +218,19 @@ private fun AppNavHost(
             }
             HistoricoScreen(viewModel = viewModel)
         }
+
+        composable<ArmariosGestorRoute> {
+            val viewModel = viewModel {
+                ArmariosViewModel(
+                    ferramentas = AppModule.ferramentaRemoteDataSource,
+                    armarios = AppModule.armarioRemoteDataSource,
+                    alertas = AppModule.alertaRemoteDataSource
+                )
+            }
+
+            ArmariosScreen(viewModel = viewModel)
+        }
     }
+
 }
 
