@@ -12,6 +12,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,6 +21,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.armarios.ArmariosViewModel
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard.AlertaUi
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard.Gravidade
 import pfc.a50727a50799.smarttool_cabinet.ui.AlertaCard
@@ -49,7 +53,7 @@ private fun AlertasScreenContent(
                 TopBar(
                     titulo = "Alertas",
                     alertasAtivos = state.alertasAtivos,
-                    mostrarAlertas = true,
+                    mostrarAlertas = false,
                     onMenu = {}
                 )
 
@@ -88,6 +92,16 @@ private fun AlertasScreenContent(
             }
 
     }
+}
+
+@Composable
+fun AlertasScreen(
+    viewModel: AlertasViewModel = viewModel()
+) {
+    val state by viewModel.state.collectAsState()
+    AlertasScreenContent(
+        state = state
+    )
 }
 
 @Preview(showBackground = true, showSystemUi = true)
