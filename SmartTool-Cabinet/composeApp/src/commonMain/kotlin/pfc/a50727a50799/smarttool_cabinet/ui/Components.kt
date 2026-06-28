@@ -3,6 +3,7 @@ package pfc.a50727a50799.smarttool_cabinet.ui
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,6 +31,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,15 +49,16 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
-import pfc.a50727a50799.smarttool_cabinet.feature.gestor.ArmarioUi
-import pfc.a50727a50799.smarttool_cabinet.feature.gestor.EstadoArmario
-import pfc.a50727a50799.smarttool_cabinet.feature.gestor.EstatisticasFerramentas
-import pfc.a50727a50799.smarttool_cabinet.feature.gestor.Gravidade
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard.ArmarioUi
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard.EstadoArmario
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard.EstatisticasFerramentas
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard.Gravidade
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AlertOrange
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AlertOrangeText
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AppTheme
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.CardBorder
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.CardShape
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.FieldBg
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.InfoBoxBg
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.PillShape
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapAlert
@@ -71,6 +75,7 @@ import smarttoolcabinet.composeapp.generated.resources.alert_triangle
 import smarttoolcabinet.composeapp.generated.resources.arrowleft
 import smarttoolcabinet.composeapp.generated.resources.lock
 import smarttoolcabinet.composeapp.generated.resources.menu
+import smarttoolcabinet.composeapp.generated.resources.search
 import smarttoolcabinet.composeapp.generated.resources.unlock
 
 @Composable
@@ -145,7 +150,7 @@ fun TopBar(
 fun WelcomeCard(
     nomeGestor: String,
     turno: String,
-    cargo: String = "Gestor de Armazém",
+    cargo: String = "",
     color: Color
 ) {
     Column(
@@ -532,6 +537,59 @@ fun AlertaCard(
     }
 }
 
+@Composable
+fun BarraPesquisa(
+    label: String,
+    query: String,
+    onQueryChange: (String) -> Unit
+) {
+    TextField(
+        value = query,
+        onValueChange = onQueryChange,
+        placeholder = { Text(label, color = TextSecondary) },
+        leadingIcon = {
+            Icon(
+                painterResource(Res.drawable.search),
+                contentDescription = null,
+                tint = TextSecondary,
+                modifier = Modifier.size(20.dp)
+            )
+        },
+        singleLine = true,
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = FieldBg,
+            unfocusedContainerColor = FieldBg,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent
+        ),
+        shape = RoundedCornerShape(12.dp),
+        modifier = Modifier.fillMaxWidth()
+    )
+}
+
+@Composable
+fun FilterChip(label: String, isSelected: Boolean, onClick: () -> Unit) {
+    val bgColor = if (isSelected) TapLightGreen.copy(alpha = 0.15f) else Color.White
+    val borderColor = if (isSelected) TapBrandDark else CardBorder
+    val textColor = if (isSelected) TapBrandDark else TextSecondary
+
+    Box(
+        modifier = Modifier
+            .clip(PillShape)
+            .background(bgColor)
+            .border(1.dp, borderColor, PillShape)
+            .clickable { onClick() }
+            .padding(horizontal = 16.dp, vertical = 3.dp),
+    ) {
+        Text(
+            text = label,
+            color = textColor,
+            fontSize = 13.sp,
+            fontWeight = FontWeight.Medium
+        )
+    }
+}
+
 /**
  * Moldura partilhada das 3 caixas. O conteúdo vem de fora.
  *
@@ -569,7 +627,12 @@ private fun StatusPill(
     estado: EstadoArmario
 ) {
     val (fundo, texto, label) = when (estado) {
-        EstadoArmario.OPERACIONAL -> Triple(TapLightGreen.copy(alpha = 0.2f), TapBrandDark, "Online")
+        EstadoArmario.OPERACIONAL -> Triple(
+            TapLightGreen.copy(alpha = 0.2f),
+            TapBrandDark,
+            "Online"
+        )
+
         EstadoArmario.ALERTA -> Triple(
             AlertOrange.copy(alpha = 0.2f),
             AlertOrangeText,
@@ -704,6 +767,42 @@ private fun PreviewEstadoFerramentasCard() {
                 indisponivel = 1,
                 manutencao = 2
             )
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewBarra() {
+    AppTheme {
+        BarraPesquisa(
+            label = "Pesquisar armários...",
+            query = "",
+            onQueryChange = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewFiltroChipsOn() {
+    AppTheme {
+        FilterChip(
+            label = "Todos",
+            isSelected = true,
+            onClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewFiltroChipsOff() {
+    AppTheme {
+        FilterChip(
+            label = "Offline",
+            isSelected = false,
+            onClick = {}
         )
     }
 }
