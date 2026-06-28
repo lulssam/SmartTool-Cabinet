@@ -32,7 +32,8 @@ import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapBrandDark
 
 @Composable
 private fun GestorScreenContent(
-    state: GestorUiState
+    state: GestorUiState,
+    onVerArmarios: () -> Unit
 ) {
     when {
         state.isLoading ->
@@ -59,14 +60,16 @@ private fun GestorScreenContent(
                     contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
-                    item { WelcomeCard(
-                        nomeGestor = state.nomeGestor,
-                        turno = state.turno,
-                        cargo = "Gestor de Armazém",
-                        color = TapBrandDark
-                    ) }
+                    item {
+                        WelcomeCard(
+                            nomeGestor = state.nomeGestor,
+                            turno = state.turno,
+                            cargo = "Gestor de Armazém",
+                            color = TapBrandDark
+                        )
+                    }
                     item { EstadoFerramentasCard(state.estatisticas) }
-                    item { SectionHeader("Estado dos Armários", onVerTodos = {}) }
+                    item { SectionHeader("Estado dos Armários", onVerTodos = onVerArmarios) }
                     items(state.armarios) { ArmarioCard(it) }
                     item { SectionHeader("Alertas Recentes", onVerTodos = {}) }
                     items(state.alertas) {
@@ -85,11 +88,13 @@ private fun GestorScreenContent(
 
 @Composable
 fun GestorScreen(
-    viewModel: GestorViewModel = viewModel()
+    viewModel: GestorViewModel = viewModel(),
+    onVerArmarios: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
     GestorScreenContent(
-        state = state
+        state = state,
+        onVerArmarios = onVerArmarios
     )
 }
 
@@ -139,8 +144,9 @@ fun Preview() {
                         "9:30",
                         Gravidade.AVISO
                     )
-                )
-            )
+                ),
+            ),
+            onVerArmarios = {}
         )
     }
 }
