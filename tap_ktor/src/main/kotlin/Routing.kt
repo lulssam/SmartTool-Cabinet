@@ -24,15 +24,11 @@ fun Application.configureRouting() {
         // ====== GETS ======
         // devolve vista das ferramentas
         get("/api/ferramentas") {
-            val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
-            val user = USER
-            val password = PASSWORD
-
             val lista = mutableListOf<FerramentaDTO>()
 
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver")
-                val connection = DriverManager.getConnection(url, user, password)
+                val connection = DriverManager.getConnection(URL, USER, PASSWORD)
                 try {
                     val statement = connection.createStatement()
                     val resultSet = statement.executeQuery(
@@ -64,13 +60,9 @@ fun Application.configureRouting() {
 
         // devolve {idFunc, nome, cargo, turno, ativo}
         get("/api/funcionarios/{email}") {
-            val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
-            val user = USER
-            val password = PASSWORD
-
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver")
-                val connection = DriverManager.getConnection(url, user, password)
+                val connection = DriverManager.getConnection(URL, USER, PASSWORD)
                 try {
                     val email = call.parameters["email"]
                     // Atualizado o SQL para incluir a coluna 'ativo'
@@ -108,15 +100,12 @@ fun Application.configureRouting() {
         // devolve lista de armários com estado
 
         get("/api/armarios") {
-            val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
-            val user = USER
-            val password = PASSWORD
 
             val listaArmarios = mutableListOf<ArmariosDTO>()
 
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver")
-                val connection = DriverManager.getConnection(url, user, password)
+                val connection = DriverManager.getConnection(URL, USER, PASSWORD)
 
                 try {
                     val sql = "SELECT nArmario, capacidade, estado, trancado FROM armario"
@@ -144,15 +133,12 @@ fun Application.configureRouting() {
 
         // devolve ferramentas por armário (estado + disponibilidade)
         get("/api/armarios/{id}/ferramentas") {
-            val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
-            val user = USER
-            val password = PASSWORD
 
             val listaFerramentasArmarios = mutableListOf<FerramentaDTO>()
 
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver")
-                val connection = DriverManager.getConnection(url, user, password)
+                val connection = DriverManager.getConnection(URL, USER, PASSWORD)
 
                 try {
                     val id = call.parameters["id"]?.toIntOrNull()
@@ -192,15 +178,12 @@ fun Application.configureRouting() {
         // requisições dos últimos 7 dias (usa View_Mapa_Emprestimos)
         // todo ver se eventualmente fazemos com 30 dias por ex
         get("/api/historico") {
-            val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
-            val user = USER
-            val password = PASSWORD
 
             val listaHistorico = mutableListOf<HistoricoDTO>()
 
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver")
-                val connection = DriverManager.getConnection(url, user, password)
+                val connection = DriverManager.getConnection(URL, USER, PASSWORD)
 
                 try {
                     // TODO mudar nome para id
@@ -235,15 +218,12 @@ fun Application.configureRouting() {
 
         // ferramentas em falta + armários destrancados (fim do turno)
         get("/api/alertas") {
-            val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
-            val user = USER
-            val password = PASSWORD
 
             val listaAlertas = mutableListOf<AlertasDTO>()
 
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver")
-                val connection = DriverManager.getConnection(url, user, password)
+                val connection = DriverManager.getConnection(URL, USER, PASSWORD)
 
                 try {
 
@@ -285,8 +265,6 @@ fun Application.configureRouting() {
         }
 
         get("/api/tecnicos/{id}/ferramentas") {
-            val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
-
             val idTecnico = call.parameters["id"]?.toIntOrNull()
             if (idTecnico == null) {
                 call.respond(HttpStatusCode.BadRequest, "id inválido")
@@ -297,7 +275,7 @@ fun Application.configureRouting() {
 
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver")
-                val connection = DriverManager.getConnection(url, USER, PASSWORD)
+                val connection = DriverManager.getConnection(URL, USER, PASSWORD)
                 try {
                     val sql = "SELECT idFerramenta, nome, categoria, estado, disponibilidade, Armario " +
                             "FROM View_Ferramentas_Tecnico WHERE id_tecnico = ?"
@@ -329,13 +307,10 @@ fun Application.configureRouting() {
         // ====== POSTS ======
         // técnico requisita ferramenta
         post("/api/requisicoes") {
-            val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
-            val user = USER
-            val password = PASSWORD
 
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver")
-                val connection = DriverManager.getConnection(url, user, password)
+                val connection = DriverManager.getConnection(URL, USER, PASSWORD)
 
                 // Desligar o autoCommit para a transação
                 connection.autoCommit = false
@@ -414,13 +389,10 @@ fun Application.configureRouting() {
         }
         // atribuir tarefas e ferramentas a um técnico
         post("/api/tarefas") {
-            val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
-            val user = USER
-            val password = PASSWORD
 
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver")
-                val connection = DriverManager.getConnection(url, user, password)
+                val connection = DriverManager.getConnection(URL, USER, PASSWORD)
 
                 connection.autoCommit = false
 
@@ -480,13 +452,10 @@ fun Application.configureRouting() {
         // ====== PATCH ======
         // tecnico devolve ferramenta
         patch("/api/requisicoes/{id}/devolver") {
-            val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
-            val user = USER
-            val password = PASSWORD
 
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver")
-                val connection = DriverManager.getConnection(url, user, password)
+                val connection = DriverManager.getConnection(URL, USER, PASSWORD)
 
                 try {
                     val id = call.parameters["id"]?.toIntOrNull()
@@ -518,13 +487,11 @@ fun Application.configureRouting() {
         // marcar estado das ferramentas
         // TODO ao marcar estragada, disponibilidade tem que ir para indisponivel
         patch("/api/ferramentas/{id}/estado") {
-            val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
-            val user = USER
-            val password = PASSWORD
-
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver")
-                val connection = DriverManager.getConnection(url, user, password)
+                val connection = DriverManager.getConnection(
+                    URL, USER, PASSWORD
+                )
 
                 try {
                     val id = call.parameters["id"]?.toIntOrNull()
@@ -577,13 +544,9 @@ fun Application.configureRouting() {
 
         // gerir permições de acesso
         patch("/api/funcionarios/{id}/cargo") {
-            val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
-            val user = USER
-            val password = PASSWORD
-
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver")
-                val connection = DriverManager.getConnection(url, user, password)
+                val connection = DriverManager.getConnection(URL, USER, PASSWORD)
                 connection.autoCommit = false
 
                 try {
@@ -651,13 +614,10 @@ fun Application.configureRouting() {
 
         // definir turnos
         patch("/api/funcionarios/{id}/turno") {
-            val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
-            val user = USER
-            val password = PASSWORD
 
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver")
-                val connection = DriverManager.getConnection(url, user, password)
+                val connection = DriverManager.getConnection(URL, USER, PASSWORD)
 
                 try {
                     val id = call.parameters["id"]?.toIntOrNull()
@@ -702,15 +662,12 @@ fun Application.configureRouting() {
         // consultar ferramentas em falta e o seu eventual detentor
 
         get("/api/ferramentas/em-falta") {
-            val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
-            val user = USER
-            val password = PASSWORD
 
             val listaEmFalta = mutableListOf<FerramentaEmFaltaDTO>()
 
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver")
-                val connection = DriverManager.getConnection(url, user, password)
+                val connection = DriverManager.getConnection(URL, USER, PASSWORD)
 
                 try {
 
@@ -750,13 +707,10 @@ fun Application.configureRouting() {
 
         // Adicionar novo funcionário
         post("/api/funcionarios") {
-            val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
-            val user = USER
-            val password = PASSWORD
 
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver")
-                val connection = DriverManager.getConnection(url, user, password)
+                val connection = DriverManager.getConnection(URL, USER, PASSWORD)
                 connection.autoCommit = false // Inicia transação
 
                 try {
@@ -811,13 +765,10 @@ fun Application.configureRouting() {
 
         // remover  um funcionário
         patch("/api/funcionarios/{id}/desativar") {
-            val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
-            val user = USER
-            val password = PASSWORD
 
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver")
-                val connection = DriverManager.getConnection(url, user, password)
+                val connection = DriverManager.getConnection(URL, USER, PASSWORD)
 
                 try {
                     val id = call.parameters["id"]?.toIntOrNull()
