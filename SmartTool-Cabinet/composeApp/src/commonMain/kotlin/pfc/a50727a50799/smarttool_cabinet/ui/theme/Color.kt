@@ -22,3 +22,6 @@ val CardBorder = Color(0xFFECECEC)
 val AlertOrange = Color(0xFFF29A42)
 val AlertOrangeText = Color(0xFFD16800)
 val TapAlmostGreen = Color(0xFF273835)
+
+val SearchFieldBg = Color(0x29787880)
+val SearchFieldText = Color(0xFF727272)

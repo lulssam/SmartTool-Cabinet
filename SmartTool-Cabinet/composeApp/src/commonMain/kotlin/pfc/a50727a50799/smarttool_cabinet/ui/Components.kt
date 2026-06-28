@@ -59,8 +59,11 @@ import pfc.a50727a50799.smarttool_cabinet.ui.theme.AppTheme
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.CardBorder
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.CardShape
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.FieldBg
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.FieldShape
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.InfoBoxBg
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.PillShape
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.SearchFieldBg
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.SearchFieldText
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapAlert
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapAlmostGreen
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapBrandDark
@@ -546,23 +549,23 @@ fun BarraPesquisa(
     TextField(
         value = query,
         onValueChange = onQueryChange,
-        placeholder = { Text(label, color = TextSecondary) },
+        placeholder = { Text(label, color = SearchFieldText) },
         leadingIcon = {
             Icon(
                 painterResource(Res.drawable.search),
                 contentDescription = null,
-                tint = TextSecondary,
+                tint = SearchFieldText,
                 modifier = Modifier.size(20.dp)
             )
         },
         singleLine = true,
         colors = TextFieldDefaults.colors(
-            focusedContainerColor = FieldBg,
-            unfocusedContainerColor = FieldBg,
+            focusedContainerColor = SearchFieldBg,
+            unfocusedContainerColor = SearchFieldBg,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent
         ),
-        shape = RoundedCornerShape(12.dp),
+        shape = FieldShape,
         modifier = Modifier.fillMaxWidth()
     )
 }
