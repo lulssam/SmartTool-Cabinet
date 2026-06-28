@@ -33,7 +33,8 @@ import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapBrandDark
 @Composable
 private fun GestorScreenContent(
     state: GestorUiState,
-    onVerArmarios: () -> Unit
+    onVerArmarios: () -> Unit,
+    onVerAlertas: () -> Unit
 ) {
     when {
         state.isLoading ->
@@ -71,7 +72,7 @@ private fun GestorScreenContent(
                     item { EstadoFerramentasCard(state.estatisticas) }
                     item { SectionHeader("Estado dos Armários", onVerTodos = onVerArmarios) }
                     items(state.armarios) { ArmarioCard(it) }
-                    item { SectionHeader("Alertas Recentes", onVerTodos = {}) }
+                    item { SectionHeader("Alertas Recentes", onVerTodos = onVerAlertas) }
                     items(state.alertas) {
                         AlertaCard(
                             it.gravidade,
@@ -89,12 +90,14 @@ private fun GestorScreenContent(
 @Composable
 fun GestorScreen(
     viewModel: GestorViewModel = viewModel(),
-    onVerArmarios: () -> Unit
+    onVerArmarios: () -> Unit,
+    onVerAlertas: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
     GestorScreenContent(
         state = state,
-        onVerArmarios = onVerArmarios
+        onVerArmarios = onVerArmarios,
+        onVerAlertas = onVerAlertas
     )
 }
 
@@ -146,7 +149,8 @@ fun Preview() {
                     )
                 ),
             ),
-            onVerArmarios = {}
+            onVerArmarios = {},
+            onVerAlertas = {}
         )
     }
 }

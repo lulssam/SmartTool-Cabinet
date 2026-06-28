@@ -18,10 +18,13 @@ import pfc.a50727a50799.smarttool_cabinet.di.AppModule
 import pfc.a50727a50799.smarttool_cabinet.feature.backoffice.BODashboardScreen
 import pfc.a50727a50799.smarttool_cabinet.feature.backoffice.BODashboardViewModel
 import pfc.a50727a50799.smarttool_cabinet.feature.email.emailScreen
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.alertas.AlertasScreen
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.alertas.AlertasViewModel
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.armarios.ArmariosScreen
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.armarios.ArmariosViewModel
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard.GestorScreen
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard.GestorViewModel
+import pfc.a50727a50799.smarttool_cabinet.feature.navigation.AlertasGestorRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.ArmariosGestorRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.FerramentasTecnicoRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.HistoricoTecnicoRoute
@@ -178,7 +181,8 @@ private fun AppNavHost(
             }
             GestorScreen(
                 viewModel = viewModel,
-                onVerArmarios = { navController.navigate(ArmariosGestorRoute) }
+                onVerArmarios = { navController.navigate(ArmariosGestorRoute) },
+                onVerAlertas = { navController.navigate(AlertasGestorRoute) }
             )
         }
 
@@ -230,6 +234,17 @@ private fun AppNavHost(
             }
 
             ArmariosScreen(viewModel = viewModel)
+        }
+
+        composable<AlertasGestorRoute> {
+            val viewModel = viewModel {
+                AlertasViewModel(
+                    alertas = AppModule.alertaRemoteDataSource
+                )
+
+            }
+
+            AlertasScreen(viewModel = viewModel)
         }
     }
 

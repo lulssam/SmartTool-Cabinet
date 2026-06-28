@@ -33,11 +33,14 @@ class AlertasViewModel(
             val lista = when (val r = alertas.getAlertas()) {
                 is ApiResult.Success ->
                     _state.update { it.copy(alertas = r.data.map { dto -> dto.toUi() }) }
+
                 is ApiResult.Error -> {
                     _state.update { it.copy(isLoading = false, error = mensagem(r.error)) }
                     return@launch
                 }
             }
+
+            _state.update { it.copy(isLoading = false, error = null) }
 
         }
 

@@ -24,6 +24,8 @@ import pfc.a50727a50799.smarttool_cabinet.core.auth.UserRole
 @Serializable data object FerramentasTecnicoRoute
 
 @Serializable data object ArmariosGestorRoute
+
+@Serializable data object AlertasGestorRoute
 /**
  * Indica qual é o ecrã inicial de cada cargo, para a app saber para onde enviar
  * o utilizador logo a seguir ao login (ou no arranque, se já tiver sessão).
