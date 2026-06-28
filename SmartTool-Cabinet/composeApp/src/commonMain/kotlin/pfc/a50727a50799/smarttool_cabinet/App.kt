@@ -177,7 +177,8 @@ private fun AppNavHost(
                 )
             }
             GestorScreen(
-                viewModel = viewModel
+                viewModel = viewModel,
+                onVerArmarios = { navController.navigate(ArmariosGestorRoute) }
             )
         }
 

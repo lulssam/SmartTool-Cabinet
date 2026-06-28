@@ -5,3 +5,8 @@ ktor:
     modules:
       - com.tapktor.SerializationKt.configureSerialization
       - com.tapktor.RoutingKt.configureRouting
+
+storage:
+  jdbcUrl: "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
+  user: "$DB_USER:root"
+  password: "$DB_PASSWORD"
