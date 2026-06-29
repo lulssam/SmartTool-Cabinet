@@ -1,6 +1,5 @@
 package pfc.a50727a50799.smarttool_cabinet.feature.tecnico
 
-// --- ENUMS ---
 enum class EstadoFerramentaLista {
     DISPONIVEL, EM_USO, MANUTENCAO
 }
@@ -11,7 +10,6 @@ enum class FiltroFerramenta(val label: String) {
     DISPONIVEIS("Disponíveis")
 }
 
-// --- MODELOS ---
 data class TemplateDiarioUi(
     val id: Int,
     val nome: String,
@@ -22,6 +20,7 @@ data class TemplateDiarioUi(
 
 data class FerramentaListaUi(
     val id: Int,
+    val idRequisicao: Int?,
     val nome: String,
     val detalhes: String,
     val estado: EstadoFerramentaLista,
@@ -29,12 +28,13 @@ data class FerramentaListaUi(
     val showRequisitarButton: Boolean = false
 )
 
-// --- ESTADO PRINCIPAL ---
+
 data class FerramentasUiState(
     val searchQuery: String = "",
     val filtroAtual: FiltroFerramenta = FiltroFerramenta.TODAS,
     val templates: List<TemplateDiarioUi> = emptyList(),
-    val ferramentas: List<FerramentaListaUi> = emptyList(),
-    val isLoading: Boolean = true, // Começa a true para mostrar o loader inicialmente
+    val ferramentas: List<FerramentaListaUi> = emptyList(),          // Lista filtrada (a que aparece no ecrã)
+    val todasAsFerramentas: List<FerramentaListaUi> = emptyList(), // Lista original com tudo
+    val isLoading: Boolean = true,
     val error: String? = null
 )

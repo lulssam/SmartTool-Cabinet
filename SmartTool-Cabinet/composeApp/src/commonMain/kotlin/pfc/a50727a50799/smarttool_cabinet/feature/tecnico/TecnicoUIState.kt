@@ -18,6 +18,6 @@ data class TecnicoUiState(
 data class FerramentaTecnicoUi(
     val id: Int,
     val nome: String,
-    val detalhes: String, // ex: "Arm. 1 · Chaves"
-    val estado: String    // ex: "Em Uso"
+    val detalhes: String,
+    val estado: String
 )
