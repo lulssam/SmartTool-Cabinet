@@ -177,7 +177,7 @@ fun Application.configureRouting() {
                     val sql =
                         "SELECT idRequisicao, tecnico, idFerramenta, ferramenta, dhRequisicao, dhDevolucao " +
                                 "FROM View_Mapa_Emprestimos " +
-                                "WHERE dhRequisicao >= CURDATE() - INTERVAL 7 DAY"
+                                "WHERE dhRequisicao >= CURDATE() - INTERVAL 30 DAY"
                     val statement = connection.createStatement()
                     val resultSet = statement.executeQuery(sql)
 
