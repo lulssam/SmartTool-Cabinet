@@ -20,7 +20,7 @@ import pfc.a50727a50799.smarttool_cabinet.core.network.ApiResult
  * para o ecrã mostrar. O ecrã nunca fala diretamente com o backend —
  * passa sempre por aqui.
  */
-class FerramentasViewModel(
+class FerramentasGestorViewModel(
     private val ferramentas: FerramentaRemoteDataSource,
     private val alertas: AlertaRemoteDataSource
 ) : ViewModel() {

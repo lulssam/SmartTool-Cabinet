@@ -36,7 +36,7 @@ import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapBrandDark
 private fun GestorScreenContent(
     state: GestorUiState,
     onVerArmarios: () -> Unit,
-    onVerAlertas: () -> Unit
+    onVerAlertas: () -> Unit,
 ) {
     when {
         state.isLoading ->
@@ -93,7 +93,7 @@ private fun GestorScreenContent(
 fun GestorScreen(
     viewModel: GestorViewModel = viewModel(),
     onVerArmarios: () -> Unit,
-    onVerAlertas: () -> Unit
+    onVerAlertas: () -> Unit,
 ) {
     val state by viewModel.state.collectAsState()
     GestorScreenContent(
