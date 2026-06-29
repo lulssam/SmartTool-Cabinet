@@ -44,11 +44,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import pfc.a50727a50799.smarttool_cabinet.ui.BarraPesquisa
 import pfc.a50727a50799.smarttool_cabinet.ui.FilterChip
 import pfc.a50727a50799.smarttool_cabinet.ui.TopBar
-
-// Importações a partir da pasta global
-import pfc.a50727a50799.smarttool_cabinet.ui.TopBar
-
-// Importações do Tema
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AlertOrange
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AlertOrangeText
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AppTheme
@@ -67,9 +62,10 @@ private fun FerramentasScreenContent(
     onMenuClick: () -> Unit,
     onSearchChange: (String) -> Unit,
     onFiltroChange: (FiltroFerramenta) -> Unit,
-    onTemplateClick: (Int) -> Unit
+    onTemplateClick: (Int) -> Unit,
+    onDevolverClick: (Int) -> Unit,
+    onMauEstadoClick: (Int, Int) -> Unit
 ) {
-    // Bloco exactly igual ao estilo do Gestor
     when {
         state.isLoading ->
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -82,17 +78,8 @@ private fun FerramentasScreenContent(
             }
 
         else ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(ScreenBg)
-            ) {
-                TopBar(
-                    titulo = "Ferramentas",
-                    mostrarAlertas = false,
-                    alertasAtivos = 0,
-                    onMenu = onMenuClick
-                )
+            Column(modifier = Modifier.fillMaxSize().background(ScreenBg)) {
+                TopBar(titulo = "Ferramentas", mostrarAlertas = false, alertasAtivos = 0, onMenu = onMenuClick)
 
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
@@ -141,10 +128,7 @@ private fun FerramentasScreenContent(
                     }
 
                     item {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                             FiltroFerramenta.entries.forEach { filtro ->
                                 FilterChip(
                                     label = filtro.label,
@@ -156,7 +140,15 @@ private fun FerramentasScreenContent(
                     }
 
                     items(state.ferramentas) { ferramenta ->
-                        FerramentaItemCard(ferramenta = ferramenta)
+                        FerramentaItemCard(
+                            ferramenta = ferramenta,
+                            onDevolverClick = {
+                                ferramenta.idRequisicao?.let { idReq -> onDevolverClick(idReq) }
+                            },
+                            onMauEstadoClick = {
+                                ferramenta.idRequisicao?.let { idReq -> onMauEstadoClick(ferramenta.id, idReq) }
+                            }
+                        )
                     }
                 }
             }
@@ -174,13 +166,69 @@ fun FerramentasScreen(
         onMenuClick = {},
         onSearchChange = viewModel::onSearchChange,
         onFiltroChange = viewModel::onFiltroChange,
-        onTemplateClick = viewModel::toggleTemplate
+        onTemplateClick = viewModel::toggleTemplate,
+        onDevolverClick = viewModel::devolver,
+        onMauEstadoClick = viewModel::marcarMauEstado
     )
 }
 
-// ==========================================
-// COMPONENTES DESTA PÁGINA
-// ==========================================
+@Composable
+fun FerramentaItemCard(
+    ferramenta: FerramentaListaUi,
+    onDevolverClick: () -> Unit,
+    onMauEstadoClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White), border = BorderStroke(1.dp, CardBorder)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(modifier = Modifier.size(42.dp).clip(RoundedCornerShape(8.dp)).background(FieldBg), contentAlignment = Alignment.Center) { Text("🔧", fontSize = 18.sp) }
+                Spacer(modifier = Modifier.width(12.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(text = ferramenta.nome, fontWeight = FontWeight.Bold, fontSize = 14.sp, color = TextTitle)
+                    Text(text = ferramenta.detalhes, fontSize = 11.sp, color = TextSecondary)
+                }
+
+                val (bgColor, textColor, label) = when (ferramenta.estado) {
+                    EstadoFerramentaLista.DISPONIVEL -> Triple(TapLightGreen.copy(alpha = 0.2f), TapBrandDark, "Disponível")
+                    EstadoFerramentaLista.EM_USO -> Triple(AlertOrange.copy(alpha = 0.15f), AlertOrangeText, "Em Uso")
+                    EstadoFerramentaLista.MANUTENCAO -> Triple(FieldBg, TextSecondary, "Manutenção")
+                }
+                Box(modifier = Modifier.clip(RoundedCornerShape(12.dp)).background(bgColor).padding(horizontal = 10.dp, vertical = 4.dp)) {
+                    Text(text = label, color = textColor, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                }
+            }
+
+            if (ferramenta.showDevolverButtons && ferramenta.idRequisicao != null) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    OutlinedButton(
+                        onClick = onDevolverClick,
+                        modifier = Modifier.weight(1f).height(44.dp), shape = RoundedCornerShape(8.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(containerColor = TapLightGreen.copy(alpha = 0.15f)), border = BorderStroke(1.dp, TapBrandGreen)
+                    ) { Text("Devolver", color = TapBrandDark, fontWeight = FontWeight.Bold) }
+
+                    OutlinedButton(
+                        onClick = onMauEstadoClick,
+                        modifier = Modifier.weight(1f).height(44.dp), shape = RoundedCornerShape(8.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(containerColor = AlertOrange.copy(alpha = 0.1f)), border = BorderStroke(1.dp, AlertOrange)
+                    ) { Text("Mau estado", color = AlertOrangeText, fontWeight = FontWeight.Bold) }
+                }
+            }
+
+            if (ferramenta.showRequisitarButton) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(
+                    onClick = { },
+                    modifier = Modifier.fillMaxWidth().height(44.dp), shape = RoundedCornerShape(8.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = TapBrandDark)
+                ) { Text("Requisitar ferramenta", color = Color.White, fontWeight = FontWeight.Bold) }
+            }
+        }
+    }
+}
 
 @Composable
 fun TemplateCard(template: TemplateDiarioUi, onClick: () -> Unit) {
@@ -367,7 +415,7 @@ fun FerramentaItemCard(ferramenta: FerramentaListaUi) {
 // O Preview injeta os dados mock no Content, deixando o ViewModel totalmente isolado!
 @Preview(showBackground = true)
 @Composable
-private fun Preview() {
+private fun PreviewFerramentas() {
     AppTheme {
         FerramentasScreenContent(
             state = FerramentasUiState(

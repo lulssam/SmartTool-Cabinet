@@ -2,7 +2,6 @@ package pfc.a50727a50799.smarttool_cabinet.feature.tecnico
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,13 +14,12 @@ import pfc.a50727a50799.smarttool_cabinet.core.network.ApiResult
 
 /**
  * Trata da lógica do ecrã do Técnico.
- * (No futuro, injetas aqui o teu FerramentaRemoteDataSource igual ao do Gestor)
  */
 class TecnicoViewModel(
     private val ferramentas: FerramentaRemoteDataSource,
     private val idTecnico: Int,
-    nomeTecnico: String,
-    turno: String
+    private val nomeTecnico: String,
+    private val turno: String
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(TecnicoUiState())
@@ -41,6 +39,9 @@ class TecnicoViewModel(
                     _state.update {
                         it.copy(
                             isLoading = false,
+                            nomeTecnico = nomeTecnico,
+                            cargo = "Técnico",
+                            turno = turno,
                             minhasFerramentas = lista,
                             ferramentasEmUso = lista.size,
                             ferramentasParaDevolver = lista.size
