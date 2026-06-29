@@ -127,7 +127,7 @@ class HistoricoGestorViewModel(
         return MovimentoComData(
             dataHora = dt,
             item = HistoricoItemUi(
-                id = dto.idRequisicao * 2 + idSufixo,   // 2 movimentos da mesma req. não colidem
+                id = "${dto.idRequisicao}-${dto.idFerramenta}-$idSufixo",
                 nomeFerramenta = dto.nomeFerramenta,
                 funcionario = dto.nomeFuncionario,
                 hora = "${dt.hour.toString().padStart(2, '0')}:${
