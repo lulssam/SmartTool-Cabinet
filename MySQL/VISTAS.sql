@@ -46,7 +46,8 @@ JOIN    ferramenta fe          ON rf.codigo_tipo = fe.codigo_tipo
                               
 -- View usada pelo endpoint das ferramentas que um técnico tem em uso (ainda não devolvidas)
 CREATE VIEW View_Ferramentas_Tecnico AS
-SELECT  r.id_tecnico,
+SELECT  r.idRequisicao, 
+        r.id_tecnico,
         fe.idFerramenta,
         fe.nome_tipo        AS nome,
         fe.estado,

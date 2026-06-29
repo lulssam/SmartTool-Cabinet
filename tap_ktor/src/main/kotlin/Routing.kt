@@ -9,10 +9,6 @@ import io.ktor.server.routing.*
 import java.sql.DriverManager
 import java.sql.Statement
 
-/**
- * Função principal das calls da API
- *
- * mudar user e password consoante a pessoa a correr*/
 fun Application.configureRouting() {
 
     val USER = "root"
@@ -21,7 +17,6 @@ fun Application.configureRouting() {
     routing {
 
         // ====== GETS ======
-        // devolve vista das ferramentas
         get("/api/ferramentas") {
             val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
             val user = USER
@@ -61,7 +56,6 @@ fun Application.configureRouting() {
             }
         }
 
-        // devolve {idFunc, nome, cargo, turno, ativo}
         get("/api/funcionarios/{email}") {
             val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
             val user = USER
@@ -72,7 +66,6 @@ fun Application.configureRouting() {
                 val connection = DriverManager.getConnection(url, user, password)
                 try {
                     val email = call.parameters["email"]
-                    // Atualizado o SQL para incluir a coluna 'ativo'
                     val sql = "SELECT id_func, nomeCompleto, email, cargo, turno, ativo FROM View_Email WHERE email = ?"
                     val statement = connection.prepareStatement(sql)
                     statement.setString(1, email)
@@ -85,7 +78,7 @@ fun Application.configureRouting() {
                                 nome = resultSet.getString("nomeCompleto"),
                                 cargo = resultSet.getString("cargo"),
                                 turno = resultSet.getString("turno"),
-                                ativo = resultSet.getBoolean("ativo") // Adicionada a leitura do booleano aqui
+                                ativo = resultSet.getBoolean("ativo")
                             )
                         )
                     } else {
@@ -103,8 +96,6 @@ fun Application.configureRouting() {
                 )
             }
         }
-
-        // devolve lista de armários com estado
 
         get("/api/armarios") {
             val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
@@ -141,7 +132,6 @@ fun Application.configureRouting() {
             }
         }
 
-        // devolve ferramentas por armário (estado + disponibilidade)
         get("/api/armarios/{id}/ferramentas") {
             val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
             val user = USER
@@ -188,8 +178,6 @@ fun Application.configureRouting() {
             }
         }
 
-        // requisições dos últimos 7 dias (usa View_Mapa_Emprestimos)
-        // todo ver se eventualmente fazemos com 30 dias por ex
         get("/api/historico") {
             val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
             val user = USER
@@ -202,7 +190,6 @@ fun Application.configureRouting() {
                 val connection = DriverManager.getConnection(url, user, password)
 
                 try {
-                    // TODO mudar nome para id
                     val sql =
                         "SELECT idRequisicao, tecnico, idFerramenta, ferramenta, dhRequisicao, dhDevolucao " +
                                 "FROM View_Mapa_Emprestimos " +
@@ -232,7 +219,6 @@ fun Application.configureRouting() {
             }
         }
 
-        // ferramentas em falta + armários destrancados (fim do turno)
         get("/api/alertas") {
             val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
             val user = USER
@@ -298,7 +284,7 @@ fun Application.configureRouting() {
                 Class.forName("com.mysql.cj.jdbc.Driver")
                 val connection = DriverManager.getConnection(url, USER, PASSWORD)
                 try {
-                    val sql = "SELECT idFerramenta, nome, categoria, estado, disponibilidade, Armario " +
+                    val sql = "SELECT idRequisicao, idFerramenta, nome, categoria, estado, disponibilidade, Armario " +
                             "FROM View_Ferramentas_Tecnico WHERE id_tecnico = ?"
                     val statement = connection.prepareStatement(sql)
                     statement.setInt(1, idTecnico)
@@ -307,12 +293,13 @@ fun Application.configureRouting() {
                     while (resultSet.next()) {
                         lista.add(
                             FerramentaDTO(
+                                idRequisicao = resultSet.getInt("idRequisicao"),
                                 idFerramenta = resultSet.getInt("idFerramenta"),
                                 nome = resultSet.getString("nome"),
                                 categoria = resultSet.getString("categoria"),
                                 estado = resultSet.getString("estado"),
                                 disponibilidade = resultSet.getString("disponibilidade"),
-                                localizacao = "Arm. ${resultSet.getString("Armario")}" // não sei o que meter
+                                localizacao = "Arm. ${resultSet.getString("Armario")}"
                             )
                         )
                     }
@@ -326,7 +313,6 @@ fun Application.configureRouting() {
         }
 
         // ====== POSTS ======
-        // técnico requisita ferramenta
         post("/api/requisicoes") {
             val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
             val user = USER
@@ -336,7 +322,6 @@ fun Application.configureRouting() {
                 Class.forName("com.mysql.cj.jdbc.Driver")
                 val connection = DriverManager.getConnection(url, user, password)
 
-                // Desligar o autoCommit para a transação
                 connection.autoCommit = false
 
                 try {
@@ -364,9 +349,8 @@ fun Application.configureRouting() {
                             HttpStatusCode.Forbidden,
                             "Acesso Negado: Não tens nenhuma tarefa ativa que te permita levantar esta ferramenta."
                         )
-                        return@post // Aborta a execução aqui, não guarda nada na base de dados
+                        return@post
                     }
-                    // ----------------------------------------
 
                     val sqlRequisicao = "INSERT INTO requisicao (dhRequisicao, id_tecnico) VALUES (NOW(), ?)"
                     val statement = connection.prepareStatement(sqlRequisicao, Statement.RETURN_GENERATED_KEYS)
@@ -392,7 +376,6 @@ fun Application.configureRouting() {
                     stmtUpdate.setInt(2, pedido.nFerramenta)
                     stmtUpdate.executeUpdate()
 
-
                     connection.commit()
 
                     call.respond(HttpStatusCode.Created, "Requisição $idRequisicao criada com sucesso.")
@@ -411,7 +394,7 @@ fun Application.configureRouting() {
                 )
             }
         }
-        // atribuir tarefas e ferramentas a um técnico
+
         post("/api/tarefas") {
             val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
             val user = USER
@@ -477,7 +460,6 @@ fun Application.configureRouting() {
         }
 
         // ====== PATCH ======
-        // tecnico devolve ferramenta
         patch("/api/requisicoes/{id}/devolver") {
             val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
             val user = USER
@@ -501,7 +483,6 @@ fun Application.configureRouting() {
 
                     val linhasAfetadas = statement.executeUpdate()
                     if (linhasAfetadas == 0) {
-                        // nenhuma linha mudou -> o id não existe
                         call.respond(HttpStatusCode.NotFound, "Requisição $id não encontrada")
                     } else {
                         call.respond(HttpStatusCode.OK, "Requisição $id devolvida")
@@ -514,8 +495,6 @@ fun Application.configureRouting() {
             }
         }
 
-        // marcar estado das ferramentas
-        // TODO ao marcar estragada, disponibilidade tem que ir para indisponivel
         patch("/api/ferramentas/{id}/estado") {
             val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
             val user = USER
@@ -534,7 +513,6 @@ fun Application.configureRouting() {
 
                     val pedido = call.receive<EstadoFerramentaDTO>()
 
-                    // consultar disponibilidade atual
                     val sqlDispo = "SELECT disponibilidade FROM ferramenta WHERE idFerramenta = ?"
                     val statementDisp = connection.prepareStatement(sqlDispo)
                     statementDisp.setInt(1, id)
@@ -542,14 +520,12 @@ fun Application.configureRouting() {
                     val resultSet = statementDisp.executeQuery()
 
                     if (!resultSet.next()) {
-                        // não existe nenhuma ferramenta com este id
                         call.respond(HttpStatusCode.NotFound, "Ferramenta com o id: $id não encontrada.")
                         return@patch
                     }
 
                     val disponibilidade = resultSet.getString("disponibilidade")
                     if (disponibilidade != "Requisitada") {
-                        // existe mas não está requisitada -> não podemos mudar o estado
                         call.respond(
                             HttpStatusCode.Conflict,
                             "Só é possível mudar o estado de uma ferramenta requisitada (está: $disponibilidade)."
@@ -557,7 +533,6 @@ fun Application.configureRouting() {
                         return@patch
                     }
 
-                    // passou na validação do estado -> atualizar o estado
                     val sql = "UPDATE ferramenta SET estado = ? WHERE idFerramenta = ?"
                     val statement = connection.prepareStatement(sql)
                     statement.setString(1, pedido.estado)
@@ -574,7 +549,6 @@ fun Application.configureRouting() {
             }
         }
 
-        // gerir permições de acesso
         patch("/api/funcionarios/{id}/cargo") {
             val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
             val user = USER
@@ -621,7 +595,6 @@ fun Application.configureRouting() {
                     deleteBackoffice.setInt(1, id)
                     deleteBackoffice.executeUpdate()
 
-                    //altera o cargo do funcionário
                     val sqlInsert = when (novoCargo) {
                         "GESTOR" -> "INSERT INTO gestor (id_func) VALUES (?)"
                         "TECNICO" -> "INSERT INTO tecnico (id_func) VALUES (?)"
@@ -648,7 +621,6 @@ fun Application.configureRouting() {
             }
         }
 
-        // definir turnos
         patch("/api/funcionarios/{id}/turno") {
             val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
             val user = USER
@@ -698,7 +670,6 @@ fun Application.configureRouting() {
                 )
             }
         }
-        // consultar ferramentas em falta e o seu eventual detentor
 
         get("/api/ferramentas/em-falta") {
             val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
@@ -747,7 +718,6 @@ fun Application.configureRouting() {
             }
         }
 
-        // Adicionar novo funcionário
         post("/api/funcionarios") {
             val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
             val user = USER
@@ -756,7 +726,7 @@ fun Application.configureRouting() {
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver")
                 val connection = DriverManager.getConnection(url, user, password)
-                connection.autoCommit = false // Inicia transação
+                connection.autoCommit = false
 
                 try {
                     val pedido = call.receive<NovoFuncionarioDTO>()
@@ -778,7 +748,6 @@ fun Application.configureRouting() {
                     if (!keys.next()) throw Exception("Falha ao obter o ID do funcionário.")
                     val idFuncGerado = keys.getInt(1)
 
-                    // inserir na tabela do cargo
                     val sqlCargo = when (cargoFormatado) {
                         "GESTOR" -> "INSERT INTO gestor (id_func) VALUES (?)"
                         "TECNICO" -> "INSERT INTO tecnico (id_func) VALUES (?)"
@@ -808,7 +777,6 @@ fun Application.configureRouting() {
             }
         }
 
-        // remover  um funcionário
         patch("/api/funcionarios/{id}/desativar") {
             val url = "jdbc:mysql://localhost:3306/smarttool?useSSL=false&allowPublicKeyRetrieval=true"
             val user = USER
@@ -850,7 +818,5 @@ fun Application.configureRouting() {
                 )
             }
         }
-
-
     }
 }
