@@ -12,9 +12,6 @@ import pfc.a50727a50799.smarttool_cabinet.core.ferramenta.FerramentaRemoteDataSo
 import pfc.a50727a50799.smarttool_cabinet.core.network.ApiError
 import pfc.a50727a50799.smarttool_cabinet.core.network.ApiResult
 
-/**
- * Trata da lógica do ecrã de Ferramentas.
- */
 class FerramentasViewModel(
     private val ferramentas: FerramentaRemoteDataSource,
 ) : ViewModel() {
@@ -27,34 +24,114 @@ class FerramentasViewModel(
     }
 
     fun carregar() {
+        if (idTecnico == -1) {
+            _state.update { it.copy(isLoading = false, error = "Sessão inválida") }
+            return
+        }
+
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }
 
-            // Aqui entrará a lógica real da API no futuro:
-            // when (val r = ferramentas.getFerramentas()) { ... }
+            val rTodas = ferramentasDataSource.getFerramentas()
+            val rMinhas = ferramentasDataSource.getFerramentaTecnico(idTecnico)
+
+            if (rTodas is ApiResult.Success && rMinhas is ApiResult.Success) {
+                val minhasIds = rMinhas.data.map { it.idFerramenta }.toSet()
+
+                val listaMapeada = rTodas.data.map { dto ->
+                    val isMinha = dto.idFerramenta in minhasIds
+                    val isDisponivel = dto.disponibilidade.equals("Disponivel", ignoreCase = true)
+                    val isDanificada = dto.estado.equals("Danificada", ignoreCase = true) ||
+                            dto.disponibilidade.equals("Em Manutencao", ignoreCase = true)
+
+                    val estadoVis = when {
+                        isDisponivel -> EstadoFerramentaLista.DISPONIVEL
+                        isDanificada -> EstadoFerramentaLista.MANUTENCAO
+                        else -> EstadoFerramentaLista.EM_USO
+                    }
+
+                    FerramentaListaUi(
+                        id = dto.idFerramenta,
+                        idRequisicao = rMinhas.data.find { it.idFerramenta == dto.idFerramenta }?.idRequisicao,
+                        nome = dto.nome,
+                        detalhes = "${dto.localizacao} · ${dto.categoria}",
+                        estado = estadoVis,
+                        showDevolverButtons = isMinha,
+                        showRequisitarButton = isDisponivel
+                    )
+                }
+
+
+                _state.update {
+                    it.copy(
+                        isLoading = false,
+                        todasAsFerramentas = listaMapeada
+                    )
+                }
+                aplicarFiltros()
+            } else {
+                _state.update { it.copy(isLoading = false, error = "Erro ao carregar ferramentas") }
+            }
         }
     }
 
-    // Ações de UI que mantemos no ViewModel pois são manipulações de estado válidas
+    fun marcarMauEstado(idFerramenta: Int, idRequisicao: Int) {
+        viewModelScope.launch {
+            _state.update { it.copy(isLoading = true) }
+            val rEstado = ferramentasDataSource.mudarEstadoFerramenta(idFerramenta, "Danificada")
+            if (rEstado is ApiResult.Success) {
+                ferramentasDataSource.devolverFerramenta(idRequisicao)
+            }
+            carregar()
+        }
+    }
+
+    fun devolver(idRequisicao: Int) {
+        viewModelScope.launch {
+            _state.update { it.copy(isLoading = true) }
+            when (val r = ferramentasDataSource.devolverFerramenta(idRequisicao)) {
+                is ApiResult.Success -> carregar()
+                is ApiResult.Error -> _state.update { it.copy(isLoading = false, error = "Erro ao devolver") }
+            }
+        }
+    }
+
     fun onSearchChange(query: String) {
         _state.update { it.copy(searchQuery = query) }
+        aplicarFiltros()
     }
 
     fun onFiltroChange(filtro: FiltroFerramenta) {
         _state.update { it.copy(filtroAtual = filtro) }
+        aplicarFiltros()
+    }
+
+    private fun aplicarFiltros() {
+        val atual = _state.value
+        var filtradas = atual.todasAsFerramentas
+
+        if (atual.searchQuery.isNotBlank()) {
+            filtradas = filtradas.filter { it.nome.contains(atual.searchQuery, ignoreCase = true) }
+        }
+
+        filtradas = when (atual.filtroAtual) {
+            FiltroFerramenta.TODAS -> filtradas
+            FiltroFerramenta.AS_MINHAS -> filtradas.filter { it.showDevolverButtons }
+            FiltroFerramenta.DISPONIVEIS -> filtradas.filter { it.estado == EstadoFerramentaLista.DISPONIVEL }
+        }
+
+        _state.update { it.copy(ferramentas = filtradas) }
     }
 
     fun toggleTemplate(templateId: Int) {
         _state.update { currentState ->
             val novosTemplates = currentState.templates.map { template ->
-                if (template.id == templateId) template.copy(isExpanded = !template.isExpanded)
-                else template
+                if (template.id == templateId) template.copy(isExpanded = !template.isExpanded) else template
             }
             currentState.copy(templates = novosTemplates)
         }
     }
 
-    /** Transforma o erro tipado numa frase legível para o utilizador. */
     private fun mensagem(erro: ApiError): String = when (erro) {
         ApiError.NetworkError -> "Não foi possível contactar o servidor"
         is ApiError.Unknown -> erro.message ?: "Erro desconhecido"
