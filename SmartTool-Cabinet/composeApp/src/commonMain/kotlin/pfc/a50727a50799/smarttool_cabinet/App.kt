@@ -2,6 +2,7 @@ package pfc.a50727a50799.smarttool_cabinet
 
 import androidx.compose.runtime.*
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import pfc.a50727a50799.smarttool_cabinet.core.auth.AuthRepository
 import pfc.a50727a50799.smarttool_cabinet.feature.welcome.WelcomeScreen
@@ -18,8 +19,18 @@ import pfc.a50727a50799.smarttool_cabinet.di.AppModule
 import pfc.a50727a50799.smarttool_cabinet.feature.backoffice.BODashboardScreen
 import pfc.a50727a50799.smarttool_cabinet.feature.backoffice.BODashboardViewModel
 import pfc.a50727a50799.smarttool_cabinet.feature.email.emailScreen
-import pfc.a50727a50799.smarttool_cabinet.feature.gestor.GestorScreen
-import pfc.a50727a50799.smarttool_cabinet.feature.gestor.GestorViewModel
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.alertas.AlertasScreen
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.alertas.AlertasViewModel
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.armarios.ArmariosScreen
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.armarios.ArmariosViewModel
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard.GestorScreen
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard.GestorViewModel
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.ferramentas.FerramentasGestorScreen
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.ferramentas.FerramentasGestorViewModel
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.menu.GestorScaffold
+import pfc.a50727a50799.smarttool_cabinet.feature.navigation.AlertasGestorRoute
+import pfc.a50727a50799.smarttool_cabinet.feature.navigation.ArmariosGestorRoute
+import pfc.a50727a50799.smarttool_cabinet.feature.navigation.FerramentasGestorRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.FerramentasTecnicoRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.HistoricoTecnicoRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.LoginEmailRoute
@@ -173,7 +184,25 @@ private fun AppNavHost(
 
                 )
             }
-            GestorScreen(viewModel = viewModel)
+
+            val scope by viewModel.state.collectAsState()
+
+            GestorScaffold(
+                itemSelecionado = "dashboard",
+                alertasAtivos = scope.alertas.count(),
+                nomeGestor = SessionManager.atual?.nome ?: "",
+                cargo = "Gestor de Armazém",
+                onNavegar = { id -> navegarGestor(navController, id) },
+                onLogout = {/*todo: terminar sessão*/ },
+            ) { abrirMenu ->
+                GestorScreen(
+                    viewModel = viewModel,
+                    onVerArmarios = { navController.navigate(ArmariosGestorRoute) },
+                    onVerAlertas = { navController.navigate(AlertasGestorRoute) },
+                    onMenuClick = abrirMenu
+                )
+            }
+
         }
 
         composable<BackOfficeRoute> {
@@ -221,6 +250,85 @@ private fun AppNavHost(
             }
             HistoricoScreen(viewModel = viewModel)
         }
+
+        composable<ArmariosGestorRoute> {
+            val viewModel = viewModel {
+                ArmariosViewModel(
+                    ferramentas = AppModule.ferramentaRemoteDataSource,
+                    armarios = AppModule.armarioRemoteDataSource,
+                    alertas = AppModule.alertaRemoteDataSource
+                )
+            }
+
+            val state by viewModel.state.collectAsState()
+
+            GestorScaffold(
+                itemSelecionado = "armarios",
+                alertasAtivos = state.alertasAtivos,
+                nomeGestor = SessionManager.atual?.nome ?: "",
+                cargo = "Gestor de Armazém",
+                onNavegar = { id -> navegarGestor(navController, id) },
+                onLogout = {/*todo: terminar sessão*/ },
+            ) { abrirMenu -> ArmariosScreen(viewModel = viewModel, onMenuClick = abrirMenu) }
+
+
+        }
+
+        composable<AlertasGestorRoute> {
+            val viewModel = viewModel {
+                AlertasViewModel(
+                    alertas = AppModule.alertaRemoteDataSource
+                )
+            }
+
+            val state by viewModel.state.collectAsState()
+
+            GestorScaffold(
+                itemSelecionado = "alertas",
+                alertasAtivos = state.alertasAtivos,
+                nomeGestor = SessionManager.atual?.nome ?: "",
+                cargo = "Gestor de Armazém",
+                onNavegar = { id -> navegarGestor(navController, id) },
+                onLogout = {/*todo: terminar sessão*/ },
+            ) { abrirMenu ->
+                AlertasScreen(viewModel = viewModel, onMenuClick = abrirMenu)
+            }
+        }
+
+        composable<FerramentasGestorRoute> {
+            val viewModel = viewModel {
+                FerramentasGestorViewModel(
+                    ferramentas = AppModule.ferramentaRemoteDataSource,
+                    alertas = AppModule.alertaRemoteDataSource
+                )
+            }
+            val state by viewModel.state.collectAsState()
+
+            GestorScaffold(
+                itemSelecionado = "ferramentas",
+                alertasAtivos = state.alertasAtivos,
+                nomeGestor = SessionManager.atual?.nome ?: "",
+                cargo = "Gestor de Armazém",
+                onNavegar = { id -> navegarGestor(navController, id) },
+                onLogout = {/*todo: terminar sessão*/ },
+            ) { abrirMenu ->
+                FerramentasGestorScreen(viewModel = viewModel, onMenuClick = abrirMenu)
+            }
+
+
+        }
     }
 }
 
+private fun navegarGestor(navController: NavController, id: String) {
+    val rota: Any? = when (id) {
+        "dashboard" -> GestorRoute
+        "armarios" -> ArmariosGestorRoute
+        "ferramentas" -> FerramentasGestorRoute
+        "alertas" -> AlertasGestorRoute
+        else -> null   // todo: "tarefas"/"historico" que ainda não têm ecrã
+    }
+    rota?.let {
+        navController.navigate(it) { launchSingleTop = true }  // evita empilhar o mesmo ecrã
+    }
+}

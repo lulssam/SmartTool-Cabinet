@@ -21,7 +21,7 @@ private val SmartToolColors = lightColorScheme(
 // formas reutilizáveis — aplica-as por componente
 val PillShape  = RoundedCornerShape(28.dp)  // botões em pílula
 val CardShape  = RoundedCornerShape(20.dp)  // cartões
-val FieldShape = RoundedCornerShape(12.dp)  // campos de texto
+val FieldShape = RoundedCornerShape(13.dp)  // campos de texto
 
 /** O tema da app: aplica as cores e a tipografia da TAP a tudo o que estiver lá dentro. */
 @Composable
