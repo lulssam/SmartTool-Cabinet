@@ -24,8 +24,11 @@ import pfc.a50727a50799.smarttool_cabinet.feature.gestor.armarios.ArmariosScreen
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.armarios.ArmariosViewModel
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard.GestorScreen
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard.GestorViewModel
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.ferramentas.FerramentasGestorScreen
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.ferramentas.FerramentasGestorViewModel
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.AlertasGestorRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.ArmariosGestorRoute
+import pfc.a50727a50799.smarttool_cabinet.feature.navigation.FerramentasGestorRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.FerramentasTecnicoRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.HistoricoTecnicoRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.LoginEmailRoute
@@ -245,6 +248,16 @@ private fun AppNavHost(
             }
 
             AlertasScreen(viewModel = viewModel)
+        }
+
+        composable<FerramentasGestorRoute> {
+            val viewModel = viewModel {
+                FerramentasGestorViewModel(
+                    ferramentas = AppModule.ferramentaRemoteDataSource,
+                    alertas = AppModule.alertaRemoteDataSource
+                )
+            }
+            FerramentasGestorScreen(viewModel = viewModel)
         }
     }
 
