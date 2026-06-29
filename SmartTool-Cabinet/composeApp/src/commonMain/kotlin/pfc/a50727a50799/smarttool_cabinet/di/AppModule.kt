@@ -10,6 +10,7 @@ import pfc.a50727a50799.smarttool_cabinet.core.armario.ArmarioRemoteDataSource
 import pfc.a50727a50799.smarttool_cabinet.core.auth.AuthRepository
 import pfc.a50727a50799.smarttool_cabinet.core.auth.data.funcionario.FuncionarioRemoteDataSource
 import pfc.a50727a50799.smarttool_cabinet.core.ferramenta.FerramentaRemoteDataSource
+import pfc.a50727a50799.smarttool_cabinet.core.historico.HistoricoRemoteDataSource
 
 
 /**
@@ -42,7 +43,7 @@ object AppModule {
      */
     private val httpClient: HttpClient by lazy { // by lazy garante que cada coisa é criada uma unica vez, na primeira vez que for pedida
         HttpClient {
-            install(ContentNegotiation) {json(Json { ignoreUnknownKeys = true })}
+            install(ContentNegotiation) { json(Json { ignoreUnknownKeys = true }) }
             defaultRequest { url(baseUrl) }
         }
     }
@@ -62,4 +63,6 @@ object AppModule {
     /** A fonte que vai ao backend buscar os alertas (usa o [httpClient]). */
     val alertaRemoteDataSource by lazy { AlertaRemoteDataSource(httpClient) }
 
+    /** A fonte que vai ao backend buscar o histórico (usa o [httpClient]). */
+    val historicoRemoteDataSource by lazy { HistoricoRemoteDataSource(httpClient) }
 }
