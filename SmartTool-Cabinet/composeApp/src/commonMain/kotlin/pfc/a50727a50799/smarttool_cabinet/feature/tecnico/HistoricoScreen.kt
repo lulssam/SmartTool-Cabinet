@@ -46,7 +46,6 @@ import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapLightGreen
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TextSecondary
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TextTitle
 
-// Cor local para o "Retirou" que é azul no teu Figma
 private val AzulRetirou = Color(0xFF2563EB)
 private val FundoAzulRetirou = Color(0xFFEFF6FF)
 
@@ -177,7 +176,6 @@ fun HistoricoItemCard(item: HistoricoItemUi) {
     }
 }
 
-// O Preview injeta os dados mock no Content, deixando o ViewModel isolado
 @Preview(showBackground = true)
 @Composable
 private fun PreviewHistorico() {

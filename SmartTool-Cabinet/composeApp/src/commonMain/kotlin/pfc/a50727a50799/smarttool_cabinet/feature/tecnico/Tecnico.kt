@@ -53,9 +53,9 @@ import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapGreenishBlue
 
 @Composable
 private fun TecnicoScreenContent(
-    state: TecnicoUiState
+    state: TecnicoUiState,
+    onVerTodosClick: () -> Unit
 ) {
-    // Bloco `when` de Loading, Erro e UI normal, EXATAMENTE igual ao Gestor
     when {
         state.isLoading ->
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -69,10 +69,9 @@ private fun TecnicoScreenContent(
 
         else ->
             Column(Modifier.fillMaxSize().background(ScreenBg)) {
-                // TopBar global
                 TopBar(
                     titulo = "Dashboard",
-                    alertasAtivos = 0, // Técnico não tem contador na TopBar no Figma
+                    alertasAtivos = 0,
                     mostrarAlertas = false,
                     onMenu = {}
                 )
@@ -111,7 +110,7 @@ private fun TecnicoScreenContent(
                     }
 
                     item {
-                        SectionHeader("As minhas ferramentas", onVerTodos = {})
+                        SectionHeader("As minhas ferramentas", onVerTodos = onVerTodosClick)
                     }
 
                     items(state.minhasFerramentas) { ferramenta ->
@@ -124,17 +123,16 @@ private fun TecnicoScreenContent(
 
 @Composable
 fun TecnicoScreen(
-    viewModel: TecnicoViewModel = viewModel()
+    viewModel: TecnicoViewModel = viewModel(),
+    onVerTodosClick: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
     TecnicoScreenContent(
-        state = state
+        state = state,
+        onVerTodosClick = onVerTodosClick
     )
 }
 
-// ==========================================
-// COMPONENTES EXCLUSIVOS DO ECRÃ DO TÉCNICO
-// ==========================================
 
 @Composable
 fun EstatisticaCard(
@@ -206,7 +204,7 @@ fun FerramentaTecnicoCard(ferramenta: FerramentaTecnicoUi) {
 private fun Preview() {
     AppTheme {
         TecnicoScreenContent(
-            TecnicoUiState(
+            state = TecnicoUiState(
                 isLoading = false,
                 error = null,
                 nomeTecnico = "Luísa Sampaio",
@@ -222,7 +220,8 @@ private fun Preview() {
                         estado = "Em Uso"
                     )
                 )
-            )
+            ),
+            onVerTodosClick = {}
         )
     }
 }
