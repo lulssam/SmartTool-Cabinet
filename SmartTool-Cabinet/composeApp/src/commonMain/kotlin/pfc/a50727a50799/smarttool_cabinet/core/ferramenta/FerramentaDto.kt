@@ -8,7 +8,7 @@ import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.FerramentaTecnicoUi
 
 @Serializable
 data class FerramentaDto(
-    val idRequisicao: Int?,
+    val idRequisicao: Int? = null,
     val idFerramenta: Int,
     val nome: String,
     val estado: String,

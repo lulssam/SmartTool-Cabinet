@@ -27,11 +27,14 @@ import pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard.GestorScreen
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard.GestorViewModel
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.ferramentas.FerramentasGestorScreen
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.ferramentas.FerramentasGestorViewModel
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.historico.HistoricoGestorScreen
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.historico.HistoricoGestorViewModel
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.menu.GestorScaffold
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.AlertasGestorRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.ArmariosGestorRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.FerramentasGestorRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.FerramentasTecnicoRoute
+import pfc.a50727a50799.smarttool_cabinet.feature.navigation.HistoricoGestorRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.HistoricoTecnicoRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.LoginEmailRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.SSORoute
@@ -317,6 +320,29 @@ private fun AppNavHost(
 
 
         }
+
+        composable<HistoricoGestorRoute> {
+            val viewModel = viewModel {
+                HistoricoGestorViewModel(
+                    historico = AppModule.historicoRemoteDataSource,
+                    alertas = AppModule.alertaRemoteDataSource
+                )
+            }
+
+            val state by viewModel.state.collectAsState()
+
+            GestorScaffold(
+                itemSelecionado = "historico",
+                alertasAtivos = state.alertasAtivos,
+                nomeGestor = SessionManager.atual?.nome ?: "",
+                cargo = "Gestor de Armazém",
+                onNavegar = { id -> navegarGestor(navController, id) },
+                onLogout = {/*todo: terminar sessão*/ },
+            ) {
+                abrirMenu ->
+                HistoricoGestorScreen(viewModel = viewModel, onMenuClick = abrirMenu)
+            }
+        }
     }
 }
 
@@ -326,6 +352,7 @@ private fun navegarGestor(navController: NavController, id: String) {
         "armarios" -> ArmariosGestorRoute
         "ferramentas" -> FerramentasGestorRoute
         "alertas" -> AlertasGestorRoute
+        "historico" -> HistoricoGestorRoute
         else -> null   // todo: "tarefas"/"historico" que ainda não têm ecrã
     }
     rota?.let {
