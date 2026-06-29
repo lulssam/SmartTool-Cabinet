@@ -33,22 +33,24 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import pfc.a50727a50799.smarttool_cabinet.ui.MovimentoCard
 
 // Importação do Componente Partilhado a partir da pasta UI
 import pfc.a50727a50799.smarttool_cabinet.ui.TopBar
 
 // Importações do Tema
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AppTheme
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.AzulRetirou
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.CardBorder
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.FundoAzulRetirou
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.ScreenBg
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapBrandDark
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapLightGreen
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TextSecondary
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TextTitle
-
-// Cor local para o "Retirou" que é azul no teu Figma
-private val AzulRetirou = Color(0xFF2563EB)
-private val FundoAzulRetirou = Color(0xFFEFF6FF)
+import smarttoolcabinet.composeapp.generated.resources.Res
+import smarttoolcabinet.composeapp.generated.resources.check
+import smarttoolcabinet.composeapp.generated.resources.tool
 
 @Composable
 private fun HistoricoScreenContent(
@@ -126,55 +128,13 @@ fun HistoricoScreen(
 @Composable
 fun HistoricoItemCard(item: HistoricoItemUi) {
     val isRetirou = item.tipo == TipoMovimento.RETIROU
-
-    val icone = if (isRetirou) "🔧" else "✓"
-    val corFundoIcone = if (isRetirou) FundoAzulRetirou else TapLightGreen.copy(alpha = 0.2f)
-    val corTextoStatus = if (isRetirou) AzulRetirou else TapBrandDark
-    val textoStatus = if (isRetirou) "Retirou" else "Devolveu"
-
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        border = BorderStroke(1.dp, CardBorder)
-    ) {
-        Row(
-            modifier = Modifier.padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(corFundoIcone),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = icone,
-                    fontSize = 18.sp,
-                    color = if (isRetirou) Color.Unspecified else TapBrandDark,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-
-            Spacer(modifier = Modifier.width(12.dp))
-
-            Text(
-                text = item.nomeFerramenta,
-                fontWeight = FontWeight.Bold,
-                fontSize = 14.sp,
-                color = TextTitle,
-                modifier = Modifier.weight(1f)
-            )
-
-            Text(
-                text = textoStatus,
-                color = corTextoStatus,
-                fontSize = 11.sp,
-                fontWeight = FontWeight.Bold
-            )
-        }
-    }
+    MovimentoCard(
+        icone = if (isRetirou) Res.drawable.tool else Res.drawable.check,
+        corAcao = if (isRetirou) AzulRetirou else TapBrandDark,
+        corFundoIcone = if (isRetirou) FundoAzulRetirou else TapLightGreen.copy(alpha = 0.2f),
+        nome = item.nomeFerramenta,
+        label = if (isRetirou) "Retirou" else "Devolveu"
+    )
 }
 
 // O Preview injeta os dados mock no Content, deixando o ViewModel isolado
