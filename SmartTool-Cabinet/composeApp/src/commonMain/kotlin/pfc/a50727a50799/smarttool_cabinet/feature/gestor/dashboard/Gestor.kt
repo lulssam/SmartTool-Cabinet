@@ -37,6 +37,7 @@ private fun GestorScreenContent(
     state: GestorUiState,
     onVerArmarios: () -> Unit,
     onVerAlertas: () -> Unit,
+    onMenuClick: () -> Unit,
 ) {
     when {
         state.isLoading ->
@@ -55,7 +56,7 @@ private fun GestorScreenContent(
                     titulo = "Dashboard",
                     alertasAtivos = state.alertas.size,
                     mostrarAlertas = state.alertas.isNotEmpty(),
-                    onMenu = {}
+                    onMenu = onMenuClick
                 )
 
                 LazyColumn(
@@ -94,12 +95,14 @@ fun GestorScreen(
     viewModel: GestorViewModel = viewModel(),
     onVerArmarios: () -> Unit,
     onVerAlertas: () -> Unit,
+    onMenuClick: () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsState()
     GestorScreenContent(
         state = state,
         onVerArmarios = onVerArmarios,
-        onVerAlertas = onVerAlertas
+        onVerAlertas = onVerAlertas,
+        onMenuClick = onMenuClick
     )
 }
 
@@ -152,7 +155,8 @@ fun Preview() {
                 ),
             ),
             onVerArmarios = {},
-            onVerAlertas = {}
+            onVerAlertas = {},
+            onMenuClick = {}
         )
     }
 }

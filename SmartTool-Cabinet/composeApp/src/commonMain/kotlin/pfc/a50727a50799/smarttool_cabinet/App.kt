@@ -2,6 +2,7 @@ package pfc.a50727a50799.smarttool_cabinet
 
 import androidx.compose.runtime.*
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import pfc.a50727a50799.smarttool_cabinet.core.auth.AuthRepository
 import pfc.a50727a50799.smarttool_cabinet.feature.welcome.WelcomeScreen
@@ -26,6 +27,7 @@ import pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard.GestorScreen
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard.GestorViewModel
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.ferramentas.FerramentasGestorScreen
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.ferramentas.FerramentasGestorViewModel
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.menu.GestorScaffold
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.AlertasGestorRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.ArmariosGestorRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.FerramentasGestorRoute
@@ -182,11 +184,25 @@ private fun AppNavHost(
 
                 )
             }
-            GestorScreen(
-                viewModel = viewModel,
-                onVerArmarios = { navController.navigate(ArmariosGestorRoute) },
-                onVerAlertas = { navController.navigate(AlertasGestorRoute) }
-            )
+
+            val scope by viewModel.state.collectAsState()
+
+            GestorScaffold(
+                itemSelecionado = "dashboard",
+                alertasAtivos = scope.alertas.count(),
+                nomeGestor = SessionManager.atual?.nome ?: "",
+                cargo = "Gestor de Armazém",
+                onNavegar = { id -> navegarGestor(navController, id) },
+                onLogout = {/*todo: terminar sessão*/ },
+            ) { abrirMenu ->
+                GestorScreen(
+                    viewModel = viewModel,
+                    onVerArmarios = { navController.navigate(ArmariosGestorRoute) },
+                    onVerAlertas = { navController.navigate(AlertasGestorRoute) },
+                    onMenuClick = abrirMenu
+                )
+            }
+
         }
 
         composable<BackOfficeRoute> {
@@ -236,7 +252,18 @@ private fun AppNavHost(
                 )
             }
 
-            ArmariosScreen(viewModel = viewModel)
+            val state by viewModel.state.collectAsState()
+
+            GestorScaffold(
+                itemSelecionado = "armarios",
+                alertasAtivos = state.alertasAtivos,
+                nomeGestor = SessionManager.atual?.nome ?: "",
+                cargo = "Gestor de Armazém",
+                onNavegar = { id -> navegarGestor(navController, id) },
+                onLogout = {/*todo: terminar sessão*/ },
+            ) { abrirMenu -> ArmariosScreen(viewModel = viewModel, onMenuClick = abrirMenu) }
+
+
         }
 
         composable<AlertasGestorRoute> {
@@ -244,10 +271,20 @@ private fun AppNavHost(
                 AlertasViewModel(
                     alertas = AppModule.alertaRemoteDataSource
                 )
-
             }
 
-            AlertasScreen(viewModel = viewModel)
+            val state by viewModel.state.collectAsState()
+
+            GestorScaffold(
+                itemSelecionado = "alertas",
+                alertasAtivos = state.alertasAtivos,
+                nomeGestor = SessionManager.atual?.nome ?: "",
+                cargo = "Gestor de Armazém",
+                onNavegar = { id -> navegarGestor(navController, id) },
+                onLogout = {/*todo: terminar sessão*/ },
+            ) { abrirMenu ->
+                AlertasScreen(viewModel = viewModel, onMenuClick = abrirMenu)
+            }
         }
 
         composable<FerramentasGestorRoute> {
@@ -257,9 +294,33 @@ private fun AppNavHost(
                     alertas = AppModule.alertaRemoteDataSource
                 )
             }
-            FerramentasGestorScreen(viewModel = viewModel)
+            val state by viewModel.state.collectAsState()
+
+            GestorScaffold(
+                itemSelecionado = "ferramentas",
+                alertasAtivos = state.alertasAtivos,
+                nomeGestor = SessionManager.atual?.nome ?: "",
+                cargo = "Gestor de Armazém",
+                onNavegar = { id -> navegarGestor(navController, id) },
+                onLogout = {/*todo: terminar sessão*/ },
+            ) { abrirMenu ->
+                FerramentasGestorScreen(viewModel = viewModel, onMenuClick = abrirMenu)
+            }
+
+
         }
     }
-
 }
 
+private fun navegarGestor(navController: NavController, id: String) {
+    val rota: Any? = when (id) {
+        "dashboard" -> GestorRoute
+        "armarios" -> ArmariosGestorRoute
+        "ferramentas" -> FerramentasGestorRoute
+        "alertas" -> AlertasGestorRoute
+        else -> null   // todo: "tarefas"/"historico" que ainda não têm ecrã
+    }
+    rota?.let {
+        navController.navigate(it) { launchSingleTop = true }  // evita empilhar o mesmo ecrã
+    }
+}
