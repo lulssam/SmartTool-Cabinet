@@ -322,11 +322,16 @@ private fun CategoriaHeader(categoria: String, total: Int) {
  */
 @Composable
 fun FerramentasGestorScreen(
-    viewModel: FerramentasGestorViewModel = viewModel()
+    viewModel: FerramentasGestorViewModel = viewModel(),
+    onMenuClick: () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsState()
     FerramentasGestorScreenContent(
         state = state,
+        onMenuClick = onMenuClick,
+        onSearchChange = viewModel::onSearchChange,
+        onFiltroChange = viewModel::onFiltroChange,
+        onAdicionarClick = {} // todo: adicionar no viewmodel esta função
     )
 }
 
