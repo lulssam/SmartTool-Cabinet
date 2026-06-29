@@ -1,8 +1,8 @@
 package pfc.a50727a50799.smarttool_cabinet.core.armario
 
 import kotlinx.serialization.Serializable
-import pfc.a50727a50799.smarttool_cabinet.feature.gestor.ArmarioUi
-import pfc.a50727a50799.smarttool_cabinet.feature.gestor.EstadoArmario
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard.ArmarioUi
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard.EstadoArmario
 
 @Serializable
 data class ArmarioDto(
