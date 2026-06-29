@@ -13,7 +13,8 @@ import pfc.a50727a50799.smarttool_cabinet.core.network.ApiError
 import pfc.a50727a50799.smarttool_cabinet.core.network.ApiResult
 
 class FerramentasViewModel(
-    private val ferramentas: FerramentaRemoteDataSource,
+    private val ferramentasDataSource: FerramentaRemoteDataSource,
+    private val idTecnico: Int
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(FerramentasUiState())
@@ -91,7 +92,12 @@ class FerramentasViewModel(
             _state.update { it.copy(isLoading = true) }
             when (val r = ferramentasDataSource.devolverFerramenta(idRequisicao)) {
                 is ApiResult.Success -> carregar()
-                is ApiResult.Error -> _state.update { it.copy(isLoading = false, error = "Erro ao devolver") }
+                is ApiResult.Error -> _state.update {
+                    it.copy(
+                        isLoading = false,
+                        error = "Erro ao devolver"
+                    )
+                }
             }
         }
     }
