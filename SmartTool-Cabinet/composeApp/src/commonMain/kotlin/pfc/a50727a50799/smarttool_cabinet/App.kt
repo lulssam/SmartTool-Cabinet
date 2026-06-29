@@ -214,21 +214,29 @@ private fun AppNavHost(
 
 
         composable<TecnicoRoute> {
+            val session = SessionManager.atual
             val viewModel = viewModel {
                 TecnicoViewModel(
                     ferramentas = AppModule.ferramentaRemoteDataSource,
-                    idTecnico = SessionManager.atual?.idFunc ?: -1,
-                    nomeTecnico = SessionManager.atual?.nome ?: "",
-                    turno = SessionManager.atual?.turno ?: ""
+                    idTecnico = session?.idFunc ?: -1,
+                    nomeTecnico = session?.nome ?: "Técnico",
+                    turno = session?.turno ?: "Manhã"
                 )
             }
-            TecnicoScreen(viewModel = viewModel)
+            TecnicoScreen(
+                viewModel = viewModel,
+                onVerTodosClick = {
+                    navController.navigate(FerramentasTecnicoRoute)
+                }
+            )
         }
 
         composable<FerramentasTecnicoRoute> {
+            val session = SessionManager.atual
             val viewModel = viewModel {
                 FerramentasViewModel(
-                    ferramentas = AppModule.ferramentaRemoteDataSource
+                    ferramentasDataSource = AppModule.ferramentaRemoteDataSource,
+                    idTecnico = session?.idFunc ?: -1
                 )
             }
             FerramentasScreen(viewModel = viewModel)
