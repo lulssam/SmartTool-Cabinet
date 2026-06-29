@@ -74,18 +74,22 @@ private fun ArmariosScreenContent(
 
                     // titulo
                     item {
+                        Column(
+                            modifier = Modifier.weight(1f)
+                        ) {
                         Text(
                             text = "Armários",
                             fontWeight = FontWeight.Bold,
                             color = Color.Black,
                             fontSize = 28.sp,
                         )
-                        Text(
-                            text = "Gestão e monitorização dos armários",
-                            fontWeight = FontWeight.Normal,
-                            fontSize = 14.sp,
-                            color = TextSecondary
-                        )
+                            Text(
+                                text = "Gestão e monitorização dos armários",
+                                fontWeight = FontWeight.Normal,
+                                fontSize = 14.sp,
+                                color = TextSecondary
+                            )
+                        }
                     }
 
                     // barra de pesquisa
