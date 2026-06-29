@@ -28,7 +28,7 @@ data class SecaoHistoricoUi(
 )
 
 data class HistoricoItemUi(
-    val id: Int,
+    val id: String,
     val nomeFerramenta: String,
     val funcionario: String,
     val hora: String,

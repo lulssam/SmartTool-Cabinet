@@ -91,7 +91,7 @@ private fun HistoricoGestorScreenContent(
                                 color = Color.Black
                             )
                             Text(
-                                "Últimos 7 dias de movimentos",
+                                "Últimos 30 dias de movimentos",
                                 fontSize = 14.sp,
                                 color = TextSecondary
                             )
@@ -206,14 +206,14 @@ private fun HistoricoGestorPreview() {
                     SecaoHistoricoUi(
                         "HOJE", listOf(
                             HistoricoItemUi(
-                                1,
+                                "1",
                                 "Chave de Caixa 10mm",
                                 "Tiago Dias",
                                 "09:45",
                                 TipoMovimento.RETIROU
                             ),
                             HistoricoItemUi(
-                                2,
+                                "2",
                                 "Alicate de Bico",
                                 "Pedro Fazenda",
                                 "10:43",
@@ -224,7 +224,7 @@ private fun HistoricoGestorPreview() {
                     SecaoHistoricoUi(
                         "ONTEM", listOf(
                             HistoricoItemUi(
-                                3,
+                                "3",
                                 "Torquímetro 60Nm",
                                 "Miguel Azenha",
                                 "09:32",
