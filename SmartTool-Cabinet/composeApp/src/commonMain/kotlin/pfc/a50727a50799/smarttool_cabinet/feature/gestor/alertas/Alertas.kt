@@ -34,6 +34,7 @@ import pfc.a50727a50799.smarttool_cabinet.ui.theme.TextSecondary
 @Composable
 private fun AlertasScreenContent(
     state: AlertasUiState,
+    onMenuClick: () -> Unit
 ) {
     when {
         state.isLoading ->
@@ -54,7 +55,7 @@ private fun AlertasScreenContent(
                     titulo = "Alertas",
                     alertasAtivos = state.alertasAtivos,
                     mostrarAlertas = false,
-                    onMenu = {}
+                    onMenu = onMenuClick
                 )
 
                 LazyColumn(
@@ -96,11 +97,13 @@ private fun AlertasScreenContent(
 
 @Composable
 fun AlertasScreen(
-    viewModel: AlertasViewModel = viewModel()
+    viewModel: AlertasViewModel = viewModel(),
+    onMenuClick: () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsState()
     AlertasScreenContent(
-        state = state
+        state = state,
+        onMenuClick = onMenuClick
     )
 }
 
@@ -124,7 +127,8 @@ private fun Preview() {
                         Gravidade.AVISO
                     )
                 ),
-            )
+            ),
+            onMenuClick = {}
         )
     }
 }

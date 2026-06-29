@@ -41,7 +41,8 @@ import pfc.a50727a50799.smarttool_cabinet.ui.theme.TextSecondary
 private fun ArmariosScreenContent(
     state: ArmariosUiState,
     onSearchChange: (String) -> Unit,
-    onFiltroChange: (FiltroArmario) -> Unit
+    onFiltroChange: (FiltroArmario) -> Unit,
+    onMenuClick: () -> Unit
 ) {
     when {
         state.isLoading ->
@@ -62,7 +63,7 @@ private fun ArmariosScreenContent(
                     titulo = "Armários",
                     alertasAtivos = state.alertasAtivos,
                     mostrarAlertas = true,
-                    onMenu = {}
+                    onMenu = onMenuClick
                 )
 
 
@@ -77,12 +78,12 @@ private fun ArmariosScreenContent(
                         Column(
                             modifier = Modifier.weight(1f)
                         ) {
-                        Text(
-                            text = "Armários",
-                            fontWeight = FontWeight.Bold,
-                            color = Color.Black,
-                            fontSize = 28.sp,
-                        )
+                            Text(
+                                text = "Armários",
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Black,
+                                fontSize = 28.sp,
+                            )
                             Text(
                                 text = "Gestão e monitorização dos armários",
                                 fontWeight = FontWeight.Normal,
@@ -128,14 +129,16 @@ private fun ArmariosScreenContent(
 
 @Composable
 fun ArmariosScreen(
-    viewModel: ArmariosViewModel = viewModel()
+    viewModel: ArmariosViewModel = viewModel(),
+    onMenuClick: () -> Unit = {}
 ) {
 
     val state by viewModel.state.collectAsState()
     ArmariosScreenContent(
         state = state,
         onSearchChange = viewModel::onSearchChange,
-        onFiltroChange = viewModel::onFiltroChange
+        onFiltroChange = viewModel::onFiltroChange,
+        onMenuClick = onMenuClick
     )
 }
 
@@ -158,8 +161,8 @@ private fun Preview() {
             ),
 
             onSearchChange = {},
-            onFiltroChange = {}
-
+            onFiltroChange = {},
+            onMenuClick ={}
         )
     }
 }
