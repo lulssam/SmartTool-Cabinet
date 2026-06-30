@@ -12,14 +12,14 @@ package pfc.a50727a50799.smarttool_cabinet.feature.gestor.tarefas
  *                 Null significa que não há nenhum erro.
  */
 data class TarefasGestorUiState(
-    val tarefas: List<TaregaUi> = emptyList(),
+    val tarefas: List<TarefaUi> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null,
     val filtroAtual: FiltroTarefa = FiltroTarefa.TODAS,
     val alertasAtivos: Int = 0
 )
 
-data class TaregaUi(
+data class TarefaUi(
     val id: String,
     val titulo: String,
     val codigo: String,
