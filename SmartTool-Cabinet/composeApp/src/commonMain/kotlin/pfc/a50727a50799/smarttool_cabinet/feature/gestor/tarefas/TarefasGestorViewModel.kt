@@ -83,4 +83,31 @@ class TarefasGestorViewModel(
         }
         _state.update { it.copy(tarefas = visiveis) }
     }
+
+    fun abrirNovaTarefa() {
+        _state.update { it.copy(mostrarNovaTarefa = true) }
+    }
+
+    fun fecharNovaTarefa() {
+        _state.update { it.copy(mostrarNovaTarefa = false) }
+    }
+
+    fun onTituloChange(newTitulo: String) = _state.update { it.copy(titulo = newTitulo) }
+    fun onDescricaoChange(newDescricao: String) =
+        _state.update { it.copy(descricao = newDescricao) }
+
+    fun onTecnicoSelecionado(newTecnico: Int?) =
+        _state.update { it.copy(tecnicoSelecionado = newTecnico) }
+
+    fun onNovaPrioridade(p: PrioridadeTarefa) = _state.update { it.copy(novaPrioridade = p) }
+    fun onQueryFerramentasChange(newQuery: String) =
+        _state.update { it.copy(queryFerramentas = newQuery) }
+
+    fun onToggleFerramenta(id: Int) = _state.update {
+        val novo = if (id in it.ferramentasSelecionadas) it.ferramentasSelecionadas - id
+        else it.ferramentasSelecionadas + id
+        it.copy(ferramentasSelecionadas = novo)
+    }
 }
+
+
