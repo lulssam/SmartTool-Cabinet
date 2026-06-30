@@ -7,16 +7,21 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import pfc.a50727a50799.smarttool_cabinet.core.network.ApiError
+import pfc.a50727a50799.smarttool_cabinet.core.alerta.AlertaRemoteDataSource
+import pfc.a50727a50799.smarttool_cabinet.core.network.ApiResult
+import pfc.a50727a50799.smarttool_cabinet.core.tarefa.TarefaRemoteDataSource
+import pfc.a50727a50799.smarttool_cabinet.core.tarefa.toGestorUi
 
 /**
  * Gere o estado e a lógica do ecrã TarefasGestor.
  *
- * Vai buscar os dados necessários ao backend e guarda-os no estado
- * para o ecrã mostrar. O ecrã nunca fala diretamente com o backend —
- * passa sempre por aqui.
+ * Vai buscar os dados ao backend e guarda-os no estado para o ecrã mostrar.
+ * O ecrã nunca fala diretamente com o backend — passa sempre por aqui.
  */
-class TarefasGestorViewModel : ViewModel() {
+class TarefasGestorViewModel(
+    private val tarefas: TarefaRemoteDataSource,
+    private val alertas: AlertaRemoteDataSource
+) : ViewModel() {
 
     private val _state = MutableStateFlow(TarefasGestorUiState(isLoading = true))
 
@@ -25,35 +30,57 @@ class TarefasGestorViewModel : ViewModel() {
      * Só o ViewModel pode alterar este valor — o ecrã apenas o lê.
      */
     val state: StateFlow<TarefasGestorUiState> = _state.asStateFlow()
+    private var todas: List<TarefaUi> = emptyList()
 
     init {
         carregar()
     }
 
-    /**
-     * Vai buscar os dados ao backend e atualiza o estado do ecrã.
-     *
-     * Mostra um indicador de carregamento enquanto espera,
-     * e um erro se algo correr mal.
-     */
+    /** Vai buscar os dados ao backend e atualiza o estado do ecrã. */
     fun carregar() {
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }
 
-            // Carregar dados aqui
+            todas = when (val r = tarefas.getTarefas()) {
+                is ApiResult.Success -> r.data.map { it.toGestorUi() }
+                is ApiResult.Error -> {
+                    _state.update {
+                        it.copy(isLoading = false, error = "Não foi possível carregar as tarefas")
+                    }
+                    return@launch
+                }
+            }
 
-            _state.update { it.copy(isLoading = false) }
+            val nAlertas = when (val r = alertas.getAlertas()) {
+                is ApiResult.Success -> r.data.size
+                is ApiResult.Error -> 0
+            }
+
+            _state.update { it.copy(isLoading = false, alertasAtivos = nAlertas) }
+            recomputar()
         }
     }
 
+    /** Troca o chip de filtro e recalcula a lista visível. */
+    fun onFiltroChange(filtro: FiltroTarefa) {
+        _state.update { it.copy(filtroAtual = filtro) }
+        recomputar()
+    }
+
     /**
-     * Transforma um erro do backend numa frase legível para o utilizador.
-     *
-     * @param erro O erro devolvido pelo backend.
-     * @return Uma mensagem em português para mostrar no ecrã.
+     * Aplica o filtro atual à lista crua. Corre no arranque e sempre que o
+     * filtro muda — nunca vai à rede, só reorganiza o que já está em memória.
      */
-    private fun mensagem(erro: ApiError): String = when (erro) {
-        ApiError.NetworkError -> "Não foi possível contactar o servidor"
-        is ApiError.Unknown -> erro.message ?: "Erro desconhecido"
+    private fun recomputar() {
+        val filtro = _state.value.filtroAtual
+        val visiveis = todas.filter { t ->
+            when (filtro) {
+                FiltroTarefa.TODAS -> true
+                FiltroTarefa.PENDENTES -> t.estado == EstadoTarefa.PENDENTE
+                FiltroTarefa.EM_CURSO -> t.estado == EstadoTarefa.EM_CURSO
+                FiltroTarefa.CONCLUIDAS -> t.estado == EstadoTarefa.CONCLUIDA
+            }
+        }
+        _state.update { it.copy(tarefas = visiveis) }
     }
 }
