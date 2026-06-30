@@ -290,6 +290,8 @@ fun Application.configureRouting() {
                 call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain)
             }
         }
+        
+        // todo get das ferramentas
 
         // ====== POSTS ======
         post("/api/requisicoes") {
