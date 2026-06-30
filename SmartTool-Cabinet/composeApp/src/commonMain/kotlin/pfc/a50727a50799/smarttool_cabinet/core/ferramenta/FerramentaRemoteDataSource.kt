@@ -4,6 +4,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.patch
+import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
@@ -81,6 +82,23 @@ class FerramentaRemoteDataSource(
             }
             when (response.status) {
                 HttpStatusCode.OK -> ApiResult.Success(Unit)
+                else -> ApiResult.Error(ApiError.Unknown(response.status.toString()))
+            }
+        } catch (e: IOException) {
+            ApiResult.Error(ApiError.NetworkError)
+        } catch (e: Exception) {
+            ApiResult.Error(ApiError.Unknown(e.message))
+        }
+    }
+    suspend fun requisitarFerramenta(idTecnico: Int, codigoTipo: Int, nFerramenta: Int): ApiResult<Unit> {
+        return try {
+
+            val response = httpClient.post("/api/requisicoes") {
+                contentType(ContentType.Application.Json)
+                setBody(NovaRequisicaoDTO.NovaRequisicaoDTO(idTecnico, codigoTipo, nFerramenta))
+            }
+            when (response.status) {
+                HttpStatusCode.OK, HttpStatusCode.Created -> ApiResult.Success(Unit)
                 else -> ApiResult.Error(ApiError.Unknown(response.status.toString()))
             }
         } catch (e: IOException) {

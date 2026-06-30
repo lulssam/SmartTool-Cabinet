@@ -51,8 +51,13 @@ class FerramentasViewModel(
                         else -> EstadoFerramentaLista.EM_USO
                     }
 
+                    val codigoTipoCalculado = dto.idFerramenta / 100000
+                    val nFerramentaCalculado = dto.idFerramenta % 100000
+
                     FerramentaListaUi(
                         id = dto.idFerramenta,
+                        codigoTipo = codigoTipoCalculado,
+                        nFerramenta = nFerramentaCalculado,
                         idRequisicao = rMinhas.data.find { it.idFerramenta == dto.idFerramenta }?.idRequisicao,
                         nome = dto.nome,
                         detalhes = "${dto.localizacao} · ${dto.categoria}",
@@ -61,7 +66,6 @@ class FerramentasViewModel(
                         showRequisitarButton = isDisponivel
                     )
                 }
-
 
                 _state.update {
                     it.copy(
@@ -127,6 +131,29 @@ class FerramentasViewModel(
         }
 
         _state.update { it.copy(ferramentas = filtradas) }
+    }
+
+    fun requisitarFerramenta(codigoTipo: Int, nFerramenta: Int) {
+        viewModelScope.launch {
+            _state.update { it.copy(isLoading = true, error = null) }
+
+            when (val r = ferramentasDataSource.requisitarFerramenta(idTecnico, codigoTipo, nFerramenta)) {
+                is ApiResult.Success -> {
+                    carregar()
+                }
+                is ApiResult.Error -> {
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            error = mensagem(r.error)
+                        )
+                    }
+                }
+            }
+        }
+    }
+    fun limparErro() {
+        _state.update { it.copy(error = null) }
     }
 
     fun toggleTemplate(templateId: Int) {

@@ -25,7 +25,9 @@ data class FerramentaListaUi(
     val detalhes: String,
     val estado: EstadoFerramentaLista,
     val showDevolverButtons: Boolean = false,
-    val showRequisitarButton: Boolean = false
+    val showRequisitarButton: Boolean = false,
+    val codigoTipo: Int,
+    val nFerramenta: Int
 )
 
 
@@ -33,8 +35,8 @@ data class FerramentasUiState(
     val searchQuery: String = "",
     val filtroAtual: FiltroFerramenta = FiltroFerramenta.TODAS,
     val templates: List<TemplateDiarioUi> = emptyList(),
-    val ferramentas: List<FerramentaListaUi> = emptyList(),          // Lista filtrada (a que aparece no ecrã)
-    val todasAsFerramentas: List<FerramentaListaUi> = emptyList(), // Lista original com tudo
+    val ferramentas: List<FerramentaListaUi> = emptyList(),
+    val todasAsFerramentas: List<FerramentaListaUi> = emptyList(),
     val isLoading: Boolean = true,
     val error: String? = null
 )
