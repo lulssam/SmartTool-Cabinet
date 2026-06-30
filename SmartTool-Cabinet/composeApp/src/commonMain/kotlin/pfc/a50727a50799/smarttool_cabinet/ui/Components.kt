@@ -48,6 +48,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard.ArmarioUi
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard.EstadoArmario
@@ -56,10 +57,12 @@ import pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard.Gravidade
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AlertOrange
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AlertOrangeText
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AppTheme
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.AzulRetirou
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.CardBorder
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.CardShape
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.FieldBg
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.FieldShape
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.FundoAzulRetirou
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.InfoBoxBg
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.PillShape
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.SearchFieldBg
@@ -79,6 +82,7 @@ import smarttoolcabinet.composeapp.generated.resources.arrowleft
 import smarttoolcabinet.composeapp.generated.resources.lock
 import smarttoolcabinet.composeapp.generated.resources.menu
 import smarttoolcabinet.composeapp.generated.resources.search
+import smarttoolcabinet.composeapp.generated.resources.tool
 import smarttoolcabinet.composeapp.generated.resources.unlock
 
 @Composable
@@ -594,6 +598,102 @@ fun FilterChip(label: String, isSelected: Boolean, onClick: () -> Unit) {
 }
 
 /**
+ * Card de um movimento de histórico, partilhado entre perfis. É "burro": não
+ * conhece tipos de movimento, recebe já a cor, o ícone e os textos prontos.
+ * Cada ecrã traduz o seu próprio enum nestes valores.
+ *
+ * @param icone Ícone à esquerda (ex: chave, check, triângulo de aviso).
+ * @param corAcao Cor do ícone e do texto da ação (azul/verde/laranja).
+ * @param corFundoIcone Cor de fundo do quadrado do ícone.
+ * @param nome Nome da ferramenta.
+ * @param label Texto da ação ("Retirou", "Devolveu", "Marcou avaria").
+ * @param subtitulo Linha por baixo do nome (ex: funcionário). Null = não aparece.
+ * @param hora Hora do movimento à direita (ex: "09:45"). Null = não aparece.
+ */
+@Composable
+fun MovimentoCard(
+    icone: DrawableResource,
+    corAcao: Color,
+    corFundoIcone: Color,
+    nome: String,
+    label: String,
+    subtitulo: String? = null,
+    hora: String? = null
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = CardShape,
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        border = BorderStroke(1.dp, CardBorder)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            // icone
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(corFundoIcone),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    painter = painterResource(icone),
+                    contentDescription = null,
+                    tint = corAcao,
+                    modifier = Modifier.size(18.dp)
+                )
+            }
+
+            Spacer(Modifier.width(12.dp))
+
+            // nome + subtitulo
+            Column(Modifier.weight(1f)) {
+                Text(
+                    text = nome,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.Black,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                if (subtitulo != null) {
+                    Text(
+                        text = subtitulo,
+                        fontSize = 10.sp,
+                        color = TextSecondary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
+
+            Spacer(Modifier.width(8.dp))
+
+            // direita: ação + hora
+            Column(horizontalAlignment = Alignment.End) {
+                Text(
+                    text = label,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = corAcao
+                )
+
+                if (hora != null) {
+                    Text(
+                        text = hora,
+                        fontSize = 10.sp,
+                        color = TextSecondary
+                    )
+                }
+            }
+        }
+    }
+}
+
+/**
  * Moldura partilhada das 3 caixas. O conteúdo vem de fora.
  *
  * 'RowScope' é uma função de extensão, só pode ser chaamda
@@ -660,7 +760,7 @@ private fun StatusPill(
     )
 }
 
-@Preview
+/*@Preview
 @Composable
 fun PreviewWelcomeCard() {
     AppTheme {
@@ -807,5 +907,28 @@ private fun PreviewFiltroChipsOff() {
             isSelected = false,
             onClick = {}
         )
+    }
+}*/
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewMovimentoCard() {
+    AppTheme {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            MovimentoCard(
+                icone = Res.drawable.tool, corAcao = AzulRetirou, corFundoIcone = FundoAzulRetirou,
+                nome = "Chave de Caixa 10mm", label = "Retirou",
+                subtitulo = "Tiago Dias", hora = "09:45"
+            )
+            MovimentoCard(
+                icone = Res.drawable.alert_triangle,
+                corAcao = AlertOrangeText,
+                corFundoIcone = AlertOrange.copy(alpha = 0.2f),
+                nome = "Torquímetro 60Nm",
+                label = "Marcou avaria",
+                subtitulo = "Miguel Azenha",
+                hora = "09:32"
+            )
+        }
     }
 }

@@ -96,7 +96,12 @@ class FerramentasViewModel(
             _state.update { it.copy(isLoading = true) }
             when (val r = ferramentasDataSource.devolverFerramenta(idRequisicao)) {
                 is ApiResult.Success -> carregar()
-                is ApiResult.Error -> _state.update { it.copy(isLoading = false, error = "Erro ao devolver") }
+                is ApiResult.Error -> _state.update {
+                    it.copy(
+                        isLoading = false,
+                        error = "Erro ao devolver"
+                    )
+                }
             }
         }
     }
