@@ -3,6 +3,7 @@ package pfc.a50727a50799.smarttool_cabinet.feature.gestor.tarefas
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,11 +13,14 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -26,10 +30,15 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -42,8 +51,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.jetbrains.compose.resources.painterResource
+import pfc.a50727a50799.smarttool_cabinet.ui.BarraPesquisa
 import pfc.a50727a50799.smarttool_cabinet.ui.FilterChip
 import pfc.a50727a50799.smarttool_cabinet.ui.TopBar
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AlertOrange
@@ -61,6 +73,7 @@ import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapRedText
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TextSecondary
 import smarttoolcabinet.composeapp.generated.resources.Res
 import smarttoolcabinet.composeapp.generated.resources.tool
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.ferramentas.FerramentaUi
 
 /**
  * Parte visual do ecrã Tarefas (Gestor).
@@ -73,7 +86,15 @@ private fun TarefasGestorScreenContent(
     state: TarefasGestorUiState,
     onMenuClick: () -> Unit = {},
     onFiltroChange: (FiltroTarefa) -> Unit = {},
-    onNovaClick: () -> Unit = {}
+    onNovaClick: () -> Unit = {},
+    onFecharTarefaClick: () -> Unit = {},
+    onTituloChange: (String) -> Unit = {},
+    onDescricaoChange: (String) -> Unit = {},
+    onTecnicoSelecionado: (Int) -> Unit = {},
+    onNovaPrioridade: (PrioridadeTarefa) -> Unit = {},
+    onQueryFerramentasChange: (String) -> Unit = {},
+    onToggleFerramenta: (Int) -> Unit = {},
+    onAdicionarTarefa: () -> Unit = {}
 ) {
     when {
         state.isLoading ->
@@ -169,6 +190,231 @@ private fun TarefasGestorScreenContent(
                             TarefaCard(tarefa)
                         }
                     }
+                }
+                // adicionar nova tarefa
+                if (state.mostrarNovaTarefa) {
+                    NovaTarefaDialog(
+                        state = state,
+                        onFechar = onFecharTarefaClick,
+                        onTitulo = onTituloChange,
+                        onDescricao = onDescricaoChange,
+                        onTecnico = onTecnicoSelecionado,
+                        onPrioridade = onNovaPrioridade,
+                        onQuery = onQueryFerramentasChange,
+                        onToggleFerramenta = onToggleFerramenta,
+                        onAdicionar = onAdicionarTarefa
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun NovaTarefaDialog(
+    state: TarefasGestorUiState,
+    onFechar: () -> Unit,
+    onTitulo: (String) -> Unit,
+    onDescricao: (String) -> Unit,
+    onTecnico: (Int) -> Unit,
+    onPrioridade: (PrioridadeTarefa) -> Unit,
+    onQuery: (String) -> Unit,
+    onToggleFerramenta: (Int) -> Unit,
+    onAdicionar: () -> Unit
+) {
+    Dialog(
+        onDismissRequest = onFechar,
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        Surface(
+            shape = RoundedCornerShape(20.dp),
+            color = Color.White,
+            modifier = Modifier
+                .fillMaxWidth(0.95f)
+                .widthIn(max = 480.dp)
+                .fillMaxHeight(0.9f)
+        ) {
+            Column(Modifier.fillMaxSize()) {
+
+                // cabeçalho
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(Modifier.weight(1f)) {
+                        Text("Nova Tarefa", fontWeight = FontWeight.Bold, fontSize = 20.sp)
+                        Text(
+                            "Atribuir tarefa e ferramentas a um técnico",
+                            fontSize = 13.sp,
+                            color = TextSecondary
+                        )
+                    }
+                    Box(
+                        Modifier
+                            .size(34.dp)
+                            .clip(RoundedCornerShape(11.dp))
+                            .background(TextSecondary.copy(alpha = 0.2f))
+                            .clickable(onClick = onFechar),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("✕", color = TextSecondary, fontSize = 16.sp)
+                    }
+                }
+
+                HorizontalDivider()
+
+                LazyColumn(
+                    modifier = Modifier.weight(1f).fillMaxWidth(),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    item { CampoTexto("Título da Tarefa", state.titulo, onTitulo) }
+                    item { CampoTexto("Descrição", state.descricao, onDescricao, minLines = 3) }
+
+                    item { Text("Técnico", fontWeight = FontWeight.SemiBold, fontSize = 14.sp) }
+                    items(state.tecnicos, key = { it.id }) { t ->
+                        TecnicoSelecionavel(t, t.id == state.tecnicoSelecionado) { onTecnico(t.id) }
+                    }
+
+                    item { PrioridadeSelector(state.novaPrioridade, onPrioridade) }
+
+                    item {
+                        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                            Text(
+                                "Ferramentas necessárias",
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 14.sp
+                            )
+                            BarraPesquisa(
+                                label = "Procurar Ferramentas...",
+                                query = state.queryFerramentas,
+                                onQueryChange = onQuery
+                            )
+                        }
+                    }
+                    items(
+                        state.ferramentasDisponiveis.filter {
+                            it.nome.contains(state.queryFerramentas, ignoreCase = true)
+                        },
+                        key = { it.idFerramenta }
+                    ) { f ->
+                        FerramentaCheck(f, f.idFerramenta in state.ferramentasSelecionadas) {
+                            onToggleFerramenta(f.idFerramenta)
+                        }
+                    }
+                }
+
+                Button(
+                    onClick = onAdicionar,
+                    colors = ButtonDefaults.buttonColors(containerColor = TapGreenishBlue),
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier.fillMaxWidth().padding(16.dp).height(48.dp)
+                ) {
+                    Text("+ Adicionar Tarefa", color = Color.White, fontWeight = FontWeight.SemiBold)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun FerramentaCheck(f: FerramentaUi, checked: Boolean, onToggle: () -> Unit) {
+    Row(
+        Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp))
+            .border(1.5.dp, TextSecondary.copy(alpha = 0.2f), RoundedCornerShape(12.dp))
+            .clickable(onClick = onToggle).padding(horizontal = 10.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        Checkbox(checked = checked, onCheckedChange = { onToggle() })
+        Icon(
+            painterResource(Res.drawable.tool),
+            null,
+            tint = TextSecondary,
+            modifier = Modifier.size(20.dp)
+        )
+        Column(Modifier.weight(1f)) {
+            Text(f.nome, fontWeight = FontWeight.SemiBold, fontSize = 14.sp, color = Color.Black)
+            Text("${f.codigo} · ${f.localizacao}", fontSize = 10.sp, color = TextSecondary)
+        }
+    }
+}
+
+
+@Composable
+private fun CampoTexto(
+    label: String,
+    valor: String,
+    onChange: (String) -> Unit,
+    minLines: Int = 1
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(label, fontWeight = FontWeight.SemiBold, fontSize = 14.sp, color = Color.Black)
+        TextField(
+            value = valor, onValueChange = onChange,
+            singleLine = minLines == 1, minLines = minLines,
+            modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp),
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = FieldBg,
+                unfocusedContainerColor = FieldBg,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent
+            )
+        )
+    }
+}
+
+@Composable
+private fun TecnicoSelecionavel(t: TecnicoUi, selecionado: Boolean, onClick: () -> Unit) {
+    Row(
+        Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp))
+            .background(if (selecionado) TapLightGreen.copy(0.1f) else Color.White)
+            .border(
+                if (selecionado) 1.5.dp else 1.dp,
+                if (selecionado) TapGreenishBlue else CardBorder,
+                RoundedCornerShape(12.dp)
+            )
+            .clickable(onClick = onClick).padding(12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Avatar(t.nome)
+        Spacer(Modifier.width(12.dp))
+        Column(Modifier.weight(1f)) {
+            Text(t.nome, fontWeight = FontWeight.SemiBold, fontSize = 13.sp, color = Color.Black)
+            Text("Turno ${t.turno}", fontSize = 10.sp, color = TextSecondary)
+        }
+        if (t.disponivel) Pill(TapLightGreen.copy(0.2f), TapBrandDark, "Disponível")
+        else Pill(AlertOrange.copy(0.2f), AlertOrangeText, "Ocupado")
+    }
+}
+
+@Composable
+private fun PrioridadeSelector(
+    selecionada: PrioridadeTarefa,
+    onSelect: (PrioridadeTarefa) -> Unit
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Text("Prioridade", fontWeight = FontWeight.SemiBold, fontSize = 14.sp, color = Color.Black)
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            PrioridadeTarefa.entries.forEach { p ->
+                val sel = p == selecionada
+                Box(
+                    Modifier.weight(1f)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(if (sel) TapLightGreen.copy(0.1f) else Color.White)
+                        .border(
+                            1.5.dp,
+                            if (sel) TapGreenishBlue else CardBorder,
+                            RoundedCornerShape(12.dp)
+                        )
+                        .clickable { onSelect(p) }.padding(vertical = 12.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        p.label,
+                        fontWeight = FontWeight.SemiBold,
+                        color = if (sel) TapGreenishBlue else Color.Black
+                    )
                 }
             }
         }
@@ -333,14 +579,17 @@ private fun iniciais(nome: String): String {
 @Composable
 fun TarefasGestorScreen(
     viewModel: TarefasGestorViewModel = viewModel(),
-    onMenuClick: () -> Unit = {}
+    onMenuClick: () -> Unit = {},
+    onNovaClick: () -> Unit = {},
+    onFecharTarefaClick: () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsState()
     TarefasGestorScreenContent(
         state = state,
         onMenuClick = onMenuClick,
         onFiltroChange = viewModel::onFiltroChange,
-        onNovaClick = {} // todo: criar nova tarefa
+        onNovaClick = viewModel::abrirNovaTarefa,
+        onFecharTarefaClick = viewModel::fecharNovaTarefa
     )
 }
 
