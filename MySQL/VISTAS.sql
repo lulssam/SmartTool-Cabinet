@@ -46,7 +46,7 @@ JOIN    ferramenta fe          ON rf.codigo_tipo = fe.codigo_tipo
                               
 -- View usada pelo endpoint das ferramentas que um técnico tem em uso (ainda não devolvidas)
 CREATE VIEW View_Ferramentas_Tecnico AS
-SELECT  r.idRequisicao, 
+SELECT  r.idRequisicao,
         r.id_tecnico,
         fe.idFerramenta,
         fe.nome_tipo        AS nome,
@@ -60,3 +60,19 @@ JOIN    ferramenta fe            ON rf.codigo_tipo  = fe.codigo_tipo
                                 AND rf.nFerramenta  = fe.nFerramenta
 JOIN    tipo_ferramenta tf       ON fe.codigo_tipo  = tf.codigo
 WHERE   r.dhDevolucao IS NULL;
+
+
+-- View usada pelo endpoint GET /api/tarefas
+CREATE OR REPLACE VIEW View_Tarefas_Detalhada AS
+SELECT  t.idTarefa,
+        t.descricao,
+        t.estado,
+        t.prioridade,
+        t.dhAtribuicao,
+        f.nomeCompleto      AS tecnico,
+        fe.nome_tipo        AS ferramenta
+FROM    tarefa t
+JOIN    funcionario f                     ON t.id_tecnico    = f.id_func
+LEFT JOIN tarefa_ferramenta_permitida tfp ON t.idTarefa      = tfp.idTarefa
+LEFT JOIN ferramenta fe                   ON tfp.codigo_tipo = fe.codigo_tipo
+                                         AND tfp.nFerramenta = fe.nFerramenta;
