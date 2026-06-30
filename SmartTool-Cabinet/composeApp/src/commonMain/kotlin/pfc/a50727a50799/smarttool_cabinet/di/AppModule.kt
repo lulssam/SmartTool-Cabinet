@@ -11,6 +11,7 @@ import pfc.a50727a50799.smarttool_cabinet.core.auth.AuthRepository
 import pfc.a50727a50799.smarttool_cabinet.core.auth.data.funcionario.FuncionarioRemoteDataSource
 import pfc.a50727a50799.smarttool_cabinet.core.ferramenta.FerramentaRemoteDataSource
 import pfc.a50727a50799.smarttool_cabinet.core.historico.HistoricoRemoteDataSource
+import pfc.a50727a50799.smarttool_cabinet.core.tarefa.TarefaRemoteDataSource
 
 
 /**
@@ -65,4 +66,7 @@ object AppModule {
 
     /** A fonte que vai ao backend buscar o histórico (usa o [httpClient]). */
     val historicoRemoteDataSource by lazy { HistoricoRemoteDataSource(httpClient) }
+
+    /**A fonte que vai ao backend buscar as tarefas (usa o [httpClient]). */
+    val tarefaRemoteDataSource by lazy { TarefaRemoteDataSource(httpClient) }
 }

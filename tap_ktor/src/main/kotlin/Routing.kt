@@ -291,6 +291,51 @@ fun Application.configureRouting() {
             }
         }
 
+        // todo get das tarefas
+        get("/api/tarefas") {
+            val porTarefa = LinkedHashMap<Int, TarefaDTO>()
+
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver")
+                val connection = DriverManager.getConnection(URL, USER, PASSWORD)
+
+                try {
+                    val sql = """
+                            SELECT idTarefa, descricao, estado, prioridade, dhAtribuicao, tecnico, ferramenta
+                            FROM   View_Tarefas_Detalhada
+                            ORDER BY dhAtribuicao DESC, idTarefa
+                        """.trimIndent()
+
+                    val resultSet = connection.createStatement().executeQuery(sql)
+
+                    while (resultSet.next()) {
+                        val id = resultSet.getInt("idTarefa")
+
+                        // se for a primeira vez que a tarefa aparece -> cria o dto
+                        val tarefa = porTarefa.getOrPut(id) {
+                            TarefaDTO(
+                                idTarefa = id,
+                                descricao = resultSet.getString("descricao"),
+                                tecnico = resultSet.getString("tecnico"),
+                                estado = resultSet.getString("estado"),
+                                prioridade = resultSet.getString("prioridade"),
+                                dhAtribuicao = resultSet.getString("dhAtribuicao")
+                            )
+                        }
+
+                        // cada linha trás uma ferrramenta -> acrescentar linha
+                        resultSet.getString("ferramenta")?.let { tarefa.ferramentas.add(it) }
+                    }
+                } finally {
+                    connection.close()
+                }
+                call.respond(porTarefa.values.toList())
+            } catch (e: Exception) {
+                e.printStackTrace()
+                call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain, HttpStatusCode.InternalServerError)
+            }
+        }
+
         // ====== POSTS ======
         post("/api/requisicoes") {
 
