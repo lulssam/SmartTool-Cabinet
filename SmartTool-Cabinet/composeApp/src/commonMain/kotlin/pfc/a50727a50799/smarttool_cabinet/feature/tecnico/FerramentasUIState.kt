@@ -20,7 +20,7 @@ data class TemplateDiarioUi(
 
 data class FerramentaListaUi(
     val id: Int,
-    val idRequisicao: Int?,
+    val idRequisicao: Int? = null,
     val nome: String,
     val detalhes: String,
     val estado: EstadoFerramentaLista,

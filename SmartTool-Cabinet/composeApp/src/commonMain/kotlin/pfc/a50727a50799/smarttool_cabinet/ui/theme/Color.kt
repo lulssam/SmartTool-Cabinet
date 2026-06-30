@@ -25,3 +25,5 @@ val TapAlmostGreen = Color(0xFF273835)
 
 val SearchFieldBg = Color(0x29787880)
 val SearchFieldText = Color(0xFF727272)
+val AzulRetirou = Color(0xFF2563EB)
+val FundoAzulRetirou = Color(0xFFEFF6FF)
