@@ -13,7 +13,6 @@ import pfc.a50727a50799.smarttool_cabinet.feature.navigation.WelcomeRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.TecnicoRoute
 import androidx.navigation.compose.*
 import kotlinx.coroutines.launch
-import pfc.a50727a50799.smarttool_cabinet.core.auth.Session
 import pfc.a50727a50799.smarttool_cabinet.core.auth.UserRole
 import pfc.a50727a50799.smarttool_cabinet.core.auth.data.SessionManager
 import pfc.a50727a50799.smarttool_cabinet.di.AppModule
@@ -58,8 +57,8 @@ import pfc.a50727a50799.smarttool_cabinet.feature.session.SplashScreen
 import pfc.a50727a50799.smarttool_cabinet.feature.sso.SSOScreen
 import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.ferramentas.FerramentasScreen
 import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.ferramentas.FerramentasViewModel
-import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.Historico.HistoricoScreen
-import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.Historico.HistoricoViewModel
+import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.historico.HistoricoScreen
+import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.historico.HistoricoViewModel
 import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.dashboard.TecnicoScreen
 import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.dashboard.TecnicoViewModel
 import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.menu.TecnicoScaffold
@@ -394,8 +393,6 @@ private fun AppNavHost(
                 )
             }
 
-            val scope by viewModel.state.collectAsState()
-
             TecnicoScaffold(
                 itemSelecionado = "dashboard",
                 nomeTecnico = SessionManager.atual?.nome ?: "",
@@ -419,7 +416,16 @@ private fun AppNavHost(
                     idTecnico = session?.idFunc ?: -1
                 )
             }
-            FerramentasScreen(viewModel = viewModel)
+
+            TecnicoScaffold(
+                itemSelecionado = "ferramentas",
+                nomeTecnico = SessionManager.atual?.nome ?: "",
+                cargo = "Técnico",
+                onNavegar = { id -> navegarTecnico(navController, id) },
+                onLogout = { fazerLogout(navController, authRepository) }
+            ) { abrirMenu ->
+                FerramentasScreen(viewModel = viewModel, onMenuClick = abrirMenu)
+            }
         }
 
         composable<HistoricoTecnicoRoute> {
@@ -430,7 +436,16 @@ private fun AppNavHost(
                     idTecnico = session?.idFunc ?: -1
                 )
             }
-            HistoricoScreen(viewModel = viewModel)
+
+            TecnicoScaffold(
+                itemSelecionado = "historico",
+                nomeTecnico = SessionManager.atual?.nome ?: "",
+                cargo = "Técnico",
+                onNavegar = { id -> navegarTecnico(navController, id) },
+                onLogout = { fazerLogout(navController, authRepository) }
+            ) { abrirMenu ->
+                HistoricoScreen(viewModel = viewModel, onMenuClick = abrirMenu)
+            }
         }
     }
 }
