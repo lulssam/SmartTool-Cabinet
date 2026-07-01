@@ -1,4 +1,4 @@
-package pfc.a50727a50799.smarttool_cabinet.feature.tecnico
+package pfc.a50727a50799.smarttool_cabinet.feature.tecnico.ferramentas
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import pfc.a50727a50799.smarttool_cabinet.core.alerta.AlertaRemoteDataSource
 import pfc.a50727a50799.smarttool_cabinet.core.ferramenta.FerramentaRemoteDataSource
 import pfc.a50727a50799.smarttool_cabinet.core.network.ApiError
 import pfc.a50727a50799.smarttool_cabinet.core.network.ApiResult

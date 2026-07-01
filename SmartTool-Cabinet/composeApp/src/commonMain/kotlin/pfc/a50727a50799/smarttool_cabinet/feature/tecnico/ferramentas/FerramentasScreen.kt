@@ -1,4 +1,4 @@
-package pfc.a50727a50799.smarttool_cabinet.feature.tecnico
+package pfc.a50727a50799.smarttool_cabinet.feature.tecnico.ferramentas
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
@@ -66,12 +66,17 @@ private fun FerramentasScreenContent(
     onDevolverClick: (Int) -> Unit,
     onMauEstadoClick: (Int, Int) -> Unit,
     onRequisitarClick: (Int, Int) -> Unit,
-    onClearError: () -> Unit
+    onClearError: () -> Unit,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
 
         Column(modifier = Modifier.fillMaxSize().background(ScreenBg)) {
-            TopBar(titulo = "Ferramentas", mostrarAlertas = false, alertasAtivos = 0, onMenu = onMenuClick)
+            TopBar(
+                titulo = "Ferramentas",
+                mostrarAlertas = false,
+                alertasAtivos = 0,
+                onMenu = onMenuClick
+            )
 
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
@@ -80,13 +85,28 @@ private fun FerramentasScreenContent(
             ) {
                 item {
                     Column {
-                        Text(text = "Ferramentas", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = TextTitle)
-                        Text(text = "Consulte e gira as suas ferramentas", fontSize = 14.sp, color = TextSecondary)
+                        Text(
+                            text = "Ferramentas",
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = TextTitle
+                        )
+                        Text(
+                            text = "Consulte e gira as suas ferramentas",
+                            fontSize = 14.sp,
+                            color = TextSecondary
+                        )
                     }
                 }
 
                 item {
-                    Text(text = "Templates diários", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = TextTitle, modifier = Modifier.padding(top = 8.dp))
+                    Text(
+                        text = "Templates diários",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = TextTitle,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
                 }
 
                 items(state.templates) { template ->
@@ -95,13 +115,23 @@ private fun FerramentasScreenContent(
 
                 item {
                     Spacer(modifier = Modifier.height(8.dp))
-                    BarraPesquisa(label = "Pesquisar ferramentas...", query = state.searchQuery, onQueryChange = onSearchChange)
+                    BarraPesquisa(
+                        label = "Pesquisar ferramentas...",
+                        query = state.searchQuery,
+                        onQueryChange = onSearchChange
+                    )
                 }
 
                 item {
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
                         FiltroFerramenta.entries.forEach { filtro ->
-                            FilterChip(label = filtro.label, isSelected = state.filtroAtual == filtro, onClick = { onFiltroChange(filtro) })
+                            FilterChip(
+                                label = filtro.label,
+                                isSelected = state.filtroAtual == filtro,
+                                onClick = { onFiltroChange(filtro) })
                         }
                     }
                 }
@@ -109,9 +139,27 @@ private fun FerramentasScreenContent(
                 items(state.ferramentas) { ferramenta ->
                     FerramentaItemCard(
                         ferramenta = ferramenta,
-                        onDevolverClick = { ferramenta.idRequisicao?.let { idReq -> onDevolverClick(idReq) } },
-                        onMauEstadoClick = { ferramenta.idRequisicao?.let { idReq -> onMauEstadoClick(ferramenta.id, idReq) } },
-                        onRequisitarClick = { onRequisitarClick(ferramenta.codigoTipo, ferramenta.nFerramenta) }
+                        onDevolverClick = {
+                            ferramenta.idRequisicao?.let { idReq ->
+                                onDevolverClick(
+                                    idReq
+                                )
+                            }
+                        },
+                        onMauEstadoClick = {
+                            ferramenta.idRequisicao?.let { idReq ->
+                                onMauEstadoClick(
+                                    ferramenta.id,
+                                    idReq
+                                )
+                            }
+                        },
+                        onRequisitarClick = {
+                            onRequisitarClick(
+                                ferramenta.codigoTipo,
+                                ferramenta.nFerramenta
+                            )
+                        }
                     )
                 }
             }
@@ -129,7 +177,11 @@ private fun FerramentasScreenContent(
                     Text("Aviso", fontWeight = FontWeight.Bold, color = TextTitle)
                 },
                 text = {
-                    Text("Não tem nenhuma tarefa atribuida para requisitar esta ferramenta.", color = TextSecondary, fontSize = 15.sp)
+                    Text(
+                        "Não tem nenhuma tarefa atribuida para requisitar esta ferramenta.",
+                        color = TextSecondary,
+                        fontSize = 15.sp
+                    )
                 },
                 containerColor = Color.White,
                 shape = RoundedCornerShape(12.dp)
@@ -151,19 +203,25 @@ private fun FerramentasScreenContent(
 
 @Composable
 fun FerramentasScreen(
-    viewModel: FerramentasViewModel = viewModel()
+    viewModel: FerramentasViewModel = viewModel(),
+    onMenuClick: () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsState()
 
     FerramentasScreenContent(
         state = state,
-        onMenuClick = {},
+        onMenuClick = onMenuClick,
         onSearchChange = viewModel::onSearchChange,
         onFiltroChange = viewModel::onFiltroChange,
         onTemplateClick = viewModel::toggleTemplate,
         onDevolverClick = viewModel::devolver,
         onMauEstadoClick = viewModel::marcarMauEstado,
-        onRequisitarClick = { codigoTipo, nFerramenta -> viewModel.requisitarFerramenta(codigoTipo, nFerramenta) },
+        onRequisitarClick = { codigoTipo, nFerramenta ->
+            viewModel.requisitarFerramenta(
+                codigoTipo,
+                nFerramenta
+            )
+        },
         onClearError = viewModel::limparErro
     )
 }
@@ -213,7 +271,11 @@ fun FerramentaItemCard(
 
                     EstadoFerramentaLista.MANUTENCAO -> Triple(FieldBg, TextSecondary, "Manutenção")
 
-                    EstadoFerramentaLista.RESERVADA -> Triple(AzulReservou.copy(alpha = 0.2f), AzulReservou, "Reservada")
+                    EstadoFerramentaLista.RESERVADA -> Triple(
+                        AzulReservou.copy(alpha = 0.2f),
+                        AzulReservou,
+                        "Reservada"
+                    )
                 }
                 Box(
                     modifier = Modifier.clip(RoundedCornerShape(12.dp)).background(bgColor)
@@ -261,7 +323,8 @@ fun FerramentaItemCard(
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(
                     onClick = onRequisitarClick,
-                    modifier = Modifier.fillMaxWidth().height(44.dp), shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier.fillMaxWidth().height(44.dp),
+                    shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = TapBrandDark)
                 ) {
                     Text(
@@ -284,28 +347,66 @@ fun TemplateCard(template: TemplateDiarioUi, onClick: () -> Unit) {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(modifier = Modifier.size(40.dp).clip(RoundedCornerShape(8.dp)).background(TapLightGreen.copy(alpha = 0.15f)), contentAlignment = Alignment.Center) { Text("🔧", fontSize = 16.sp) }
+                Box(
+                    modifier = Modifier.size(40.dp).clip(RoundedCornerShape(8.dp))
+                        .background(TapLightGreen.copy(alpha = 0.15f)),
+                    contentAlignment = Alignment.Center
+                ) { Text("🔧", fontSize = 16.sp) }
                 Spacer(modifier = Modifier.width(12.dp))
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(text = template.nome, fontWeight = FontWeight.Bold, fontSize = 15.sp, color = TextTitle)
-                    Text(text = "${template.totalFerramentas} ferramentas", fontSize = 12.sp, color = TextSecondary)
+                    Text(
+                        text = template.nome,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 15.sp,
+                        color = TextTitle
+                    )
+                    Text(
+                        text = "${template.totalFerramentas} ferramentas",
+                        fontSize = 12.sp,
+                        color = TextSecondary
+                    )
                 }
-                Text(text = if (template.isExpanded) "▲" else "▼", color = TextSecondary, fontSize = 14.sp, modifier = Modifier.padding(start = 8.dp))
+                Text(
+                    text = if (template.isExpanded) "▲" else "▼",
+                    color = TextSecondary,
+                    fontSize = 14.sp,
+                    modifier = Modifier.padding(start = 8.dp)
+                )
             }
 
             AnimatedVisibility(visible = template.isExpanded) {
-                Column(modifier = Modifier.padding(top = 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Column(
+                    modifier = Modifier.padding(top = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
                     template.ferramentas.forEach { nomeFerramenta ->
-                        Row(modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(6.dp)).background(FieldBg).padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(6.dp))
+                                .background(FieldBg).padding(12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             Text("🔧", fontSize = 12.sp)
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text(text = nomeFerramenta, fontSize = 13.sp, fontWeight = FontWeight.Medium, color = TextTitle)
+                            Text(
+                                text = nomeFerramenta,
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = TextTitle
+                            )
                         }
                     }
                     Spacer(modifier = Modifier.height(4.dp))
                     Button(
-                        onClick = { }, modifier = Modifier.fillMaxWidth().height(48.dp), colors = ButtonDefaults.buttonColors(containerColor = TapBrandDark), shape = RoundedCornerShape(8.dp)
-                    ) { Text("Requisitar todas ( ${template.totalFerramentas} )", fontSize = 14.sp) }
+                        onClick = { },
+                        modifier = Modifier.fillMaxWidth().height(48.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = TapBrandDark),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Text(
+                            "Requisitar todas ( ${template.totalFerramentas} )",
+                            fontSize = 14.sp
+                        )
+                    }
                 }
             }
         }
