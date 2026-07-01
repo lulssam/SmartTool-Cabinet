@@ -140,7 +140,6 @@ class TarefasGestorViewModel(
     fun onAdicionarTarefa() {
         val s = _state.value
         val idTecnico = s.tecnicoSelecionado ?: return
-        println("idTecnico: $idTecnico \n s: $s")
         if (s.titulo.isBlank()) return
         viewModelScope.launch {
             val dto = NovaTarefaDto(
@@ -149,12 +148,10 @@ class TarefasGestorViewModel(
                 titulo = s.titulo,
                 descricao = s.descricao,
                 prioridade = s.novaPrioridade.name,
-                ferramentasPermitidasId = s.ferramentasSelecionadas.map {
+                ferramentasPermitidasIds = s.ferramentasSelecionadas.map {
                     FerramentaIdDto(codigoTipo = it / 100000, nFerramenta = it % 100000)
                 }
             )
-
-            println("adicionada tarefa")
 
             when (tarefas.criarTarefa(dto)) {
                 is ApiResult.Success -> {

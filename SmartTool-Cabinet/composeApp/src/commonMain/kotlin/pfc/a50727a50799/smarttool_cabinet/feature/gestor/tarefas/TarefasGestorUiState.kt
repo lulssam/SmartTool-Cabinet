@@ -45,6 +45,7 @@ data class TecnicoUi(
 data class TarefaUi(
     val id: String,
     val titulo: String,
+    val descricao: String,
     val codigo: String,
     val quando: String,
     val tecnico: String,
