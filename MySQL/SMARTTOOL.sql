@@ -88,6 +88,7 @@ CREATE TABLE requisicao_ferramenta (
 
 CREATE TABLE tarefa (
   idTarefa INT NOT NULL AUTO_INCREMENT,
+  titulo VARCHAR(150) NOT NULL,
   descricao VARCHAR(255) NOT NULL,
   id_gestor INT NOT NULL,
   id_tecnico INT NOT NULL,

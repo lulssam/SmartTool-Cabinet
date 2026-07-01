@@ -74,14 +74,14 @@ INSERT INTO requisicao_ferramenta (idRequisicao, codigo_tipo, nFerramenta) VALUE
   (6, 1, 3);                    -- Req 6 aberta (Rui)
 
 -- 9. TAREFAS (datas recentes; cobre 3 estados e 3 prioridades)
-INSERT INTO tarefa (idTarefa, descricao, id_gestor, id_tecnico, estado, prioridade, dhAtribuicao) VALUES
-  (1, 'Manutenção preventiva do trem de aterragem', 1, 3, 'CONCLUIDA', 'NORMAL', '2026-06-26 09:00:00'),
-  (2, 'Inspeção do painel elétrico principal',      2, 4, 'CONCLUIDA', 'ALTA',   '2026-06-27 10:30:00'),
-  (3, 'Inspeção do motor A320',                     1, 3, 'EM CURSO',  'ALTA',   '2026-06-30 08:00:00'),  -- hoje
-  (4, 'Substituição de parafusos da fuselagem',     1, 4, 'PENDENTE',  'NORMAL', '2026-06-30 08:30:00'),  -- hoje
-  (5, 'Inspeção dos sistemas aviónicos',            2, 5, 'PENDENTE',  'ALTA',   '2026-06-29 14:00:00'),  -- ontem
-  (6, 'Verificação do sistema hidráulico',          2, 3, 'EM CURSO',  'NORMAL', '2026-06-29 09:30:00'),  -- ontem
-  (7, 'Calibração de sensores de pressão',          1, 4, 'CONCLUIDA', 'BAIXA',  '2026-06-27 16:00:00');
+INSERT INTO tarefa (idTarefa, titulo, descricao, id_gestor, id_tecnico, estado, prioridade, dhAtribuicao) VALUES
+  (1, 'Manutenção preventiva do trem de aterragem', 'Verificar amortecedores, pneus e sistema de retração do trem principal.',1, 3, 'CONCLUIDA', 'NORMAL', '2026-06-26 09:00:00'),
+  (2, 'Inspeção do painel elétrico principal','Testar disjuntores e ligações do painel elétrico da cabine.',2, 4, 'CONCLUIDA', 'ALTA',   '2026-06-27 10:30:00'),
+  (3, 'Inspeção do motor A320', 'Inspeção visual e boroscópica do motor nº1 conforme checklist.',1, 3, 'EM CURSO',  'ALTA',   '2026-06-30 08:00:00'),  
+  (4, 'Substituição de parafusos da fuselagem','Substituir parafusos corroídos na secção traseira da fuselagem.',1, 4, 'PENDENTE',  'NORMAL', '2026-06-30 08:30:00'), 
+  (5, 'Inspeção dos sistemas aviónicos','Verificar sistemas de navegação e comunicação no cockpit.',2, 5, 'PENDENTE',  'ALTA',   '2026-06-29 14:00:00'),  
+  (6, 'Verificação do sistema hidráulico','Medir pressão e detetar fugas no circuito hidráulico principal.',2, 3, 'EM CURSO',  'NORMAL', '2026-06-29 09:30:00'), 
+  (7, 'Calibração de sensores de pressão','Calibrar sensores de pressão dos pneus e do sistema hidráulico.',1, 4, 'CONCLUIDA', 'BAIXA',  '2026-06-27 16:00:00');
 
 -- 10. FERRAMENTAS PERMITIDAS POR TAREFA
 INSERT INTO tarefa_ferramenta_permitida (idTarefa, codigo_tipo, nFerramenta) VALUES
