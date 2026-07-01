@@ -100,7 +100,9 @@ class TarefasGestorViewModel(
 
             // carrega ferramentas
             val ferrs = when (val r = ferramentas.getFerramentas()) {
-                is ApiResult.Success -> r.data.map { it.toGestorUi() }
+                is ApiResult.Success -> r.data
+                    .filter { it.disponibilidade == "Disponivel" && it.estado == "Operacional"}
+                    .map { it.toGestorUi() }
                 is ApiResult.Error -> emptyList()
             }
 

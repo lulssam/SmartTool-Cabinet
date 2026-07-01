@@ -41,15 +41,17 @@ fun FerramentaDto.toGestorUi(detentor: String? = null): FerramentaUi = Ferrament
     categoria = categoria,
     localizacao = localizacao,
     disponibilidade = when (disponibilidade) {
-        "Disponivel"  -> DisponibilidadeFerramenta.DISPONIVEL
+        "Disponivel" -> DisponibilidadeFerramenta.DISPONIVEL
         "Requisitada" -> DisponibilidadeFerramenta.REQUISITADA
-        else          -> DisponibilidadeFerramenta.DISPONIVEL   // TODO fallback enquanto o backend não dá os outros
+        "Reservada" -> DisponibilidadeFerramenta.RESERVADA
+        "Em Manutencao" -> DisponibilidadeFerramenta.EM_MANUTENCAO
+        else -> DisponibilidadeFerramenta.DISPONIVEL
     },
     estado = when (estado) {
         "Operacional" -> EstadoFerramenta.OPERACIONAL
-        "Danificada"  -> EstadoFerramenta.DANIFICADA
-        "Abatida"     -> EstadoFerramenta.ABATIDA
-        else          -> EstadoFerramenta.OPERACIONAL
+        "Danificada" -> EstadoFerramenta.DANIFICADA
+        "Abatida" -> EstadoFerramenta.ABATIDA
+        else -> EstadoFerramenta.OPERACIONAL
     },
     funcionario = detentor
 )

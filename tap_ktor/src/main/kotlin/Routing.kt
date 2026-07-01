@@ -79,7 +79,11 @@ fun Application.configureRouting() {
                 }
                 call.respond(lista)
             } catch (e: Exception) {
-                call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain, status = HttpStatusCode.InternalServerError)
+                call.respondText(
+                    "Erro na DB: ${e.message}",
+                    ContentType.Text.Plain,
+                    status = HttpStatusCode.InternalServerError
+                )
             }
         }
 
@@ -547,6 +551,7 @@ fun Application.configureRouting() {
                 try {
                     val pedido = call.receive<NovaTarefaDTO>()
 
+                    // criar tarefa
                     val sqlTarefa =
                         "INSERT INTO tarefa (titulo, descricao, id_gestor, id_tecnico, prioridade, dhAtribuicao) VALUES (?, ?, ?, ?, ?, NOW())"
                     val statementTarefa = connection.prepareStatement(sqlTarefa, Statement.RETURN_GENERATED_KEYS)
@@ -563,18 +568,35 @@ fun Application.configureRouting() {
                     }
                     val idTarefaGerada = keys.getInt(1)
 
+                    // associa as ferramentas permitidas e reserva-as
                     if (pedido.ferramentasPermitidasIds.isNotEmpty()) {
-                        val sqlFerramenta =
+                        val stmtInsert = connection.prepareStatement(
                             "INSERT INTO tarefa_ferramenta_permitida (idTarefa, codigo_tipo, nFerramenta) VALUES (?, ?, ?)"
-                        val statementFerramenta = connection.prepareStatement(sqlFerramenta)
+                        )
+                        // só reserva se ainda estiver 'Disponivel'
+                        val stmtReserva = connection.prepareStatement(
+                            "UPDATE ferramenta SET disponibilidade = 'Reservada' " +
+                                    "WHERE codigo_tipo = ? AND nFerramenta = ? AND disponibilidade = 'Disponivel'"
+                        )
 
-                        for (ferramenta in pedido.ferramentasPermitidasIds) {
-                            statementFerramenta.setInt(1, idTarefaGerada)
-                            statementFerramenta.setInt(2, ferramenta.codigoTipo)
-                            statementFerramenta.setInt(3, ferramenta.nFerramenta)
-                            statementFerramenta.addBatch()
+                        for (f in pedido.ferramentasPermitidasIds) {
+                            stmtReserva.setInt(1, f.codigoTipo)
+                            stmtReserva.setInt(2, f.nFerramenta)
+                            if (stmtReserva.executeUpdate() == 0) {
+                                connection.rollback()
+                                call.respond(
+                                    HttpStatusCode.Conflict,
+                                    "A ferramenta ${f.codigoTipo}-${f.nFerramenta} já não está disponível."
+                                )
+                                return@post
+                            }
+
+                            stmtInsert.setInt(1, idTarefaGerada)
+                            stmtInsert.setInt(2, f.codigoTipo)
+                            stmtInsert.setInt(3, f.nFerramenta)
+                            stmtInsert.addBatch()
                         }
-                        statementFerramenta.executeBatch()
+                        stmtInsert.executeBatch()
                     }
 
                     connection.commit()

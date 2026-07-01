@@ -44,6 +44,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -380,7 +381,9 @@ private fun TecnicoSelecionavel(t: TecnicoUi, selecionado: Boolean, onClick: () 
                 if (selecionado) TapGreenishBlue else CardBorder,
                 RoundedCornerShape(12.dp)
             )
-            .clickable(onClick = onClick).padding(12.dp),
+            .then(if (t.disponivel) Modifier.clickable(onClick = onClick) else Modifier)
+            .alpha(if (t.disponivel) 1f else 0.5f)
+            .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Avatar(t.nome)

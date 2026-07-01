@@ -79,7 +79,7 @@ SELECT  f.id_func      AS id,
         f.turno,
         NOT EXISTS (
             SELECT 1 FROM tarefa t
-            WHERE t.id_tecnico = f.id_func AND t.estado = 'EM CURSO'
+            WHERE t.id_tecnico = f.id_func AND t.estado <> 'CONCLUIDA'
         ) AS disponivel
 FROM    tecnico tc
 JOIN    funcionario f ON tc.id_func = f.id_func
