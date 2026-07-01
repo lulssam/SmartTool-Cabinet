@@ -1,4 +1,4 @@
-package pfc.a50727a50799.smarttool_cabinet.feature.tecnico
+package pfc.a50727a50799.smarttool_cabinet.feature.tecnico.dashboard
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -48,13 +48,13 @@ import pfc.a50727a50799.smarttool_cabinet.ui.theme.CardBorder
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.PillShape
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.ScreenBg
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapAlert
-import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapAlmostGreen
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapGreenishBlue
 
 @Composable
 private fun TecnicoScreenContent(
     state: TecnicoUiState,
-    onVerTodosClick: () -> Unit
+    onVerTodosClick: () -> Unit,
+    onMenuClick: () -> Unit,
 ) {
     when {
         state.isLoading ->
@@ -73,7 +73,7 @@ private fun TecnicoScreenContent(
                     titulo = "Dashboard",
                     alertasAtivos = 0,
                     mostrarAlertas = false,
-                    onMenu = {}
+                    onMenu = onMenuClick
                 )
 
                 LazyColumn(
@@ -82,7 +82,12 @@ private fun TecnicoScreenContent(
                     verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
                     item {
-                        WelcomeCard(state.nomeTecnico, state.turno, state.cargo, color = TapGreenishBlue)
+                        WelcomeCard(
+                            state.nomeTecnico,
+                            state.turno,
+                            state.cargo,
+                            color = TapGreenishBlue
+                        )
                     }
 
                     item {
@@ -124,12 +129,14 @@ private fun TecnicoScreenContent(
 @Composable
 fun TecnicoScreen(
     viewModel: TecnicoViewModel = viewModel(),
-    onVerTodosClick: () -> Unit
+    onVerTodosClick: () -> Unit,
+    onMenuClick: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
     TecnicoScreenContent(
         state = state,
-        onVerTodosClick = onVerTodosClick
+        onVerTodosClick = onVerTodosClick,
+        onMenuClick = onMenuClick
     )
 }
 
@@ -146,7 +153,12 @@ fun EstatisticaCard(
         border = BorderStroke(1.dp, CardBorder)
     ) {
         Column(Modifier.padding(16.dp)) {
-            Text(text = titulo, fontSize = 11.sp, color = Color.Gray, fontWeight = FontWeight.Medium)
+            Text(
+                text = titulo,
+                fontSize = 11.sp,
+                color = Color.Gray,
+                fontWeight = FontWeight.Medium
+            )
             Spacer(modifier = Modifier.height(6.dp))
             Text(text = valor, fontSize = 28.sp, fontWeight = FontWeight.Bold, color = Color.Black)
             Spacer(modifier = Modifier.height(10.dp))
@@ -157,7 +169,12 @@ fun EstatisticaCard(
                     .background(rodapeBgColor)
                     .padding(horizontal = 8.dp, vertical = 1.dp),
             ) {
-                Text(text = rodapeTexto, color = rodapeTextColor, fontSize = 9.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    text = rodapeTexto,
+                    color = rodapeTextColor,
+                    fontSize = 9.sp,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }
@@ -176,21 +193,33 @@ fun FerramentaTecnicoCard(ferramenta: FerramentaTecnicoUi) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
-                modifier = Modifier.size(42.dp).clip(RoundedCornerShape(8.dp)).background(TapGreenishBlue.copy(alpha = 0.08f)),
+                modifier = Modifier.size(42.dp).clip(RoundedCornerShape(8.dp))
+                    .background(TapGreenishBlue.copy(alpha = 0.08f)),
                 contentAlignment = Alignment.Center
             ) { Text("🔧", fontSize = 18.sp) }
 
             Spacer(modifier = Modifier.width(12.dp))
 
             Column(modifier = Modifier.weight(1f)) {
-                Text(text = ferramenta.nome, fontWeight = FontWeight.Bold, fontSize = 14.sp, color = Color.Black)
+                Text(
+                    text = ferramenta.nome,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                    color = Color.Black
+                )
                 Text(text = ferramenta.detalhes, fontSize = 11.sp, color = Color.Gray)
             }
 
             Box(
-                modifier = Modifier.clip(PillShape).background(AlertOrange.copy(alpha = 0.15f)).padding(horizontal = 12.dp, vertical = 2.dp)
+                modifier = Modifier.clip(PillShape).background(AlertOrange.copy(alpha = 0.15f))
+                    .padding(horizontal = 12.dp, vertical = 2.dp)
             ) {
-                Text(text = ferramenta.estado, color = AlertOrangeText, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    text = ferramenta.estado,
+                    color = AlertOrangeText,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }
@@ -221,7 +250,8 @@ private fun Preview() {
                     )
                 )
             ),
-            onVerTodosClick = {}
+            onVerTodosClick = {},
+            onMenuClick = {}
         )
     }
 }

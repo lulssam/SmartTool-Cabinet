@@ -55,12 +55,13 @@ import pfc.a50727a50799.smarttool_cabinet.feature.session.SessionUiState
 import pfc.a50727a50799.smarttool_cabinet.feature.session.SessionViewModel
 import pfc.a50727a50799.smarttool_cabinet.feature.session.SplashScreen
 import pfc.a50727a50799.smarttool_cabinet.feature.sso.SSOScreen
-import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.FerramentasScreen
-import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.FerramentasViewModel
-import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.HistoricoScreen
-import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.HistoricoViewModel
-import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.TecnicoScreen
-import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.TecnicoViewModel
+import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.ferramentas.FerramentasScreen
+import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.ferramentas.FerramentasViewModel
+import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.historico.HistoricoScreen
+import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.historico.HistoricoViewModel
+import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.dashboard.TecnicoScreen
+import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.dashboard.TecnicoViewModel
+import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.menu.TecnicoScaffold
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AppTheme
 
 
@@ -184,9 +185,9 @@ private fun AppNavHost(
                     }
                 }
             )
-
-
         }
+
+        // =============== GESTOR ===============
 
         composable<GestorRoute> {
             val viewModel = viewModel {
@@ -218,91 +219,6 @@ private fun AppNavHost(
                 )
             }
 
-        }
-
-        composable<BackOfficeRoute> {
-            val viewModel = viewModel {
-                BODashboardViewModel(
-                    backOfficeDataSource = AppModule.backOfficeRemoteDataSource
-                )
-            }
-            BODashboardScreen(viewModel = viewModel)
-        }
-
-        composable<BackOfficeUtilizadoresRoute> {
-            val viewModel = viewModel {
-                BOUtilizadoresViewModel(
-                    backOfficeDataSource = AppModule.backOfficeRemoteDataSource
-                )
-            }
-            BOUtilizadoresScreen(viewModel = viewModel)
-        }
-        composable<BackOfficeArmariosRoute> {
-            val viewModel = viewModel {
-                BOArmariosViewModel(
-                    ferramentas = AppModule.ferramentaRemoteDataSource,
-                    armarios = AppModule.armarioRemoteDataSource,
-
-                )
-            }
-
-            BOArmariosScreen(
-                viewModel = viewModel,
-                onMenuClick = { /* TODO: Adicionar menu mais tarde */ }
-            )
-        }
-
-        composable<BackOfficeHistoricoRoute> {
-            val viewModel = viewModel {
-                BOHistoricoViewModel(
-                    historico = AppModule.historicoRemoteDataSource,
-                )
-            }
-            BOHistoricoScreen(
-                viewModel = viewModel,
-                onMenuClick = {}
-            )
-        }
-
-
-        composable<TecnicoRoute> {
-            val session = SessionManager.atual
-            val viewModel = viewModel {
-                TecnicoViewModel(
-                    ferramentas = AppModule.ferramentaRemoteDataSource,
-                    idTecnico = session?.idFunc ?: -1,
-                    nomeTecnico = session?.nome ?: "Técnico",
-                    turno = session?.turno ?: "Manhã"
-                )
-            }
-            TecnicoScreen(
-                viewModel = viewModel,
-                onVerTodosClick = {
-                    navController.navigate(FerramentasTecnicoRoute)
-                }
-            )
-        }
-
-        composable<FerramentasTecnicoRoute> {
-            val session = SessionManager.atual
-            val viewModel = viewModel {
-                FerramentasViewModel(
-                    ferramentasDataSource = AppModule.ferramentaRemoteDataSource,
-                    idTecnico = session?.idFunc ?: -1
-                )
-            }
-            FerramentasScreen(viewModel = viewModel)
-        }
-
-        composable<HistoricoTecnicoRoute> {
-            val session = SessionManager.atual
-            val viewModel = viewModel {
-                HistoricoViewModel(
-                    historicoDataSource = AppModule.historicoRemoteDataSource,
-                    idTecnico = session?.idFunc ?: -1
-                )
-            }
-            HistoricoScreen(viewModel = viewModel)
         }
 
         composable<ArmariosGestorRoute> {
@@ -417,6 +333,120 @@ private fun AppNavHost(
                 TarefasGestorScreen(viewModel = viewModel, onMenuClick = abrirMenu)
             }
         }
+
+        // =============== BACK OFFICE ===============
+        composable<BackOfficeRoute> {
+            val viewModel = viewModel {
+                BODashboardViewModel(
+                    backOfficeDataSource = AppModule.backOfficeRemoteDataSource
+                )
+            }
+            BODashboardScreen(viewModel = viewModel)
+        }
+
+        composable<BackOfficeUtilizadoresRoute> {
+            val viewModel = viewModel {
+                BOUtilizadoresViewModel(
+                    backOfficeDataSource = AppModule.backOfficeRemoteDataSource
+                )
+            }
+            BOUtilizadoresScreen(viewModel = viewModel)
+        }
+        composable<BackOfficeArmariosRoute> {
+            val viewModel = viewModel {
+                BOArmariosViewModel(
+                    ferramentas = AppModule.ferramentaRemoteDataSource,
+                    armarios = AppModule.armarioRemoteDataSource,
+
+                    )
+            }
+
+            BOArmariosScreen(
+                viewModel = viewModel,
+                onMenuClick = { /* TODO: Adicionar menu mais tarde */ }
+            )
+        }
+
+        composable<BackOfficeHistoricoRoute> {
+            val viewModel = viewModel {
+                BOHistoricoViewModel(
+                    historico = AppModule.historicoRemoteDataSource,
+                )
+            }
+            BOHistoricoScreen(
+                viewModel = viewModel,
+                onMenuClick = {}
+            )
+        }
+
+
+        // =============== TECNICO ===============
+
+        composable<TecnicoRoute> {
+            val session = SessionManager.atual
+            val viewModel = viewModel {
+                TecnicoViewModel(
+                    ferramentas = AppModule.ferramentaRemoteDataSource,
+                    idTecnico = session?.idFunc ?: -1,
+                    nomeTecnico = session?.nome ?: "Técnico",
+                    turno = session?.turno ?: "Manhã"
+                )
+            }
+
+            TecnicoScaffold(
+                itemSelecionado = "dashboard",
+                nomeTecnico = SessionManager.atual?.nome ?: "",
+                cargo = "Técnico",
+                onNavegar = { id -> navegarTecnico(navController, id) },
+                onLogout = { fazerLogout(navController, authRepository) }
+            ) { abrirMenu ->
+                TecnicoScreen(
+                    viewModel = viewModel,
+                    onVerTodosClick = { navController.navigate(FerramentasTecnicoRoute) },
+                    onMenuClick = abrirMenu
+                )
+            }
+        }
+
+        composable<FerramentasTecnicoRoute> {
+            val session = SessionManager.atual
+            val viewModel = viewModel {
+                FerramentasViewModel(
+                    ferramentasDataSource = AppModule.ferramentaRemoteDataSource,
+                    idTecnico = session?.idFunc ?: -1
+                )
+            }
+
+            TecnicoScaffold(
+                itemSelecionado = "ferramentas",
+                nomeTecnico = SessionManager.atual?.nome ?: "",
+                cargo = "Técnico",
+                onNavegar = { id -> navegarTecnico(navController, id) },
+                onLogout = { fazerLogout(navController, authRepository) }
+            ) { abrirMenu ->
+                FerramentasScreen(viewModel = viewModel, onMenuClick = abrirMenu)
+            }
+        }
+
+        composable<HistoricoTecnicoRoute> {
+            val session = SessionManager.atual
+            val viewModel = viewModel {
+                HistoricoViewModel(
+                    historicoDataSource = AppModule.historicoRemoteDataSource,
+                    idTecnico = session?.idFunc ?: -1
+                )
+            }
+
+            TecnicoScaffold(
+                itemSelecionado = "historico",
+                nomeTecnico = SessionManager.atual?.nome ?: "",
+                cargo = "Técnico",
+                onNavegar = { id -> navegarTecnico(navController, id) },
+                onLogout = { fazerLogout(navController, authRepository) }
+            ) { abrirMenu ->
+                HistoricoScreen(viewModel = viewModel, onMenuClick = abrirMenu)
+            }
+        }
     }
 }
 
@@ -428,6 +458,18 @@ private fun navegarGestor(navController: NavController, id: String) {
         "alertas" -> AlertasGestorRoute
         "historico" -> HistoricoGestorRoute
         "tarefas" -> TarefasGestorRoute
+        else -> null
+    }
+    rota?.let {
+        navController.navigate(it) { launchSingleTop = true }  // evita empilhar o mesmo ecrã
+    }
+}
+
+private fun navegarTecnico(navController: NavController, id: String) {
+    val rota: Any? = when (id) {
+        "dashboard" -> TecnicoRoute
+        "ferramentas" -> FerramentasTecnicoRoute
+        "historico" -> HistoricoTecnicoRoute
         else -> null
     }
     rota?.let {
