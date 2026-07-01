@@ -131,9 +131,22 @@ class BOUtilizadoresViewModel(
         if (turnoDB == null) return "Sem Turno"
         return turnoDB.lowercase().replaceFirstChar { it.uppercase() }
     }
+    fun criarUtilizador(nome: String, email: String, cargo: String, turno: String) {
+        viewModelScope.launch {
+            _state.update { it.copy(isLoading = true) }
+            val r = backOfficeDataSource.criarFuncionario(nome, email, cargo, turno)
+
+            if (r is ApiResult.Success) {
+                carregar()
+            } else {
+                _state.update { it.copy(isLoading = false, error = "Erro ao criar utilizador") }
+            }
+        }
+    }
 
     private fun mensagem(erro: ApiError): String = when (erro) {
         ApiError.NetworkError -> "Não foi possível contactar o servidor"
         is ApiError.Unknown -> erro.message ?: "Erro desconhecido"
     }
+
 }

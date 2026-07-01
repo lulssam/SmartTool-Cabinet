@@ -4,6 +4,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.patch
+import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
@@ -33,7 +34,9 @@ class BackOfficeRemoteDataSource(private val httpClient: HttpClient) {
         }
         if (response.status == HttpStatusCode.OK) ApiResult.Success(Unit)
         else ApiResult.Error(ApiError.Unknown("Erro ao mudar cargo"))
-    } catch (e: Exception) { ApiResult.Error(ApiError.NetworkError) }
+    } catch (e: Exception) {
+        ApiResult.Error(ApiError.NetworkError)
+    }
 
     suspend fun mudarTurno(id: Int, turno: String): ApiResult<Unit> = try {
         val response = httpClient.patch("/api/funcionarios/$id/turno") {
@@ -42,13 +45,17 @@ class BackOfficeRemoteDataSource(private val httpClient: HttpClient) {
         }
         if (response.status == HttpStatusCode.OK) ApiResult.Success(Unit)
         else ApiResult.Error(ApiError.Unknown("Erro ao mudar turno"))
-    } catch (e: Exception) { ApiResult.Error(ApiError.NetworkError) }
+    } catch (e: Exception) {
+        ApiResult.Error(ApiError.NetworkError)
+    }
 
     suspend fun desativarFuncionario(id: Int): ApiResult<Unit> = try {
         val response = httpClient.patch("/api/funcionarios/$id/desativar")
         if (response.status == HttpStatusCode.OK) ApiResult.Success(Unit)
         else ApiResult.Error(ApiError.Unknown("Erro ao desativar"))
-    } catch (e: Exception) { ApiResult.Error(ApiError.NetworkError) }
+    } catch (e: Exception) {
+        ApiResult.Error(ApiError.NetworkError)
+    }
 
     suspend fun getArmarios(): ApiResult<List<BOArmarioDTO>> = try {
         val response = httpClient.get("/api/armarios")
@@ -56,6 +63,32 @@ class BackOfficeRemoteDataSource(private val httpClient: HttpClient) {
             ApiResult.Success(response.body())
         } else {
             ApiResult.Error(ApiError.Unknown(response.status.toString()))
+        }
+    } catch (e: Exception) {
+        ApiResult.Error(ApiError.NetworkError)
+    }
+
+    suspend fun criarFuncionario(
+        nome: String,
+        email: String,
+        cargo: String,
+        turno: String
+    ): ApiResult<Unit> = try {
+        val response = httpClient.post("/api/funcionarios") {
+            contentType(ContentType.Application.Json)
+            setBody(
+                CriarFuncionarioRequest(
+                    nomeCompleto = nome,
+                    email = email,
+                    cargo = cargo,
+                    turno = turno
+                )
+            )
+        }
+        if (response.status == HttpStatusCode.OK || response.status == HttpStatusCode.Created) {
+            ApiResult.Success(Unit)
+        } else {
+            ApiResult.Error(ApiError.Unknown("Erro ao criar utilizador no servidor"))
         }
     } catch (e: Exception) {
         ApiResult.Error(ApiError.NetworkError)
