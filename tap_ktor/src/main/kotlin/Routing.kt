@@ -291,7 +291,6 @@ fun Application.configureRouting() {
             }
         }
 
-        // todo get das tarefas
         get("/api/tarefas") {
             val porTarefa = LinkedHashMap<Int, TarefaDTO>()
 
@@ -301,7 +300,7 @@ fun Application.configureRouting() {
 
                 try {
                     val sql = """
-                            SELECT idTarefa, descricao, estado, prioridade, dhAtribuicao, tecnico, ferramenta
+                            SELECT idTarefa, titulo ,descricao, estado, prioridade, dhAtribuicao, tecnico, ferramenta
                             FROM   View_Tarefas_Detalhada
                             ORDER BY dhAtribuicao DESC, idTarefa
                         """.trimIndent()
@@ -315,6 +314,7 @@ fun Application.configureRouting() {
                         val tarefa = porTarefa.getOrPut(id) {
                             TarefaDTO(
                                 idTarefa = id,
+                                titulo = resultSet.getString("titulo"),
                                 descricao = resultSet.getString("descricao"),
                                 tecnico = resultSet.getString("tecnico"),
                                 estado = resultSet.getString("estado"),
@@ -330,6 +330,35 @@ fun Application.configureRouting() {
                     connection.close()
                 }
                 call.respond(porTarefa.values.toList())
+            } catch (e: Exception) {
+                e.printStackTrace()
+                call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain, HttpStatusCode.InternalServerError)
+            }
+        }
+
+        get("/api/tecnicos") {
+            val listaTecnicos = mutableListOf<TecnicoDTO>()
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver")
+                val connection = DriverManager.getConnection(URL, USER, PASSWORD)
+
+                try {
+                    val sql = "SELECT id, nome, turno, disponivel FROM View_Tecnicos_Disponibilidade ORDER BY nome"
+                    val rs = connection.createStatement().executeQuery(sql)
+                    while (rs.next()) {
+                        listaTecnicos.add(
+                            TecnicoDTO(
+                                id = rs.getInt("id"),
+                                nome = rs.getString("nome"),
+                                turno = rs.getString("turno"),
+                                disponivel = rs.getBoolean("disponivel")
+                            )
+                        )
+                    }
+                } finally {
+                    connection.close()
+                }
+                call.respond(listaTecnicos)
             } catch (e: Exception) {
                 e.printStackTrace()
                 call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain, HttpStatusCode.InternalServerError)
@@ -428,11 +457,13 @@ fun Application.configureRouting() {
                     val pedido = call.receive<NovaTarefaDTO>()
 
                     val sqlTarefa =
-                        "INSERT INTO tarefa (descricao, id_gestor, id_tecnico, dhAtribuicao) VALUES (?, ?, ?, NOW())"
+                        "INSERT INTO tarefa (titulo, descricao, id_gestor, id_tecnico, prioridade, dhAtribuicao) VALUES (?, ?, ?, ?, ?, NOW())"
                     val statementTarefa = connection.prepareStatement(sqlTarefa, Statement.RETURN_GENERATED_KEYS)
-                    statementTarefa.setString(1, pedido.descricao)
-                    statementTarefa.setInt(2, pedido.idGestor)
-                    statementTarefa.setInt(3, pedido.idTecnico)
+                    statementTarefa.setString(1, pedido.titulo)
+                    statementTarefa.setString(2, pedido.descricao)
+                    statementTarefa.setInt(3, pedido.idGestor)
+                    statementTarefa.setInt(4, pedido.idTecnico)
+                    statementTarefa.setString(5, pedido.prioridade)
                     statementTarefa.executeUpdate()
 
                     val keys = statementTarefa.generatedKeys
