@@ -25,6 +25,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -40,6 +41,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import org.jetbrains.compose.resources.painterResource
 import pfc.a50727a50799.smarttool_cabinet.ui.BarraPesquisa
 import pfc.a50727a50799.smarttool_cabinet.ui.FilterChip
 import pfc.a50727a50799.smarttool_cabinet.ui.TopBar
@@ -55,6 +57,8 @@ import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapBrandGreen
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapLightGreen
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TextSecondary
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TextTitle
+import smarttoolcabinet.composeapp.generated.resources.Res
+import smarttoolcabinet.composeapp.generated.resources.tool
 
 @Composable
 private fun FerramentasScreenContent(
@@ -178,7 +182,7 @@ private fun FerramentasScreenContent(
                 },
                 text = {
                     Text(
-                        "Não tem nenhuma tarefa atribuida para requisitar esta ferramenta.",
+                        text = state.error ?: "",
                         color = TextSecondary,
                         fontSize = 15.sp
                     )
@@ -244,7 +248,13 @@ fun FerramentaItemCard(
                 Box(
                     modifier = Modifier.size(42.dp).clip(RoundedCornerShape(8.dp))
                         .background(FieldBg), contentAlignment = Alignment.Center
-                ) { Text("🔧", fontSize = 18.sp) }
+                ) {
+                    Icon(
+                        painter = painterResource(Res.drawable.tool),
+                        contentDescription = null,
+                        tint = TextSecondary
+                    )
+                }
                 Spacer(modifier = Modifier.width(12.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(

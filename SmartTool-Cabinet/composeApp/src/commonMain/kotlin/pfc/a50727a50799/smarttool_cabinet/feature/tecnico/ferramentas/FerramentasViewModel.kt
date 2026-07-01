@@ -13,7 +13,7 @@ import pfc.a50727a50799.smarttool_cabinet.core.network.ApiResult
 
 class FerramentasViewModel(
     private val ferramentasDataSource: FerramentaRemoteDataSource,
-    private val idTecnico: Int
+    private val idTecnico: Int,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(FerramentasUiState())
@@ -34,13 +34,22 @@ class FerramentasViewModel(
 
             val rTodas = ferramentasDataSource.getFerramentas()
             val rMinhas = ferramentasDataSource.getFerramentaTecnico(idTecnico)
+            val rReservadas = ferramentasDataSource.getReservadasTecnico(idTecnico)
 
             if (rTodas is ApiResult.Success && rMinhas is ApiResult.Success) {
                 val minhasIds = rMinhas.data.map { it.idFerramenta }.toSet()
+                val reservadasIds =
+                    (rReservadas as? ApiResult.Success)?.data?.map { it.idFerramenta }?.toSet()
+                        ?: emptySet()
 
                 val listaMapeada = rTodas.data.map { dto ->
                     val isMinha = dto.idFerramenta in minhasIds
                     val isDisponivel = dto.disponibilidade.equals("Disponivel", ignoreCase = true)
+                    val isReservadaParaMim =
+                        dto.idFerramenta in reservadasIds && dto.disponibilidade.equals(
+                            "Reservada",
+                            ignoreCase = true
+                        )
                     val isDanificada = dto.estado.equals("Danificada", ignoreCase = true) ||
                             dto.disponibilidade.equals("Em Manutencao", ignoreCase = true)
 
@@ -62,7 +71,7 @@ class FerramentasViewModel(
                         detalhes = "${dto.localizacao} · ${dto.categoria}",
                         estado = estadoVis,
                         showDevolverButtons = isMinha,
-                        showRequisitarButton = isDisponivel
+                        showRequisitarButton = isReservadaParaMim
                     )
                 }
 
@@ -136,10 +145,12 @@ class FerramentasViewModel(
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }
 
-            when (val r = ferramentasDataSource.requisitarFerramenta(idTecnico, codigoTipo, nFerramenta)) {
+            when (val r =
+                ferramentasDataSource.requisitarFerramenta(idTecnico, codigoTipo, nFerramenta)) {
                 is ApiResult.Success -> {
                     carregar()
                 }
+
                 is ApiResult.Error -> {
                     _state.update {
                         it.copy(
@@ -151,6 +162,7 @@ class FerramentasViewModel(
             }
         }
     }
+
     fun limparErro() {
         _state.update { it.copy(error = null) }
     }
