@@ -358,6 +358,7 @@ fun Application.configureRouting() {
                 } finally {
                     connection.close()
                 }
+                call.respond(listaTecnicos)
             } catch (e: Exception) {
                 e.printStackTrace()
                 call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain, HttpStatusCode.InternalServerError)
