@@ -194,7 +194,7 @@ private fun TarefasGestorScreenContent(
                     }
                 }
                 // adicionar nova tarefa
-                if (state.mostrarNovaTarefa) {
+                if (state.mostrarNovaTarefa) { // TODO: deixar de mostrar as tarefas quando o tecnico as acaba
                     NovaTarefaDialog(
                         state = state,
                         onFechar = onFecharTarefaClick,
