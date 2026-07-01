@@ -9,7 +9,7 @@ data class NovaTarefaDto(
     val titulo: String,
     val descricao: String,
     val prioridade: String = "NORMAL",
-    val ferramentasPermitidasId: List<FerramentaIdDto>
+    val ferramentasPermitidasIds: List<FerramentaIdDto>
 )
 
 @Serializable

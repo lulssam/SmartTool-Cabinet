@@ -14,6 +14,7 @@ import kotlin.time.Clock
 @Serializable
 data class TarefaDto(
     val idTarefa: Int,
+    val titulo: String,
     val descricao: String,
     val tecnico: String,
     val estado: String,
@@ -26,7 +27,8 @@ data class TarefaDto(
 /** Converte os dados crus da tarefa no modelo pronto para o card do gestor. */
 fun TarefaDto.toGestorUi(): TarefaUi = TarefaUi(
     id = idTarefa.toString(),
-    titulo = descricao,
+    titulo = titulo,
+    descricao = descricao,
     codigo = "#" + idTarefa.toString().padStart(4, '0'),
     quando = formatarQuando(dhAtribuicao),
     tecnico = tecnico,
