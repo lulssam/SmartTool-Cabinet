@@ -1,4 +1,4 @@
-package pfc.a50727a50799.smarttool_cabinet.feature.tecnico
+package pfc.a50727a50799.smarttool_cabinet.feature.tecnico.Historico
 
 enum class TipoMovimento { RETIROU, DEVOLVEU, MARCOU_AVARIA }
 
