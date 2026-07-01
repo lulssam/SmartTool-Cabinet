@@ -36,6 +36,8 @@ import pfc.a50727a50799.smarttool_cabinet.feature.gestor.ferramentas.Ferramentas
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.historico.HistoricoGestorScreen
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.historico.HistoricoGestorViewModel
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.menu.GestorScaffold
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.tarefas.TarefasGestorScreen
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.tarefas.TarefasGestorViewModel
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.AlertasGestorRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.ArmariosGestorRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.BackOfficeArmariosRoute
@@ -47,6 +49,7 @@ import pfc.a50727a50799.smarttool_cabinet.feature.navigation.HistoricoGestorRout
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.HistoricoTecnicoRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.LoginEmailRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.SSORoute
+import pfc.a50727a50799.smarttool_cabinet.feature.navigation.TarefasGestorRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.routeForRole
 import pfc.a50727a50799.smarttool_cabinet.feature.session.SessionUiState
 import pfc.a50727a50799.smarttool_cabinet.feature.session.SessionViewModel
@@ -205,7 +208,7 @@ private fun AppNavHost(
                 nomeGestor = SessionManager.atual?.nome ?: "",
                 cargo = "Gestor de Armazém",
                 onNavegar = { id -> navegarGestor(navController, id) },
-                onLogout = {/*todo: terminar sessão*/ },
+                onLogout = { fazerLogout(navController, authRepository) },
             ) { abrirMenu ->
                 GestorScreen(
                     viewModel = viewModel,
@@ -319,7 +322,7 @@ private fun AppNavHost(
                 nomeGestor = SessionManager.atual?.nome ?: "",
                 cargo = "Gestor de Armazém",
                 onNavegar = { id -> navegarGestor(navController, id) },
-                onLogout = {/*todo: terminar sessão*/ },
+                onLogout = { fazerLogout(navController, authRepository) },
             ) { abrirMenu -> ArmariosScreen(viewModel = viewModel, onMenuClick = abrirMenu) }
 
 
@@ -340,7 +343,7 @@ private fun AppNavHost(
                 nomeGestor = SessionManager.atual?.nome ?: "",
                 cargo = "Gestor de Armazém",
                 onNavegar = { id -> navegarGestor(navController, id) },
-                onLogout = {/*todo: terminar sessão*/ },
+                onLogout = { fazerLogout(navController, authRepository) },
             ) { abrirMenu ->
                 AlertasScreen(viewModel = viewModel, onMenuClick = abrirMenu)
             }
@@ -361,7 +364,7 @@ private fun AppNavHost(
                 nomeGestor = SessionManager.atual?.nome ?: "",
                 cargo = "Gestor de Armazém",
                 onNavegar = { id -> navegarGestor(navController, id) },
-                onLogout = {/*todo: terminar sessão*/ },
+                onLogout = { fazerLogout(navController, authRepository) },
             ) { abrirMenu ->
                 FerramentasGestorScreen(viewModel = viewModel, onMenuClick = abrirMenu)
             }
@@ -385,10 +388,33 @@ private fun AppNavHost(
                 nomeGestor = SessionManager.atual?.nome ?: "",
                 cargo = "Gestor de Armazém",
                 onNavegar = { id -> navegarGestor(navController, id) },
-                onLogout = {/*todo: terminar sessão*/ },
-            ) {
-                abrirMenu ->
+                onLogout = { fazerLogout(navController, authRepository) },
+            ) { abrirMenu ->
                 HistoricoGestorScreen(viewModel = viewModel, onMenuClick = abrirMenu)
+            }
+        }
+
+        composable<TarefasGestorRoute> {
+            val viewModel = viewModel {
+                TarefasGestorViewModel(
+                    tarefas = AppModule.tarefaRemoteDataSource,
+                    alertas = AppModule.alertaRemoteDataSource,
+                    ferramentas = AppModule.ferramentaRemoteDataSource,
+                    tecnicos = AppModule.tecnicoRemoteDataSource,
+                    idGestor = SessionManager.atual?.idFunc ?: -1
+                )
+            }
+            val state by viewModel.state.collectAsState()
+
+            GestorScaffold(
+                itemSelecionado = "tarefas",
+                alertasAtivos = state.alertasAtivos,
+                nomeGestor = SessionManager.atual?.nome ?: "",
+                cargo = "Gestor de Armazém",
+                onNavegar = { id -> navegarGestor(navController, id) },
+                onLogout = { fazerLogout(navController, authRepository) },
+            ) { abrirMenu ->
+                TarefasGestorScreen(viewModel = viewModel, onMenuClick = abrirMenu)
             }
         }
     }
@@ -401,9 +427,23 @@ private fun navegarGestor(navController: NavController, id: String) {
         "ferramentas" -> FerramentasGestorRoute
         "alertas" -> AlertasGestorRoute
         "historico" -> HistoricoGestorRoute
-        else -> null   // todo: "tarefas"/"historico" que ainda não têm ecrã
+        "tarefas" -> TarefasGestorRoute
+        else -> null
     }
     rota?.let {
         navController.navigate(it) { launchSingleTop = true }  // evita empilhar o mesmo ecrã
+    }
+}
+
+private fun fazerLogout(
+    navController: NavController,
+    authRepository: AuthRepository
+) {
+    authRepository.logout() // terminar sessão na firebase
+    SessionManager.atual = null // esquecer o user atual na memória
+    navController.navigate(WelcomeRoute) {
+        popUpTo(navController.graph.id) {
+            inclusive = true
+        } // limpar stack para não dar para voltar atrás
     }
 }

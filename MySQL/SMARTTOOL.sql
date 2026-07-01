@@ -88,10 +88,12 @@ CREATE TABLE requisicao_ferramenta (
 
 CREATE TABLE tarefa (
   idTarefa INT NOT NULL AUTO_INCREMENT,
+  titulo VARCHAR(150) NOT NULL,
   descricao VARCHAR(255) NOT NULL,
   id_gestor INT NOT NULL,
   id_tecnico INT NOT NULL,
   estado VARCHAR(50) DEFAULT 'PENDENTE', -- Pode ser PENDENTE, EM CURSO, CONCLUIDA
+  prioridade VARCHAR(10) NOT NULL DEFAULT 'NORMAL', -- valores: ALTA, NORMAL, BAIXA
   dhAtribuicao DATETIME DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (idTarefa),
   FOREIGN KEY (id_gestor) REFERENCES gestor(id_func),
