@@ -1,7 +1,7 @@
 package pfc.a50727a50799.smarttool_cabinet.feature.tecnico
 
 enum class EstadoFerramentaLista {
-    DISPONIVEL, EM_USO, MANUTENCAO
+    DISPONIVEL, EM_USO, MANUTENCAO, RESERVADA
 }
 
 enum class FiltroFerramenta(val label: String) {

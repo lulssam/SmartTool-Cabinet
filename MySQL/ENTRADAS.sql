@@ -44,51 +44,13 @@ INSERT INTO tipo_ferramenta (codigo, nome, categoria, descricao) VALUES
 INSERT INTO ferramenta
   (codigo_tipo, nFerramenta, estado, disponibilidade, nArmario, id_Armazem, nome_tipo) VALUES
   (1, 1, 'Operacional', 'Disponivel',     101, NULL, 'Chave de Fendas'),
-  (1, 2, 'Operacional', 'Requisitada',    101, NULL, 'Chave de Fendas'),
-  (1, 3, 'Operacional', 'Requisitada',    102, NULL, 'Chave de Fendas'),
+  (1, 2, 'Operacional', 'Disponivel',    101, NULL, 'Chave de Fendas'),
+  (1, 3, 'Operacional', 'Disponivel',    102, NULL, 'Chave de Fendas'),
   (2, 1, 'Operacional', 'Disponivel',     101, NULL, 'Chave Inglesa'),
   (2, 2, 'Danificada',  'Em Manutencao',  NULL, 1,   'Chave Inglesa'),
-  (3, 1, 'Operacional', 'Requisitada',    102, NULL, 'Alicate Universal'),
+  (3, 1, 'Operacional', 'Disponivel',    102, NULL, 'Alicate Universal'),
   (3, 2, 'Operacional', 'Disponivel',     102, NULL, 'Alicate Universal'),
   (4, 1, 'Operacional', 'Disponivel',     201, NULL, 'Berbequim Pneumatico'),
   (4, 2, 'Abatida',     'Indisponivel',   NULL, 2,   'Berbequim Pneumatico'),
-  (5, 1, 'Operacional', 'Requisitada',    201, NULL, 'Chave Dinamometrica'),
+  (5, 1, 'Operacional', 'Disponivel',    201, NULL, 'Chave Dinamometrica'),
   (6, 1, 'Operacional', 'Disponivel',     NULL, 1,   'Multimetro Digital');
-
--- 7. REQUISICOES (datas recentes; dhDevolucao NULL = ainda em uso)
-INSERT INTO requisicao (idRequisicao, dhRequisicao, dhDevolucao, id_tecnico) VALUES
-  (1, '2026-06-22 08:30:00', '2026-06-22 17:10:00', 3),  -- fechada (Pedro)
-  (2, '2026-06-25 09:00:00', '2026-06-26 11:20:00', 4),  -- fechada (Ana)
-  (3, '2026-06-28 14:20:00', NULL,                  5),  -- aberta  (Rui)
-  (4, '2026-06-29 07:45:00', '2026-06-29 16:30:00', 3),  -- fechada (Pedro, ontem)
-  (5, '2026-06-30 08:00:00', NULL,                  4),  -- aberta  (Ana, hoje)
-  (6, '2026-06-30 09:15:00', NULL,                  5);  -- aberta  (Rui, hoje)
-
--- 8. FERRAMENTAS POR REQUISICAO
-INSERT INTO requisicao_ferramenta (idRequisicao, codigo_tipo, nFerramenta) VALUES
-  (1, 1, 1), (1, 2, 1),         -- Req 1 fechada
-  (2, 4, 1), (2, 6, 1),         -- Req 2 fechada
-  (3, 5, 1),                    -- Req 3 aberta (Rui)
-  (4, 3, 2),                    -- Req 4 fechada
-  (5, 1, 2), (5, 3, 1),         -- Req 5 aberta (Ana)
-  (6, 1, 3);                    -- Req 6 aberta (Rui)
-
--- 9. TAREFAS (datas recentes; cobre 3 estados e 3 prioridades)
-INSERT INTO tarefa (idTarefa, titulo, descricao, id_gestor, id_tecnico, estado, prioridade, dhAtribuicao) VALUES
-  (1, 'Manutenção preventiva do trem de aterragem', 'Verificar amortecedores, pneus e sistema de retração do trem principal.',1, 3, 'CONCLUIDA', 'NORMAL', '2026-06-26 09:00:00'),
-  (2, 'Inspeção do painel elétrico principal','Testar disjuntores e ligações do painel elétrico da cabine.',2, 4, 'CONCLUIDA', 'ALTA',   '2026-06-27 10:30:00'),
-  (3, 'Inspeção do motor A320', 'Inspeção visual e boroscópica do motor nº1 conforme checklist.',1, 3, 'EM CURSO',  'ALTA',   '2026-06-30 08:00:00'),  
-  (4, 'Substituição de parafusos da fuselagem','Substituir parafusos corroídos na secção traseira da fuselagem.',1, 4, 'PENDENTE',  'NORMAL', '2026-06-30 08:30:00'), 
-  (5, 'Inspeção dos sistemas aviónicos','Verificar sistemas de navegação e comunicação no cockpit.',2, 5, 'PENDENTE',  'ALTA',   '2026-06-29 14:00:00'),  
-  (6, 'Verificação do sistema hidráulico','Medir pressão e detetar fugas no circuito hidráulico principal.',2, 3, 'EM CURSO',  'NORMAL', '2026-06-29 09:30:00'), 
-  (7, 'Calibração de sensores de pressão','Calibrar sensores de pressão dos pneus e do sistema hidráulico.',1, 4, 'CONCLUIDA', 'BAIXA',  '2026-06-27 16:00:00');
-
--- 10. FERRAMENTAS PERMITIDAS POR TAREFA
-INSERT INTO tarefa_ferramenta_permitida (idTarefa, codigo_tipo, nFerramenta) VALUES
-  (1, 1, 1), (1, 2, 1),
-  (2, 6, 1), (2, 3, 2),
-  (3, 6, 1), (3, 5, 1),
-  (4, 1, 1), (4, 2, 1),
-  (5, 6, 1), (5, 3, 2),
-  (6, 4, 1), (6, 3, 1),
-  (7, 5, 1);

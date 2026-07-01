@@ -46,6 +46,7 @@ import pfc.a50727a50799.smarttool_cabinet.ui.TopBar
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AlertOrange
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AlertOrangeText
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AppTheme
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.AzulReservou
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.CardBorder
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.FieldBg
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.ScreenBg
@@ -211,6 +212,8 @@ fun FerramentaItemCard(
                     )
 
                     EstadoFerramentaLista.MANUTENCAO -> Triple(FieldBg, TextSecondary, "Manutenção")
+
+                    EstadoFerramentaLista.RESERVADA -> Triple(AzulReservou.copy(alpha = 0.2f), AzulReservou, "Reservada")
                 }
                 Box(
                     modifier = Modifier.clip(RoundedCornerShape(12.dp)).background(bgColor)

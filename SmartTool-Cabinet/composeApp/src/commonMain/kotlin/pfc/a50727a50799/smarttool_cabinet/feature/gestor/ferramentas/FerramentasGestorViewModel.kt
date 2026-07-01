@@ -129,6 +129,7 @@ class FerramentasGestorViewModel(
                     FiltroFerramenta.EM_USO -> f.disponibilidade == DisponibilidadeFerramenta.REQUISITADA
                     FiltroFerramenta.EM_FALTA -> f.disponibilidade == DisponibilidadeFerramenta.EM_FALTA
                     FiltroFerramenta.MANUTENCAO -> f.disponibilidade == DisponibilidadeFerramenta.EM_MANUTENCAO
+                    FiltroFerramenta.RESERVADA -> f.disponibilidade == DisponibilidadeFerramenta.RESERVADA
                 }
             }
             // agrupar por categoria e transformar em secções
