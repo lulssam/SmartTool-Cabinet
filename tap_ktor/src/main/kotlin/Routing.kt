@@ -496,7 +496,8 @@ fun Application.configureRouting() {
                 }
                 call.respond(lista)
             } catch (e: Exception) {
-                call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain)
+                e.printStackTrace()
+                call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain, HttpStatusCode.InternalServerError)
             }
         }
 

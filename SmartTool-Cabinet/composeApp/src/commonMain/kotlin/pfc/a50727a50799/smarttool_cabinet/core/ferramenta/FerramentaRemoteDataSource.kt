@@ -90,7 +90,12 @@ class FerramentaRemoteDataSource(
             ApiResult.Error(ApiError.Unknown(e.message))
         }
     }
-    suspend fun requisitarFerramenta(idTecnico: Int, codigoTipo: Int, nFerramenta: Int): ApiResult<Unit> {
+
+    suspend fun requisitarFerramenta(
+        idTecnico: Int,
+        codigoTipo: Int,
+        nFerramenta: Int
+    ): ApiResult<Unit> {
         return try {
 
             val response = httpClient.post("/api/requisicoes") {
@@ -99,6 +104,20 @@ class FerramentaRemoteDataSource(
             }
             when (response.status) {
                 HttpStatusCode.OK, HttpStatusCode.Created -> ApiResult.Success(Unit)
+                else -> ApiResult.Error(ApiError.Unknown(response.status.toString()))
+            }
+        } catch (e: IOException) {
+            ApiResult.Error(ApiError.NetworkError)
+        } catch (e: Exception) {
+            ApiResult.Error(ApiError.Unknown(e.message))
+        }
+    }
+
+    suspend fun getReservadasTecnico(id: Int): ApiResult<List<FerramentaDto>> {
+        return try {
+            val response = httpClient.get("/api/tecnicos/$id/reservadas")
+            when (response.status) {
+                HttpStatusCode.OK -> ApiResult.Success(response.body())
                 else -> ApiResult.Error(ApiError.Unknown(response.status.toString()))
             }
         } catch (e: IOException) {
