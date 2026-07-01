@@ -2,9 +2,11 @@ package pfc.a50727a50799.smarttool_cabinet.feature.backoffice.utilizadores
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -81,7 +83,6 @@ private fun BOUtilizadoresScreenContent(
                                 color = TextSecondary
                             )
                         }
-                        // 3. ALTERADO: O botão agora muda a variável para mostrar o pop-up
                         Button(
                             onClick = { showCriarDialog = true },
                             shape = RoundedCornerShape(20.dp),
@@ -103,8 +104,8 @@ private fun BOUtilizadoresScreenContent(
 
                 item {
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         FiltroUtilizador.entries.forEach { filtro ->
                             FilterChip(
@@ -202,13 +203,12 @@ private fun BOUtilizadoresScreenContent(
             }
         }
 
-        // 4. ADICIONADO: Se a variável for true, desenha o formulário que criaste
         if (showCriarDialog) {
             CriarUtilizadorDialog(
                 onDismiss = { showCriarDialog = false },
                 onConfirm = { nome, email, cargo, turno ->
-                    onNovoClick(nome, email, cargo, turno) // Envia para o ViewModel
-                    showCriarDialog = false // Fecha o pop-up
+                    onNovoClick(nome, email, cargo, turno)
+                    showCriarDialog = false
                 }
             )
         }
