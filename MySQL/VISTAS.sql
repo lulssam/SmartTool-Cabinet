@@ -84,3 +84,18 @@ SELECT  f.id_func      AS id,
 FROM    tecnico tc
 JOIN    funcionario f ON tc.id_func = f.id_func
 WHERE   f.ativo = TRUE;
+
+
+CREATE OR REPLACE VIEW View_Ferramentas_Reservadas_Tecnico AS
+SELECT  t.id_tecnico,
+        fe.idFerramenta,
+        fe.nome_tipo    AS nome,
+        tf.categoria    AS categoria,
+        fe.estado,
+        fe.disponibilidade,
+        fe.nArmario     AS Armario
+FROM    tarefa t
+JOIN    tarefa_ferramenta_permitida tfp ON t.idTarefa = tfp.idTarefa
+JOIN    ferramenta fe ON tfp.codigo_tipo = fe.codigo_tipo AND tfp.nFerramenta = fe.nFerramenta
+JOIN    tipo_ferramenta tf ON fe.codigo_tipo = tf.codigo
+WHERE   t.estado <> 'CONCLUIDA';

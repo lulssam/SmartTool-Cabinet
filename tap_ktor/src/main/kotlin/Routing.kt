@@ -460,6 +460,46 @@ fun Application.configureRouting() {
             }
         }
 
+        get("/api/tecnicos/{id}/reservadas") {
+            val idTecnico = call.parameters["id"]?.toIntOrNull()
+            if (idTecnico == null) {
+                call.respond(HttpStatusCode.BadRequest, "id inválido")
+                return@get
+            }
+
+            val lista = mutableListOf<FerramentaDTO>()
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver")
+                val connection = DriverManager.getConnection(URL, USER, PASSWORD)
+
+                try {
+                    val sql = "SELECT idFerramenta, nome, categoria, estado, disponibilidade, Armario " +
+                            "FROM View_Ferramentas_Reservadas_Tecnico WHERE id_tecnico = ?"
+                    val statement = connection.prepareStatement(sql)
+                    statement.setInt(1, idTecnico)
+
+                    val resultSet = statement.executeQuery()
+                    while (resultSet.next()) {
+                        lista.add(
+                            FerramentaDTO(
+                                idFerramenta = resultSet.getInt("idFerramenta"),
+                                nome = resultSet.getString("nome"),
+                                categoria = resultSet.getString("categoria"),
+                                estado = resultSet.getString("estado"),
+                                disponibilidade = resultSet.getString("disponibilidade"),
+                                localizacao = "Arm. ${resultSet.getString("Armario")}"
+                            )
+                        )
+                    }
+                } finally {
+                    connection.close()
+                }
+                call.respond(lista)
+            } catch (e: Exception) {
+                call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain)
+            }
+        }
+
         // ====== POSTS ======
         post("/api/requisicoes") {
 
