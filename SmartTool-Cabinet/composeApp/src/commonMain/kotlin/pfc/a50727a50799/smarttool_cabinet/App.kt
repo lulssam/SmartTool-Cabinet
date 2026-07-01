@@ -352,7 +352,9 @@ private fun AppNavHost(
             ) { abrirMenu ->
                 BODashboardScreen(
                     viewModel = viewModel,
-                    onMenuClick = abrirMenu
+                    onMenuClick = abrirMenu,
+                    onVerTodosArmarios = { navController.navigate(BackOfficeArmariosRoute) },
+                    onVerTodosUtilizadores = { navController.navigate(BackOfficeUtilizadoresRoute) }
                 )
             }
         }
