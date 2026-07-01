@@ -291,7 +291,6 @@ fun Application.configureRouting() {
             }
         }
 
-        // todo get das tarefas
         get("/api/tarefas") {
             val porTarefa = LinkedHashMap<Int, TarefaDTO>()
 

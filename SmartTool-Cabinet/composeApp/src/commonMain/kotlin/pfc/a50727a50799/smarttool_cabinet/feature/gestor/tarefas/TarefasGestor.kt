@@ -55,6 +55,8 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.jetbrains.compose.resources.painterResource
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.ferramentas.DisponibilidadeFerramenta
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.ferramentas.EstadoFerramenta
 import pfc.a50727a50799.smarttool_cabinet.ui.BarraPesquisa
 import pfc.a50727a50799.smarttool_cabinet.ui.FilterChip
 import pfc.a50727a50799.smarttool_cabinet.ui.TopBar
@@ -157,7 +159,7 @@ private fun TarefasGestorScreenContent(
                         }
                     }
 
-                    // chips de filtro (scroll horizontal em ecrãs estreitos)
+                    // chips de filtro
                     item {
                         Row(
                             modifier = Modifier
@@ -202,7 +204,7 @@ private fun TarefasGestorScreenContent(
                         onPrioridade = onNovaPrioridade,
                         onQuery = onQueryFerramentasChange,
                         onToggleFerramenta = onToggleFerramenta,
-                        onAdicionar = onAdicionarTarefa
+                        onAdicionar = onAdicionarTarefa,
                     )
                 }
             }
@@ -310,7 +312,11 @@ private fun NovaTarefaDialog(
                     shape = RoundedCornerShape(10.dp),
                     modifier = Modifier.fillMaxWidth().padding(16.dp).height(48.dp)
                 ) {
-                    Text("+ Adicionar Tarefa", color = Color.White, fontWeight = FontWeight.SemiBold)
+                    Text(
+                        "+ Adicionar Tarefa",
+                        color = Color.White,
+                        fontWeight = FontWeight.SemiBold
+                    )
                 }
             }
         }
@@ -398,13 +404,14 @@ private fun PrioridadeSelector(
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             PrioridadeTarefa.entries.forEach { p ->
                 val sel = p == selecionada
+                val cor = corPrioridade(p)
                 Box(
                     Modifier.weight(1f)
                         .clip(RoundedCornerShape(12.dp))
-                        .background(if (sel) TapLightGreen.copy(0.1f) else Color.White)
+                        .background(if (sel) cor.copy(0.1f) else Color.White)
                         .border(
                             1.5.dp,
-                            if (sel) TapGreenishBlue else CardBorder,
+                            if (sel) cor else CardBorder,
                             RoundedCornerShape(12.dp)
                         )
                         .clickable { onSelect(p) }.padding(vertical = 12.dp),
@@ -413,7 +420,7 @@ private fun PrioridadeSelector(
                     Text(
                         p.label,
                         fontWeight = FontWeight.SemiBold,
-                        color = if (sel) TapGreenishBlue else Color.Black
+                        color = if (sel) cor else Color.Black
                     )
                 }
             }
@@ -506,7 +513,7 @@ private fun PillEstado(estado: EstadoTarefa) {
 private fun PillPrioridade(prioridade: PrioridadeTarefa) {
     val (fundo, texto, label) = when (prioridade) {
         PrioridadeTarefa.ALTA -> Triple(TapAlert.copy(alpha = 0.2f), TapRedText, "Alta")
-        PrioridadeTarefa.NORMAL -> Triple(AlertOrange.copy(alpha = 0.2f), AlertOrangeText, "Normal")
+        PrioridadeTarefa.NORMAL -> Triple(TapBrandDark.copy(alpha = 0.2f), TapBrandDark, "Normal")
         PrioridadeTarefa.BAIXA -> Triple(TextSecondary.copy(alpha = 0.2f), TextSecondary, "Baixa")
     }
     Pill(fundo, texto, label)
@@ -526,8 +533,15 @@ private fun Pill(fundo: Color, texto: Color, label: String) {
 
 private fun corBordaPrioridade(prioridade: PrioridadeTarefa): Color = when (prioridade) {
     PrioridadeTarefa.ALTA -> TapAlert.copy(alpha = 0.25f)
-    PrioridadeTarefa.NORMAL -> AlertOrange.copy(alpha = 0.25f)
+    PrioridadeTarefa.NORMAL -> TapBrandDark.copy(alpha = 0.25f)
     PrioridadeTarefa.BAIXA -> CardBorder
+}
+
+
+private fun corPrioridade(p: PrioridadeTarefa): Color = when (p) {
+    PrioridadeTarefa.ALTA -> TapRedText
+    PrioridadeTarefa.NORMAL -> TapBrandDark
+    PrioridadeTarefa.BAIXA -> TextSecondary
 }
 
 @Composable
@@ -580,19 +594,25 @@ private fun iniciais(nome: String): String {
 fun TarefasGestorScreen(
     viewModel: TarefasGestorViewModel = viewModel(),
     onMenuClick: () -> Unit = {},
-    onNovaClick: () -> Unit = {},
-    onFecharTarefaClick: () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsState()
     TarefasGestorScreenContent(
         state = state,
         onMenuClick = onMenuClick,
+        onNovaPrioridade = viewModel::onNovaPrioridade,
+        onTituloChange = viewModel::onTituloChange,
+        onDescricaoChange = viewModel::onDescricaoChange,
+        onTecnicoSelecionado = viewModel::onTecnicoSelecionado,
+        onToggleFerramenta = viewModel::onToggleFerramenta,
+        onQueryFerramentasChange = viewModel::onQueryFerramentasChange,
         onFiltroChange = viewModel::onFiltroChange,
         onNovaClick = viewModel::abrirNovaTarefa,
-        onFecharTarefaClick = viewModel::fecharNovaTarefa
+        onFecharTarefaClick = viewModel::fecharNovaTarefa,
+        // onAdicionarTarefa = viewModel::onAdicionarTarefa todo
     )
 }
 
+/*
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun TarefasGestorPreview() {
@@ -626,6 +646,43 @@ private fun TarefasGestorPreview() {
             onMenuClick = {},
             onFiltroChange = {},
             onNovaClick = {}
+        )
+    }
+}
+*/
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+private fun NovaTarefaPreview() {
+    AppTheme {
+        TarefasGestorScreenContent(
+            state = TarefasGestorUiState(
+                alertasAtivos = 4,
+                mostrarNovaTarefa = true,
+                titulo = "Inspeção Motor A320",
+                novaPrioridade = PrioridadeTarefa.ALTA,
+                tecnicoSelecionado = 4,
+                ferramentasSelecionadas = setOf(100001),
+                tecnicos = listOf(
+                    TecnicoUi(3, "João Ferreira", "08-16:00", disponivel = true),
+                    TecnicoUi(4, "Ana Costa", "08-16:00", disponivel = true),
+                    TecnicoUi(5, "Carlos Mota", "08-16:00", disponivel = false)
+                ),
+                ferramentasDisponiveis = listOf(
+                    FerramentaUi(
+                        100001, "0001-00001", "Chave de Caixa 10mm", "Chaves", "Arm. A1",
+                        DisponibilidadeFerramenta.DISPONIVEL, EstadoFerramenta.OPERACIONAL
+                    ),
+                    FerramentaUi(
+                        100002, "0001-00002", "Chave de Caixa 12mm", "Chaves", "Arm. A2",
+                        DisponibilidadeFerramenta.DISPONIVEL, EstadoFerramenta.OPERACIONAL
+                    ),
+                    FerramentaUi(
+                        100003, "0001-00003", "Chave de Caixa 14mm", "Chaves", "Arm. B1",
+                        DisponibilidadeFerramenta.DISPONIVEL, EstadoFerramenta.OPERACIONAL
+                    )
+                )
+            )
         )
     }
 }
