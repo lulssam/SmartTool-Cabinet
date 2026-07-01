@@ -16,6 +16,8 @@ import pfc.a50727a50799.smarttool_cabinet.core.tarefa.FerramentaIdDto
 import pfc.a50727a50799.smarttool_cabinet.core.tarefa.NovaTarefaDto
 import pfc.a50727a50799.smarttool_cabinet.core.tarefa.TarefaRemoteDataSource
 import pfc.a50727a50799.smarttool_cabinet.core.tarefa.toGestorUi
+import pfc.a50727a50799.smarttool_cabinet.core.tecnico.TecnicoRemoteDataSource
+import pfc.a50727a50799.smarttool_cabinet.core.tecnico.toUi
 
 /**
  * Gere o estado e a lógica do ecrã TarefasGestor.
@@ -27,6 +29,7 @@ class TarefasGestorViewModel(
     private val tarefas: TarefaRemoteDataSource,
     private val alertas: AlertaRemoteDataSource,
     private val ferramentas: FerramentaRemoteDataSource,
+    private val tecnicos: TecnicoRemoteDataSource,
     private val idGestor: Int
 ) : ViewModel() {
 
@@ -94,12 +97,22 @@ class TarefasGestorViewModel(
     fun abrirNovaTarefa() {
         _state.update { it.copy(mostrarNovaTarefa = true) }
         viewModelScope.launch {
+
+            // carrega ferramentas
             val ferrs = when (val r = ferramentas.getFerramentas()) {
                 is ApiResult.Success -> r.data.map { it.toGestorUi() }
                 is ApiResult.Error -> emptyList()
             }
 
-            _state.update { it.copy(ferramentasDisponiveis = ferrs) }
+            // carregar tecnicos
+            val tecs = when (val r = tecnicos.getTecnicos()) {
+                is ApiResult.Success -> r.data.map { it.toUi() }
+                is ApiResult.Error -> emptyList()
+            }
+
+            println("tecs: $tecs")
+
+            _state.update { it.copy(ferramentasDisponiveis = ferrs, tecnicos = tecs) }
         }
     }
 

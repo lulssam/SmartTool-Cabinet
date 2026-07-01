@@ -12,6 +12,8 @@ import pfc.a50727a50799.smarttool_cabinet.core.auth.data.funcionario.Funcionario
 import pfc.a50727a50799.smarttool_cabinet.core.ferramenta.FerramentaRemoteDataSource
 import pfc.a50727a50799.smarttool_cabinet.core.historico.HistoricoRemoteDataSource
 import pfc.a50727a50799.smarttool_cabinet.core.tarefa.TarefaRemoteDataSource
+import pfc.a50727a50799.smarttool_cabinet.core.tecnico.TecnicoRemoteDataSource
+import kotlin.getValue
 
 
 /**
@@ -69,4 +71,7 @@ object AppModule {
 
     /**A fonte que vai ao backend buscar as tarefas (usa o [httpClient]). */
     val tarefaRemoteDataSource by lazy { TarefaRemoteDataSource(httpClient) }
+
+    /**A fonte que vai ao backend buscar os tecnicos (usa o [httpClient])*/
+    val tecnicoRemoteDataSource by lazy { TecnicoRemoteDataSource(httpClient) }
 }
