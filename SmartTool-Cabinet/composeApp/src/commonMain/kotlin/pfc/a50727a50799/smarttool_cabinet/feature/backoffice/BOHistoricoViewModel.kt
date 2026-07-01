@@ -1,4 +1,4 @@
-package pfc.a50727a50799.smarttool_cabinet.feature.tecnico
+package pfc.a50727a50799.smarttool_cabinet.feature.backoffice
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,57 +9,48 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.*
 import kotlin.time.Clock
+import pfc.a50727a50799.smarttool_cabinet.core.alerta.AlertaRemoteDataSource
 import pfc.a50727a50799.smarttool_cabinet.core.historico.HistoricoDto
 import pfc.a50727a50799.smarttool_cabinet.core.historico.HistoricoRemoteDataSource
 import pfc.a50727a50799.smarttool_cabinet.core.network.ApiError
 import pfc.a50727a50799.smarttool_cabinet.core.network.ApiResult
 
-class HistoricoViewModel(
-    private val historicoDataSource: HistoricoRemoteDataSource,
-    private val idTecnico: Int
+class BOHistoricoViewModel(
+    private val historico: HistoricoRemoteDataSource,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(HistoricoUiState(isLoading = true))
-    val state: StateFlow<HistoricoUiState> = _state.asStateFlow()
+    private val _state = MutableStateFlow(BOHistoricoUiState(isLoading = true))
+    val state: StateFlow<BOHistoricoUiState> = _state.asStateFlow()
 
     init {
         carregar()
     }
 
     fun carregar() {
-        if (idTecnico == -1) {
-            _state.update { it.copy(isLoading = false, error = "Sessão inválida") }
-            return
-        }
-
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }
 
-            val resposta = historicoDataSource.getHistoricoTecnico(idTecnico)
-
-
-            val dtos: List<HistoricoDto> = if (resposta is ApiResult.Success) {
-                resposta.data
-            } else if (resposta is ApiResult.Error) {
-                _state.update { it.copy(isLoading = false, error = mensagem(resposta.error)) }
-                return@launch
-            } else {
-                return@launch
+            val dtos = when (val r = historico.getHistorico()) {
+                is ApiResult.Success -> r.data
+                is ApiResult.Error -> {
+                    _state.update { it.copy(isLoading = false, error = mensagem(r.error)) }
+                    return@launch
+                }
             }
 
-            val movimentos = dtos.flatMap { dto: HistoricoDto ->
+            val movimentos = dtos.flatMap { dto ->
                 buildList {
-                    add(movimento(dto, dto.dhRequisicao, TipoMovimento.RETIROU, 0))
-                    dto.dhDevolucao?.let { add(movimento(dto, it, TipoMovimento.DEVOLVEU, 1)) }
+                    add(movimento(dto, dto.dhRequisicao, TipoMovimentoBO.RETIROU, 0))
+                    dto.dhDevolucao?.let { add(movimento(dto, it, TipoMovimentoBO.DEVOLVEU, 1)) }
                 }
             }
 
             val hoje = Clock.System.todayIn(TimeZone.currentSystemDefault())
-            val grupos = movimentos
+            val secoes = movimentos
                 .sortedByDescending { it.dataHora }
                 .groupBy { it.dataHora.date }
                 .map { (dia, lista) ->
-                    GrupoHistoricoUi(
+                    SecaoBOHistoricoUi(
                         data = etiqueta(dia, hoje),
                         movimentos = lista.map { it.item }
                     )
@@ -68,7 +59,8 @@ class HistoricoViewModel(
             _state.update {
                 it.copy(
                     isLoading = false,
-                    grupos = grupos
+                    secoes = secoes,
+
                 )
             }
         }
@@ -77,8 +69,7 @@ class HistoricoViewModel(
     private fun etiqueta(dia: LocalDate, hoje: LocalDate): String = when (dia) {
         hoje -> "HOJE"
         hoje.minus(1, DateTimeUnit.DAY) -> "ONTEM"
-        // 3. Trocado 'dayOfMonth' por 'day' a pedido do compilador
-        else -> "${dia.day} ${mesPt(dia.month)}"
+        else -> "${dia.dayOfMonth} ${mesPt(dia.month)}"
     }
 
     private fun mesPt(mes: Month): String = when (mes) {
@@ -93,17 +84,19 @@ class HistoricoViewModel(
     private fun movimento(
         dto: HistoricoDto,
         raw: String,
-        tipo: TipoMovimento,
+        tipo: TipoMovimentoBO,
         idSufixo: Int
     ): MovimentoComData {
         val dt = LocalDateTime.parse(raw.replace(" ", "T"))
         return MovimentoComData(
             dataHora = dt,
-            item = HistoricoItemUi(
+            item = BOHistoricoItemUi(
                 id = "${dto.idRequisicao}-${dto.idFerramenta}-$idSufixo",
                 nomeFerramenta = dto.nomeFerramenta,
-                detalhe = dto.nomeFuncionario,
-                hora = "${dt.hour.toString().padStart(2, '0')}:${dt.minute.toString().padStart(2, '0')}",
+                funcionario = dto.nomeFuncionario,
+                hora = "${dt.hour.toString().padStart(2, '0')}:${
+                    dt.minute.toString().padStart(2, '0')
+                }",
                 tipo = tipo
             )
         )
@@ -111,7 +104,7 @@ class HistoricoViewModel(
 
     private data class MovimentoComData(
         val dataHora: LocalDateTime,
-        val item: HistoricoItemUi
+        val item: BOHistoricoItemUi
     )
 
     private fun mensagem(erro: ApiError): String = when (erro) {

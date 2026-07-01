@@ -2,19 +2,19 @@ package pfc.a50727a50799.smarttool_cabinet.feature.backoffice
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import pfc.a50727a50799.smarttool_cabinet.core.auth.data.SessionManager
+import pfc.a50727a50799.smarttool_cabinet.core.backoffice.BackOfficeRemoteDataSource
 import pfc.a50727a50799.smarttool_cabinet.core.network.ApiError
 import pfc.a50727a50799.smarttool_cabinet.core.network.ApiResult
 
-/**
- * Trata da lógica do ecrã do Dashboard de Back Office.
- */
 class BODashboardViewModel(
-    // private val backOfficeRepository: BackOfficeRepository
+    private val backOfficeDataSource: BackOfficeRemoteDataSource
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(BODashboardUiState())
@@ -25,27 +25,78 @@ class BODashboardViewModel(
     }
 
     fun carregar() {
-        viewModelScope.launch {
-            _state.update { it.copy(isLoading = true, error = null) }
+        val sessao = SessionManager.atual
 
-            // Lógica real da API no futuro:
-            /*
-            when (val r = backOfficeRepository.getDashboardData()) {
-                is ApiResult.Success -> {
-                    // Mapeamento e atualização
-                }
-                is ApiResult.Error -> {
-                    _state.update { it.copy(isLoading = false, error = mensagem(r.error)) }
-                    return@launch
-                }
+        viewModelScope.launch {
+            _state.update {
+                it.copy(
+                    isLoading = true,
+                    error = null,
+                    nomeBackOffice = sessao?.nome ?: "Administrador",
+                    cargo = "Back Office",
+                    turno = sessao?.turno?.lowercase()?.replaceFirstChar { c -> c.uppercase() } ?: "Manhã"
+                )
             }
-            */
+
+
+            val deferredFuncionarios = async { backOfficeDataSource.getFuncionarios() }
+            val deferredArmarios = async { backOfficeDataSource.getArmarios() }
+
+            val rFuncionarios = deferredFuncionarios.await()
+            val rArmarios = deferredArmarios.await()
+
+            if (rFuncionarios is ApiResult.Success && rArmarios is ApiResult.Success) {
+                val funcs = rFuncionarios.data
+                val armarios = rArmarios.data
+                val total = funcs.size
+                val ativos = funcs.count { it.ativo }
+                val gestores = funcs.count { it.cargo?.uppercase() == "GESTOR" }
+                val tecnicos = funcs.count { it.cargo?.uppercase() == "TECNICO" }
+                val recentesUi = funcs.takeLast(4).reversed().map { dto ->
+                    UtilizadorRecenteUi(
+                        id = dto.idFunc,
+                        nome = dto.nome,
+                        iniciais = getIniciais(dto.nome),
+                        cargoSubtitulo = "${formatarCargo(dto.cargo)} · Turno ${formatarTurno(dto.turno)}",
+                        cargoTag = formatarCargo(dto.cargo)
+                    )
+                }
+                val armariosUi = armarios.map { dto ->
+                    ArmarioResumoUi(
+                        id = dto.nArmario,
+                        nome = "Armário ${dto.nArmario}",
+                        estado = dto.estado
+                    )
+                }
+                _state.update {
+                    it.copy(
+                        isLoading = false,
+                        estatisticas = EstatisticasBOUi(total, ativos, gestores, tecnicos),
+                        utilizadoresRecentes = recentesUi,
+                        armarios = armariosUi
+                    )
+                }
+            } else {
+                _state.update { it.copy(isLoading = false, error = "Erro ao carregar os dados do Dashboard.") }
+            }
         }
     }
 
-    /** Transforma o erro tipado numa frase legível para o utilizador. */
-    private fun mensagem(erro: ApiError): String = when (erro) {
-        ApiError.NetworkError -> "Não foi possível contactar o servidor"
-        is ApiError.Unknown -> erro.message ?: "Erro desconhecido"
+    private fun getIniciais(nome: String): String {
+        val partes = nome.trim().split(" ")
+        return if (partes.size >= 2) "${partes.first().first()}${partes.last().first()}".uppercase()
+        else nome.take(2).uppercase()
+    }
+
+    private fun formatarCargo(cargoDB: String?): String = when (cargoDB?.uppercase()) {
+        "GESTOR" -> "Gestor"
+        "TECNICO" -> "Técnico"
+        "BACKOFFICE" -> "Back Office"
+        else -> "Sem Cargo"
+    }
+
+    private fun formatarTurno(turnoDB: String?): String {
+        if (turnoDB == null) return "Sem Turno"
+        return turnoDB.lowercase().replaceFirstChar { it.uppercase() }
     }
 }

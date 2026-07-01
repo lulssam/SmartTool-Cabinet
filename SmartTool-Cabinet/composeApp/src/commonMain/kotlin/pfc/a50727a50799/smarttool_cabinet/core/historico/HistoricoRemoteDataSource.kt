@@ -22,4 +22,15 @@ class HistoricoRemoteDataSource(
     } catch (e: Exception) {
         ApiResult.Error(ApiError.Unknown(e.message))
     }
+    suspend fun getHistoricoTecnico(idTecnico: Int): ApiResult<List<HistoricoDto>> = try {
+        val response = httpClient.get("/api/historico/tecnico/$idTecnico")
+        when (response.status) {
+            HttpStatusCode.OK -> ApiResult.Success(response.body())
+            else -> ApiResult.Error(ApiError.Unknown(response.status.toString()))
+        }
+    } catch (e: IOException) {
+        ApiResult.Error(ApiError.NetworkError)
+    } catch (e: Exception) {
+        ApiResult.Error(ApiError.Unknown(e.message))
+    }
 }
