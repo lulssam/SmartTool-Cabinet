@@ -1,4 +1,4 @@
-package pfc.a50727a50799.smarttool_cabinet.feature.backoffice
+package pfc.a50727a50799.smarttool_cabinet.feature.backoffice.armarios
 
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard.ArmarioUi
 

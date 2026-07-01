@@ -1,4 +1,4 @@
-package pfc.a50727a50799.smarttool_cabinet.feature.backoffice
+package pfc.a50727a50799.smarttool_cabinet.feature.backoffice.dashboard
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -129,13 +129,14 @@ private fun BODashboardScreenContent(
 
 @Composable
 fun BODashboardScreen(
-    viewModel: BODashboardViewModel = viewModel()
+    viewModel: BODashboardViewModel = viewModel(),
+    onMenuClick: () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsState()
 
     BODashboardScreenContent(
         state = state,
-        onMenuClick = {},
+        onMenuClick = onMenuClick,
         onVerTodosUtilizadores = {},
         onVerTodosArmarios = {}
     )

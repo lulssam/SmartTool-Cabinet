@@ -16,14 +16,15 @@ import kotlinx.coroutines.launch
 import pfc.a50727a50799.smarttool_cabinet.core.auth.UserRole
 import pfc.a50727a50799.smarttool_cabinet.core.auth.data.SessionManager
 import pfc.a50727a50799.smarttool_cabinet.di.AppModule
-import pfc.a50727a50799.smarttool_cabinet.feature.backoffice.BOArmariosScreen
-import pfc.a50727a50799.smarttool_cabinet.feature.backoffice.BOArmariosViewModel
-import pfc.a50727a50799.smarttool_cabinet.feature.backoffice.BODashboardScreen
-import pfc.a50727a50799.smarttool_cabinet.feature.backoffice.BODashboardViewModel
-import pfc.a50727a50799.smarttool_cabinet.feature.backoffice.BOHistoricoScreen
-import pfc.a50727a50799.smarttool_cabinet.feature.backoffice.BOHistoricoViewModel
-import pfc.a50727a50799.smarttool_cabinet.feature.backoffice.BOUtilizadoresScreen
-import pfc.a50727a50799.smarttool_cabinet.feature.backoffice.BOUtilizadoresViewModel
+import pfc.a50727a50799.smarttool_cabinet.feature.backoffice.armarios.BOArmariosScreen
+import pfc.a50727a50799.smarttool_cabinet.feature.backoffice.armarios.BOArmariosViewModel
+import pfc.a50727a50799.smarttool_cabinet.feature.backoffice.dashboard.BODashboardScreen
+import pfc.a50727a50799.smarttool_cabinet.feature.backoffice.dashboard.BODashboardViewModel
+import pfc.a50727a50799.smarttool_cabinet.feature.backoffice.historico.BOHistoricoScreen
+import pfc.a50727a50799.smarttool_cabinet.feature.backoffice.historico.BOHistoricoViewModel
+import pfc.a50727a50799.smarttool_cabinet.feature.backoffice.menu.BackOfficeScaffold
+import pfc.a50727a50799.smarttool_cabinet.feature.backoffice.utilizadores.BOUtilizadoresScreen
+import pfc.a50727a50799.smarttool_cabinet.feature.backoffice.utilizadores.BOUtilizadoresViewModel
 import pfc.a50727a50799.smarttool_cabinet.feature.email.emailScreen
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.alertas.AlertasScreen
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.alertas.AlertasViewModel
@@ -341,7 +342,19 @@ private fun AppNavHost(
                     backOfficeDataSource = AppModule.backOfficeRemoteDataSource
                 )
             }
-            BODashboardScreen(viewModel = viewModel)
+
+            BackOfficeScaffold(
+                itemSelecionado = "dashboard",
+                nomeBO = SessionManager.atual?.nome ?: "",
+                cargo = "Back Office",
+                onNavegar = { id -> navegarBO(navController, id) },
+                onLogout = { fazerLogout(navController, authRepository) },
+            ) { abrirMenu ->
+                BODashboardScreen(
+                    viewModel = viewModel,
+                    onMenuClick = abrirMenu
+                )
+            }
         }
 
         composable<BackOfficeUtilizadoresRoute> {
@@ -350,7 +363,18 @@ private fun AppNavHost(
                     backOfficeDataSource = AppModule.backOfficeRemoteDataSource
                 )
             }
-            BOUtilizadoresScreen(viewModel = viewModel)
+            BackOfficeScaffold(
+                itemSelecionado = "utilizadores",
+                nomeBO = SessionManager.atual?.nome ?: "",
+                cargo = "Back Office",
+                onNavegar = { id -> navegarBO(navController, id) },
+                onLogout = { fazerLogout(navController, authRepository) },
+            ) { abrirMenu ->
+                BOUtilizadoresScreen(
+                    viewModel = viewModel,
+                    onMenuClick = abrirMenu
+                )
+            }
         }
         composable<BackOfficeArmariosRoute> {
             val viewModel = viewModel {
@@ -361,10 +385,18 @@ private fun AppNavHost(
                     )
             }
 
-            BOArmariosScreen(
-                viewModel = viewModel,
-                onMenuClick = { /* TODO: Adicionar menu mais tarde */ }
-            )
+            BackOfficeScaffold(
+                itemSelecionado = "armarios",
+                nomeBO = SessionManager.atual?.nome ?: "",
+                cargo = "Back Office",
+                onNavegar = { id -> navegarBO(navController, id) },
+                onLogout = { fazerLogout(navController, authRepository) },
+            ) { abrirMenu ->
+                BOArmariosScreen(
+                    viewModel = viewModel,
+                    onMenuClick = abrirMenu
+                )
+            }
         }
 
         composable<BackOfficeHistoricoRoute> {
@@ -373,10 +405,18 @@ private fun AppNavHost(
                     historico = AppModule.historicoRemoteDataSource,
                 )
             }
-            BOHistoricoScreen(
-                viewModel = viewModel,
-                onMenuClick = {}
-            )
+            BackOfficeScaffold(
+                itemSelecionado = "historico",
+                nomeBO = SessionManager.atual?.nome ?: "",
+                cargo = "Back Office",
+                onNavegar = { id -> navegarBO(navController, id) },
+                onLogout = { fazerLogout(navController, authRepository) },
+            ) { abrirMenu ->
+                BOHistoricoScreen(
+                    viewModel = viewModel,
+                    onMenuClick = abrirMenu
+                )
+            }
         }
 
 
@@ -470,6 +510,20 @@ private fun navegarTecnico(navController: NavController, id: String) {
         "dashboard" -> TecnicoRoute
         "ferramentas" -> FerramentasTecnicoRoute
         "historico" -> HistoricoTecnicoRoute
+        else -> null
+    }
+    rota?.let {
+        navController.navigate(it) { launchSingleTop = true }  // evita empilhar o mesmo ecrã
+    }
+}
+
+
+private fun navegarBO(navController: NavController, id: String) {
+    val rota: Any? = when (id) {
+        "dashboard" -> BackOfficeRoute
+        "armarios" -> BackOfficeArmariosRoute
+        "utilizadores" -> BackOfficeUtilizadoresRoute
+        "historico" -> BackOfficeHistoricoRoute
         else -> null
     }
     rota?.let {
