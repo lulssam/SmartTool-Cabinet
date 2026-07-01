@@ -1,4 +1,4 @@
-package pfc.a50727a50799.smarttool_cabinet.feature.backoffice
+package pfc.a50727a50799.smarttool_cabinet.feature.backoffice.historico
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.*
 import kotlin.time.Clock
-import pfc.a50727a50799.smarttool_cabinet.core.alerta.AlertaRemoteDataSource
 import pfc.a50727a50799.smarttool_cabinet.core.historico.HistoricoDto
 import pfc.a50727a50799.smarttool_cabinet.core.historico.HistoricoRemoteDataSource
 import pfc.a50727a50799.smarttool_cabinet.core.network.ApiError
