@@ -5,6 +5,7 @@ import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
@@ -33,7 +34,10 @@ class TarefaRemoteDataSource(
         }
         when (post.status) {
             HttpStatusCode.Created, HttpStatusCode.OK -> ApiResult.Success(Unit)
-            else -> ApiResult.Error(ApiError.Unknown(post.status.toString()))
+            else -> {
+                println("criarTarefa falhou (${post.status}): ${post.bodyAsText()}")
+                ApiResult.Error(ApiError.Unknown(post.status.toString()))
+            }
         }
     } catch (e: IOException) {
         ApiResult.Error(ApiError.NetworkError)
