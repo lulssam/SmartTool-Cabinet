@@ -24,3 +24,10 @@ data class BOArmarioDTO(
     val estado: String,
     val trancado: Boolean
 )
+@Serializable
+data class CriarFuncionarioRequest(
+    val nomeCompleto: String,
+    val email: String,
+    val cargo: String,
+    val turno: String
+)

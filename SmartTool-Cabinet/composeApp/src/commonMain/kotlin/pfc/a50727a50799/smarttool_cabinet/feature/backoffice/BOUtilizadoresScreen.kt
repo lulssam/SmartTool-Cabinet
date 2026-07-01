@@ -33,7 +33,8 @@ private fun BOUtilizadoresScreenContent(
     onMenuClick: () -> Unit,
     onSearchChange: (String) -> Unit,
     onFiltroChange: (FiltroUtilizador) -> Unit,
-    onNovoClick: () -> Unit,
+    // 1. ALTERADO: Agora aceita os 4 campos do formulário
+    onNovoClick: (String, String, String, String) -> Unit,
     onAlterarCargo: (Int, String) -> Unit,
     onAlterarTurno: (Int, String) -> Unit,
     onDesativar: (Int) -> Unit,
@@ -41,6 +42,8 @@ private fun BOUtilizadoresScreenContent(
 ) {
     var userEditando by remember { mutableStateOf<UtilizadorListaUi?>(null) }
     var modoEdicao by remember { mutableStateOf<String?>(null) }
+    // 2. ADICIONADO: Variável para controlar quando o pop-up de criar aparece
+    var showCriarDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(state.error) {
         if (state.error != null) {
@@ -63,7 +66,13 @@ private fun BOUtilizadoresScreenContent(
                             Text("Gestão de Acessos", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = TextTitle)
                             Text("Controlo de permissões e turnos", fontSize = 14.sp, color = TextSecondary)
                         }
-                        Button(onClick = onNovoClick, shape = RoundedCornerShape(20.dp), colors = ButtonDefaults.buttonColors(containerColor = TapBrandDark), modifier = Modifier.height(36.dp)) {
+                        // 3. ALTERADO: O botão agora muda a variável para mostrar o pop-up
+                        Button(
+                            onClick = { showCriarDialog = true },
+                            shape = RoundedCornerShape(20.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = TapBrandDark),
+                            modifier = Modifier.height(36.dp)
+                        ) {
                             Text("+ Novo", fontSize = 13.sp, fontWeight = FontWeight.Medium)
                         }
                     }
@@ -125,13 +134,36 @@ private fun BOUtilizadoresScreenContent(
                 )
             }
         }
+
+        // 4. ADICIONADO: Se a variável for true, desenha o formulário que criaste
+        if (showCriarDialog) {
+            CriarUtilizadorDialog(
+                onDismiss = { showCriarDialog = false },
+                onConfirm = { nome, email, cargo, turno ->
+                    onNovoClick(nome, email, cargo, turno) // Envia para o ViewModel
+                    showCriarDialog = false // Fecha o pop-up
+                }
+            )
+        }
     }
 }
 
 @Composable
 fun BOUtilizadoresScreen(viewModel: BOUtilizadoresViewModel = viewModel(), onMenuClick: () -> Unit = {}) {
     val state by viewModel.state.collectAsState()
-    BOUtilizadoresScreenContent(state = state, onMenuClick = onMenuClick, onSearchChange = viewModel::onSearchChange, onFiltroChange = viewModel::onFiltroChange, onNovoClick = {}, onAlterarCargo = viewModel::alterarCargo, onAlterarTurno = viewModel::alterarTurno, onDesativar = viewModel::desativarConta, onClearError = viewModel::limparErro)
+
+    BOUtilizadoresScreenContent(
+        state = state,
+        onMenuClick = onMenuClick,
+        onSearchChange = viewModel::onSearchChange,
+        onFiltroChange = viewModel::onFiltroChange,
+        // 5. ALTERADO: Aqui ligamos o botão à função que já tinhas no ViewModel
+        onNovoClick = viewModel::criarUtilizador,
+        onAlterarCargo = viewModel::alterarCargo,
+        onAlterarTurno = viewModel::alterarTurno,
+        onDesativar = viewModel::desativarConta,
+        onClearError = viewModel::limparErro
+    )
 }
 
 @Composable
@@ -196,5 +228,82 @@ fun SelecaoDialog(titulo: String, opcoes: List<String>, onDismiss: () -> Unit, o
             }
         },
         confirmButton = {}, dismissButton = { TextButton(onClick = onDismiss) { Text("Cancelar") } }, containerColor = Color.White
+    )
+}
+
+@Composable
+fun CriarUtilizadorDialog(
+    onDismiss: () -> Unit,
+    onConfirm: (nome: String, email: String, cargo: String, turno: String) -> Unit
+) {
+    var nome by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
+    var cargo by remember { mutableStateOf("TECNICO") }
+    var turno by remember { mutableStateOf("MANHA") }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Novo Utilizador", fontWeight = FontWeight.Bold) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                OutlinedTextField(
+                    value = nome,
+                    onValueChange = { nome = it },
+                    label = { Text("Nome Completo") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                OutlinedTextField(
+                    value = email,
+                    onValueChange = { email = it },
+                    label = { Text("Email da TAP") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Text("Cargo:", fontSize = 12.sp, color = TextSecondary)
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    listOf("GESTOR", "TECNICO", "BACKOFFICE").forEach { c ->
+                        val isSelected = cargo == c
+                        OutlinedButton(
+                            onClick = { cargo = c },
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                containerColor = if (isSelected) TapBrandDark.copy(alpha = 0.1f) else Color.Transparent,
+                                contentColor = if (isSelected) TapBrandDark else Color.Gray
+                            ),
+                            border = BorderStroke(1.dp, if (isSelected) TapBrandDark else Color.LightGray),
+                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp),
+                            modifier = Modifier.height(32.dp)
+                        ) { Text(c, fontSize = 10.sp) }
+                    }
+                }
+
+                Text("Turno:", fontSize = 12.sp, color = TextSecondary)
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    listOf("MANHA", "TARDE", "NOITE").forEach { t ->
+                        val isSelected = turno == t
+                        OutlinedButton(
+                            onClick = { turno = t },
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                containerColor = if (isSelected) TapLightGreen.copy(alpha = 0.2f) else Color.Transparent,
+                                contentColor = if (isSelected) TapBrandDark else Color.Gray
+                            ),
+                            border = BorderStroke(1.dp, if (isSelected) TapBrandDark else Color.LightGray),
+                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp),
+                            modifier = Modifier.height(32.dp)
+                        ) { Text(t, fontSize = 10.sp) }
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = { onConfirm(nome, email, cargo, turno) },
+                colors = ButtonDefaults.buttonColors(containerColor = TapBrandDark),
+                enabled = nome.isNotBlank() && email.isNotBlank()
+            ) { Text("Criar") }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text("Cancelar", color = Color.Gray) }
+        },
+        containerColor = Color.White
     )
 }
