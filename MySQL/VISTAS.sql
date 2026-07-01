@@ -1,7 +1,7 @@
 USE SMARTTOOL;
 
 -- View usada pelo endpoint GET /api/ferramentas (junta ferramenta + tipo_ferramenta)
-CREATE VIEW View_Inventario_Detalhado AS
+CREATE OR REPLACE VIEW View_Inventario_Detalhado AS
 SELECT  f.idFerramenta,
         f.nome_tipo        AS Nome_Tipo,
         tf.categoria       AS categoria,
@@ -30,7 +30,7 @@ LEFT JOIN backoffice b ON f.id_func = b.id_func;
 
 -- View usada pelo endpoint GET /api/historico
 -- não filtrei já aqui pela data para isto puder ser usado noutras queries
-CREATE VIEW View_Mapa_Emprestimos AS
+CREATE OR REPLACE VIEW View_Mapa_Emprestimos AS
 SELECT  r.idRequisicao,
         f.nomeCompleto      AS tecnico,
         fe.idFerramenta,
@@ -45,8 +45,8 @@ JOIN    ferramenta fe          ON rf.codigo_tipo = fe.codigo_tipo
                               
                               
 -- View usada pelo endpoint das ferramentas que um técnico tem em uso (ainda não devolvidas)
-CREATE VIEW View_Ferramentas_Tecnico AS
-SELECT  r.idRequisicao, 
+CREATE OR REPLACE VIEW View_Ferramentas_Tecnico AS
+SELECT  r.idRequisicao,
         r.id_tecnico,
         fe.idFerramenta,
         fe.nome_tipo        AS nome,
@@ -60,3 +60,27 @@ JOIN    ferramenta fe            ON rf.codigo_tipo  = fe.codigo_tipo
                                 AND rf.nFerramenta  = fe.nFerramenta
 JOIN    tipo_ferramenta tf       ON fe.codigo_tipo  = tf.codigo
 WHERE   r.dhDevolucao IS NULL;
+
+-- View usada pelo endpoint GET /api/tarefas
+CREATE OR REPLACE VIEW View_Tarefas_Detalhada AS
+SELECT  t.idTarefa, t.titulo, t.descricao, t.estado, t.prioridade, t.dhAtribuicao,
+        f.nomeCompleto AS tecnico,
+        fe.nome_tipo   AS ferramenta
+FROM    tarefa t
+JOIN    funcionario f ON t.id_tecnico = f.id_func
+LEFT JOIN tarefa_ferramenta_permitida tfp ON t.idTarefa = tfp.idTarefa
+LEFT JOIN ferramenta fe ON tfp.codigo_tipo = fe.codigo_tipo AND tfp.nFerramenta = fe.nFerramenta;
+
+
+-- View usada pelo endpoint GET /api/tecnicos
+CREATE OR REPLACE VIEW View_Tecnicos_Disponibilidade AS
+SELECT  f.id_func      AS id,
+        f.nomeCompleto AS nome,
+        f.turno,
+        NOT EXISTS (
+            SELECT 1 FROM tarefa t
+            WHERE t.id_tecnico = f.id_func AND t.estado = 'EM CURSO'
+        ) AS disponivel
+FROM    tecnico tc
+JOIN    funcionario f ON tc.id_func = f.id_func
+WHERE   f.ativo = TRUE;

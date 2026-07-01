@@ -32,6 +32,8 @@ import pfc.a50727a50799.smarttool_cabinet.core.auth.UserRole
 @Serializable data object BackOfficeUtilizadoresRoute
 @Serializable data object BackOfficeArmariosRoute
 @Serializable data object BackOfficeHistoricoRoute
+
+@Serializable data object TarefasGestorRoute
 /**
  * Indica qual é o ecrã inicial de cada cargo, para a app saber para onde enviar
  * o utilizador logo a seguir ao login (ou no arranque, se já tiver sessão).
