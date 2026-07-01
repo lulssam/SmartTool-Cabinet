@@ -352,6 +352,7 @@ private fun AppNavHost(
                     tarefas = AppModule.tarefaRemoteDataSource,
                     alertas = AppModule.alertaRemoteDataSource,
                     ferramentas = AppModule.ferramentaRemoteDataSource,
+                    tecnicos = AppModule.tecnicoRemoteDataSource,
                     idGestor = SessionManager.atual?.idFunc ?: -1
                 )
             }
