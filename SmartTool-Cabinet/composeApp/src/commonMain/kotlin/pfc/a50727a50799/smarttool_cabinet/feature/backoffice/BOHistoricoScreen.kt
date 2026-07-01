@@ -1,4 +1,4 @@
-package pfc.a50727a50799.smarttool_cabinet.feature.tecnico
+package pfc.a50727a50799.smarttool_cabinet.feature.backoffice
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,7 +19,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -28,7 +27,6 @@ import pfc.a50727a50799.smarttool_cabinet.ui.MovimentoCard
 import pfc.a50727a50799.smarttool_cabinet.ui.TopBar
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AlertOrange
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AlertOrangeText
-import pfc.a50727a50799.smarttool_cabinet.ui.theme.AppTheme
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AzulRetirou
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.FundoAzulRetirou
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.ScreenBg
@@ -41,9 +39,9 @@ import smarttoolcabinet.composeapp.generated.resources.check
 import smarttoolcabinet.composeapp.generated.resources.tool
 
 @Composable
-private fun HistoricoScreenContent(
-    state: HistoricoUiState,
-    onMenuClick: () -> Unit
+private fun BOHistoricoScreenContent(
+    state: BOHistoricoUiState,
+    onMenuClick: () -> Unit,
 ) {
     when {
         state.isLoading ->
@@ -61,9 +59,8 @@ private fun HistoricoScreenContent(
                 modifier = Modifier.fillMaxSize().background(ScreenBg)
             ) {
                 TopBar(
-                    titulo = "O Meu Histórico",
+                    titulo = "Histórico",
                     mostrarAlertas = false,
-                    alertasAtivos = 0,
                     onMenu = onMenuClick
                 )
 
@@ -75,42 +72,40 @@ private fun HistoricoScreenContent(
                     item {
                         Column {
                             Text(
-                                "O Meu Histórico",
+                                "Histórico",
                                 fontSize = 28.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.Black
                             )
                             Text(
-                                "Últimos movimentos efetuados",
+                                "Últimos 30 dias de movimentos",
                                 fontSize = 14.sp,
                                 color = TextSecondary
                             )
                         }
                     }
-
-                    if (state.grupos.isEmpty()) {
+                    if (state.secoes.isEmpty()) {
                         item {
                             Text(
-                                text = "Sem movimentos recentes.",
+                                text = "Sem movimentos nos últimos 7 dias.",
                                 fontSize = 14.sp,
                                 color = TextSecondary,
                                 modifier = Modifier.padding(top = 16.dp)
                             )
                         }
                     } else {
-                        state.grupos.forEach { grupo ->
+                        state.secoes.forEach { secao ->
                             item {
                                 Text(
-                                    text = grupo.data,
+                                    text = secao.data,
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = TextSecondary,
                                     modifier = Modifier.padding(top = 8.dp)
                                 )
                             }
-
-                            items(grupo.movimentos, key = { it.id }) { movimento ->
-                                HistoricoItemCardTecnico(movimento)
+                            items(secao.movimentos, key = { it.id }) { movimento ->
+                                BOHistoricoItemCard(movimento)
                             }
                         }
                     }
@@ -121,7 +116,7 @@ private fun HistoricoScreenContent(
 }
 
 @Composable
-private fun HistoricoItemCardTecnico(item: HistoricoItemUi) {
+private fun BOHistoricoItemCard(item: BOHistoricoItemUi) {
     data class Estilo(
         val icone: DrawableResource,
         val cor: Color,
@@ -130,11 +125,13 @@ private fun HistoricoItemCardTecnico(item: HistoricoItemUi) {
     )
 
     val e = when (item.tipo) {
-        TipoMovimento.RETIROU ->
+        TipoMovimentoBO.RETIROU ->
             Estilo(Res.drawable.tool, AzulRetirou, FundoAzulRetirou, "Retirou")
-        TipoMovimento.DEVOLVEU ->
+
+        TipoMovimentoBO.DEVOLVEU ->
             Estilo(Res.drawable.check, TapBrandDark, TapLightGreen.copy(alpha = 0.2f), "Devolveu")
-        TipoMovimento.MARCOU_AVARIA ->
+
+        TipoMovimentoBO.MARCOU_AVARIA ->
             Estilo(Res.drawable.alert_triangle, AlertOrangeText, AlertOrange.copy(alpha = 0.2f), "Marcou avaria")
     }
 
@@ -144,48 +141,19 @@ private fun HistoricoItemCardTecnico(item: HistoricoItemUi) {
         corFundoIcone = e.fundo,
         nome = item.nomeFerramenta,
         label = e.label,
-        subtitulo = item.detalhe,
+        subtitulo = item.funcionario,
         hora = item.hora
     )
 }
 
 @Composable
-fun HistoricoScreen(
-    viewModel: HistoricoViewModel = viewModel(),
+fun BOHistoricoScreen(
+    viewModel: BOHistoricoViewModel = viewModel(),
     onMenuClick: () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsState()
-
-    HistoricoScreenContent(
+    BOHistoricoScreenContent(
         state = state,
         onMenuClick = onMenuClick
     )
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-private fun PreviewHistorico() {
-    AppTheme {
-        HistoricoScreenContent(
-            state = HistoricoUiState(
-                isLoading = false,
-                grupos = listOf(
-                    GrupoHistoricoUi(
-                        data = "HOJE",
-                        movimentos = listOf(
-                            HistoricoItemUi("1", "Chave de Caixa 10mm", "Manutenção Motor", "09:45", TipoMovimento.RETIROU),
-                            HistoricoItemUi("2", "Multímetro Digital", "Manutenção Motor", "10:43", TipoMovimento.DEVOLVEU)
-                        )
-                    ),
-                    GrupoHistoricoUi(
-                        data = "ONTEM",
-                        movimentos = listOf(
-                            HistoricoItemUi("3", "Pistola de Calor", "Reparação Cabine", "09:32", TipoMovimento.MARCOU_AVARIA)
-                        )
-                    )
-                )
-            ),
-            onMenuClick = {}
-        )
-    }
 }
