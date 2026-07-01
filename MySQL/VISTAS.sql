@@ -70,3 +70,17 @@ FROM    tarefa t
 JOIN    funcionario f ON t.id_tecnico = f.id_func
 LEFT JOIN tarefa_ferramenta_permitida tfp ON t.idTarefa = tfp.idTarefa
 LEFT JOIN ferramenta fe ON tfp.codigo_tipo = fe.codigo_tipo AND tfp.nFerramenta = fe.nFerramenta;
+
+
+-- View usada pelo endpoint GET /api/tecnicos
+CREATE OR REPLACE VIEW View_Tecnicos_Disponibilidade AS
+SELECT  f.id_func      AS id,
+        f.nomeCompleto AS nome,
+        f.turno,
+        NOT EXISTS (
+            SELECT 1 FROM tarefa t
+            WHERE t.id_tecnico = f.id_func AND t.estado = 'EM CURSO'
+        ) AS disponivel
+FROM    tecnico tc
+JOIN    funcionario f ON tc.id_func = f.id_func
+WHERE   f.ativo = TRUE;

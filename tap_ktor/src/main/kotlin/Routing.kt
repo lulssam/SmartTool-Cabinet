@@ -336,6 +336,34 @@ fun Application.configureRouting() {
             }
         }
 
+        get("/api/tecnicos") {
+            val listaTecnicos = mutableListOf<TecnicoDTO>()
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver")
+                val connection = DriverManager.getConnection(URL, USER, PASSWORD)
+
+                try {
+                    val sql = "SELECT id, nome, turno, disponivel FROM View_Tecnicos_Disponibilidade ORDER BY nome"
+                    val rs = connection.createStatement().executeQuery(sql)
+                    while (rs.next()) {
+                        listaTecnicos.add(
+                            TecnicoDTO(
+                                id = rs.getInt("id"),
+                                nome = rs.getString("nome"),
+                                turno = rs.getString("turno"),
+                                disponivel = rs.getBoolean("disponivel")
+                            )
+                        )
+                    }
+                } finally {
+                    connection.close()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain, HttpStatusCode.InternalServerError)
+            }
+        }
+
         // ====== POSTS ======
         post("/api/requisicoes") {
 
