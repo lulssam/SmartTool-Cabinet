@@ -460,6 +460,47 @@ fun Application.configureRouting() {
             }
         }
 
+        get("/api/tecnicos/{id}/reservadas") {
+            val idTecnico = call.parameters["id"]?.toIntOrNull()
+            if (idTecnico == null) {
+                call.respond(HttpStatusCode.BadRequest, "id inválido")
+                return@get
+            }
+
+            val lista = mutableListOf<FerramentaDTO>()
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver")
+                val connection = DriverManager.getConnection(URL, USER, PASSWORD)
+
+                try {
+                    val sql = "SELECT idFerramenta, nome, categoria, estado, disponibilidade, Armario " +
+                            "FROM View_Ferramentas_Reservadas_Tecnico WHERE id_tecnico = ?"
+                    val statement = connection.prepareStatement(sql)
+                    statement.setInt(1, idTecnico)
+
+                    val resultSet = statement.executeQuery()
+                    while (resultSet.next()) {
+                        lista.add(
+                            FerramentaDTO(
+                                idFerramenta = resultSet.getInt("idFerramenta"),
+                                nome = resultSet.getString("nome"),
+                                categoria = resultSet.getString("categoria"),
+                                estado = resultSet.getString("estado"),
+                                disponibilidade = resultSet.getString("disponibilidade"),
+                                localizacao = "Arm. ${resultSet.getString("Armario")}"
+                            )
+                        )
+                    }
+                } finally {
+                    connection.close()
+                }
+                call.respond(lista)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain, HttpStatusCode.InternalServerError)
+            }
+        }
+
         // ====== POSTS ======
         post("/api/requisicoes") {
 
@@ -627,30 +668,56 @@ fun Application.configureRouting() {
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver")
                 val connection = DriverManager.getConnection(URL, USER, PASSWORD)
+                connection.autoCommit = false
 
                 try {
                     val id = call.parameters["id"]?.toIntOrNull()
-
                     if (id == null) {
                         call.respond(HttpStatusCode.BadRequest, "id da requisição inválido")
                         return@patch
                     }
 
-                    val sql = "UPDATE requisicao SET dhDevolucao = NOW() WHERE idRequisicao = ?"
-                    val statement = connection.prepareStatement(sql)
-                    statement.setInt(1, id)
+                    // marcar devolução
+                    val sqlDevolucao = "UPDATE requisicao SET dhDevolucao = NOW() WHERE idRequisicao = ?"
+                    val stmtDevolver = connection.prepareStatement(sqlDevolucao)
 
-                    val linhasAfetadas = statement.executeUpdate()
-                    if (linhasAfetadas == 0) {
+                    stmtDevolver.setInt(1, id)
+                    if (stmtDevolver.executeUpdate() == 0) {
+                        connection.rollback()
                         call.respond(HttpStatusCode.NotFound, "Requisição $id não encontrada")
-                    } else {
-                        call.respond(HttpStatusCode.OK, "Requisição $id devolvida")
+                        return@patch
                     }
+
+                    val sqlUpdate =
+                        """
+                UPDATE ferramenta f
+                JOIN requisicao_ferramenta rf
+                  ON rf.codigo_tipo = f.codigo_tipo AND rf.nFerramenta = f.nFerramenta
+                SET f.disponibilidade = CASE
+                        WHEN f.estado = 'Danificada' THEN 'Em Manutencao'
+                        ELSE 'Disponivel'
+                    END
+                WHERE rf.idRequisicao = ?
+                """.trimIndent()
+                    val stmtRepor = connection.prepareStatement(sqlUpdate)
+
+                    stmtRepor.setInt(1, id)
+                    stmtRepor.executeUpdate()
+
+                    connection.commit()
+                    call.respond(HttpStatusCode.OK, "Requisição $id devolvida")
+                } catch (e: Exception) {
+                    connection.rollback()
+                    throw e
                 } finally {
                     connection.close()
                 }
             } catch (e: Exception) {
-                call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain)
+                call.respondText(
+                    text = "Erro na DB: ${e.message}",
+                    ContentType.Text.Plain,
+                    status = HttpStatusCode.InternalServerError
+                )
             }
         }
 
