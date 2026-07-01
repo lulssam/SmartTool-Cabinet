@@ -608,7 +608,7 @@ fun TarefasGestorScreen(
         onFiltroChange = viewModel::onFiltroChange,
         onNovaClick = viewModel::abrirNovaTarefa,
         onFecharTarefaClick = viewModel::fecharNovaTarefa,
-        // onAdicionarTarefa = viewModel::onAdicionarTarefa todo
+        onAdicionarTarefa = viewModel::onAdicionarTarefa
     )
 }
 

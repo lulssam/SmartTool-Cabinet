@@ -2,13 +2,18 @@ package pfc.a50727a50799.smarttool_cabinet.feature.gestor.tarefas
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import pfc.a50727a50799.smarttool_cabinet.core.alerta.AlertaRemoteDataSource
+import pfc.a50727a50799.smarttool_cabinet.core.ferramenta.FerramentaRemoteDataSource
+import pfc.a50727a50799.smarttool_cabinet.core.ferramenta.toGestorUi
 import pfc.a50727a50799.smarttool_cabinet.core.network.ApiResult
+import pfc.a50727a50799.smarttool_cabinet.core.tarefa.FerramentaIdDto
+import pfc.a50727a50799.smarttool_cabinet.core.tarefa.NovaTarefaDto
 import pfc.a50727a50799.smarttool_cabinet.core.tarefa.TarefaRemoteDataSource
 import pfc.a50727a50799.smarttool_cabinet.core.tarefa.toGestorUi
 
@@ -20,7 +25,9 @@ import pfc.a50727a50799.smarttool_cabinet.core.tarefa.toGestorUi
  */
 class TarefasGestorViewModel(
     private val tarefas: TarefaRemoteDataSource,
-    private val alertas: AlertaRemoteDataSource
+    private val alertas: AlertaRemoteDataSource,
+    private val ferramentas: FerramentaRemoteDataSource,
+    private val idGestor: Int
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(TarefasGestorUiState(isLoading = true))
@@ -86,6 +93,14 @@ class TarefasGestorViewModel(
 
     fun abrirNovaTarefa() {
         _state.update { it.copy(mostrarNovaTarefa = true) }
+        viewModelScope.launch {
+            val ferrs = when (val r = ferramentas.getFerramentas()) {
+                is ApiResult.Success -> r.data.map { it.toGestorUi() }
+                is ApiResult.Error -> emptyList()
+            }
+
+            _state.update { it.copy(ferramentasDisponiveis = ferrs) }
+        }
     }
 
     fun fecharNovaTarefa() {
@@ -107,6 +122,37 @@ class TarefasGestorViewModel(
         val novo = if (id in it.ferramentasSelecionadas) it.ferramentasSelecionadas - id
         else it.ferramentasSelecionadas + id
         it.copy(ferramentasSelecionadas = novo)
+    }
+
+    fun onAdicionarTarefa() {
+        val s = _state.value
+        val idTecnico = s.tecnicoSelecionado ?: return
+        println("idTecnico: $idTecnico \n s: $s")
+        if (s.titulo.isBlank()) return
+        viewModelScope.launch {
+            val dto = NovaTarefaDto(
+                idGestor = idGestor,
+                idTecnico = idTecnico,
+                titulo = s.titulo,
+                descricao = s.descricao,
+                prioridade = s.novaPrioridade.name,
+                ferramentasPermitidasId = s.ferramentasSelecionadas.map {
+                    FerramentaIdDto(codigoTipo = it / 100000, nFerramenta = it % 100000)
+                }
+            )
+
+            println("adicionada tarefa")
+
+            when (tarefas.criarTarefa(dto)) {
+                is ApiResult.Success -> {
+                    fecharNovaTarefa();
+                    carregar()
+                }
+
+                is ApiResult.Error ->
+                    _state.update { it.copy(error = "Não foi possível criar a tarefa") }
+            }
+        }
     }
 }
 

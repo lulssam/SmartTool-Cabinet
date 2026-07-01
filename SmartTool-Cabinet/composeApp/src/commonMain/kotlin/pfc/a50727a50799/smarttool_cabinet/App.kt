@@ -350,7 +350,9 @@ private fun AppNavHost(
             val viewModel = viewModel {
                 TarefasGestorViewModel(
                     tarefas = AppModule.tarefaRemoteDataSource,
-                    alertas = AppModule.alertaRemoteDataSource
+                    alertas = AppModule.alertaRemoteDataSource,
+                    ferramentas = AppModule.ferramentaRemoteDataSource,
+                    idGestor = SessionManager.atual?.idFunc ?: -1
                 )
             }
             val state by viewModel.state.collectAsState()
