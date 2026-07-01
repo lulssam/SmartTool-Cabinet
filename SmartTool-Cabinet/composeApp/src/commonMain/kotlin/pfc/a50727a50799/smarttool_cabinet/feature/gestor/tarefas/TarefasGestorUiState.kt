@@ -1,7 +1,6 @@
 package pfc.a50727a50799.smarttool_cabinet.feature.gestor.tarefas
 
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.ferramentas.FerramentaUi
-import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.TecnicoUiState
 
 /**
  * Tudo o que o ecrã TarefasGestor precisa para se mostrar corretamente.

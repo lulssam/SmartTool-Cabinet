@@ -1,4 +1,4 @@
-package pfc.a50727a50799.smarttool_cabinet.feature.gestor.menu
+package pfc.a50727a50799.smarttool_cabinet.feature.tecnico.menu
 
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ModalNavigationDrawer
@@ -8,25 +8,24 @@ import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.launch
 import pfc.a50727a50799.smarttool_cabinet.ui.DrawerSheet
 
+
 /**
- * Invólucro partilhado por todos os ecrãs do gestor. Mete um menu lateral
+ * Invólucro partilhado por todos os ecrãs do técnico. Mete um menu lateral
  * (drawer) à volta do conteúdo: trata de o abrir/fechar e de navegar quando se
  * toca numa opção. O ecrã lá dentro recebe a função `abrirMenu` para ligar ao
  * botão de menu da sua TopBar.
  *
  * @param itemSelecionado O `id` da secção atual (fica destacada no menu).
- * @param alertasAtivos Número no badge dos Alertas.
- * @param nomeGestor Nome mostrado no rodapé do menu.
+ * @param nomeTecnico Nome mostrado no rodapé do menu.
  * @param cargo Cargo mostrado por baixo do nome.
  * @param onNavegar Chamado com o `id` da opção tocada (quem navega é o NavHost).
  * @param onLogout Chamado quando se toca em sair.
  * @param content O ecrã a mostrar. Recebe `abrirMenu` para abrir o menu.
  */
 @Composable
-fun GestorScaffold(
+fun TecnicoScaffold(
     itemSelecionado: String,
-    alertasAtivos: Int,
-    nomeGestor: String,
+    nomeTecnico: String,
     cargo: String,
     onNavegar: (String) -> Unit,
     onLogout: () -> Unit,
@@ -38,15 +37,19 @@ fun GestorScaffold(
     ModalNavigationDrawer(
         drawerState = drawerState,
 
+        // só permite gesto quando já está aberto -> não choca com o scroll
+        // horizontal dos chips. Para abrir, usa-se o botão de menu.
+        gesturesEnabled = drawerState.isOpen,
+
         drawerContent = {
             DrawerSheet(
-                opcoes = opcoesGestor(alertasAtivos),
+                opcoes = opcoesTecnico(),
                 idSelecionado = itemSelecionado,
-                nomeUtilizador = nomeGestor,
+                nomeUtilizador = nomeTecnico,
                 cargo = cargo,
                 onOpcaoClick = { opcao ->
                     scope.launch { drawerState.close() }
-                    if (opcao.id != itemSelecionado) onNavegar(opcao.id)  // não renavega para o mesmo
+                    if (opcao.id != itemSelecionado) onNavegar(opcao.id) // não renavega para o mesmo sitio
                 },
                 onLogoutClick = {
                     scope.launch { drawerState.close() }

@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.ferramentas.DisponibilidadeFerramenta
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.ferramentas.EstadoFerramenta
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.ferramentas.FerramentaUi
-import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.FerramentaTecnicoUi
+import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.dashboard.FerramentaTecnicoUi
 
 @Serializable
 data class FerramentaDto(
