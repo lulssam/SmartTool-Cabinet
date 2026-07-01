@@ -47,6 +47,8 @@ import pfc.a50727a50799.smarttool_cabinet.ui.TopBar
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AlertOrange
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AlertOrangeText
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AppTheme
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.AzulReservou
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.AzulRetirou
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.CardBorder
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.FieldBg
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.PillShape
@@ -220,6 +222,9 @@ private fun FerramentaGestorCard(ferramenta: FerramentaUi) {
 
         DisponibilidadeFerramenta.EM_MANUTENCAO ->
             Triple(FieldBg, TextSecondary, "Manutenção")
+
+        DisponibilidadeFerramenta.RESERVADA ->
+            Triple(AzulReservou.copy(alpha = 0.2f), AzulReservou, "Reservada")
     }
 
     Card(

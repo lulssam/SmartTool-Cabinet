@@ -31,7 +31,7 @@ data class FerramentasUiState(
  * É isto que decide a cor e o texto da "pill" no card, e também o que cada
  * chip de filtro vai procurar. Há um valor para cada uma das 4 pills do design.
  */
-enum class DisponibilidadeFerramenta { DISPONIVEL, REQUISITADA, EM_FALTA, EM_MANUTENCAO }
+enum class DisponibilidadeFerramenta { DISPONIVEL, REQUISITADA, EM_FALTA, EM_MANUTENCAO, RESERVADA }
 
 
 /**
@@ -51,7 +51,8 @@ enum class FiltroFerramenta(val label: String) {
     DISPONIVEL("Disponível"),
     EM_USO("Em Uso"),
     EM_FALTA("Em Falta"),
-    MANUTENCAO("Manutenção")
+    MANUTENCAO("Manutenção"),
+    RESERVADA("Reservada")
 }
 
 /**
