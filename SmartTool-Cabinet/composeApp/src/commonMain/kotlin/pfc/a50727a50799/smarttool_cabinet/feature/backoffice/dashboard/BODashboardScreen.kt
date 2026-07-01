@@ -91,24 +91,54 @@ private fun BODashboardScreenContent(
                     verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
                     item {
-                        WelcomeCard(nomeGestor = state.nomeBackOffice, turno = state.turno, cargo = state.cargo, color = TapAlmostGreen)
+                        WelcomeCard(
+                            nomeGestor = state.nomeBackOffice,
+                            turno = state.turno,
+                            cargo = state.cargo,
+                            color = TapAlmostGreen
+                        )
                     }
 
                     item {
                         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                                EstatisticaBOSimples(titulo = "Total Utilizadores", valor = state.estatisticas.totalUtilizadores.toString(), modifier = Modifier.weight(1f))
-                                EstatisticaBOSimples(titulo = "Ativos Hoje", valor = state.estatisticas.ativosHoje.toString(), modifier = Modifier.weight(1f))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                EstatisticaBOSimples(
+                                    titulo = "Total Utilizadores",
+                                    valor = state.estatisticas.totalUtilizadores.toString(),
+                                    modifier = Modifier.weight(1f)
+                                )
+                                EstatisticaBOSimples(
+                                    titulo = "Ativos Hoje",
+                                    valor = state.estatisticas.ativosHoje.toString(),
+                                    modifier = Modifier.weight(1f)
+                                )
                             }
-                            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                                EstatisticaBOSimples(titulo = "Gestores", valor = state.estatisticas.gestores.toString(), modifier = Modifier.weight(1f))
-                                EstatisticaBOSimples(titulo = "Técnicos", valor = state.estatisticas.tecnicos.toString(), modifier = Modifier.weight(1f))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                EstatisticaBOSimples(
+                                    titulo = "Gestores",
+                                    valor = state.estatisticas.gestores.toString(),
+                                    modifier = Modifier.weight(1f)
+                                )
+                                EstatisticaBOSimples(
+                                    titulo = "Técnicos",
+                                    valor = state.estatisticas.tecnicos.toString(),
+                                    modifier = Modifier.weight(1f)
+                                )
                             }
                         }
                     }
 
                     item {
-                        SectionHeader(titulo = "Utilizadores recentes", onVerTodos = onVerTodosUtilizadores)
+                        SectionHeader(
+                            titulo = "Utilizadores recentes",
+                            onVerTodos = onVerTodosUtilizadores
+                        )
                     }
 
                     items(state.utilizadoresRecentes) { user ->
@@ -116,7 +146,10 @@ private fun BODashboardScreenContent(
                     }
                     item {
                         Spacer(modifier = Modifier.height(4.dp))
-                        SectionHeader(titulo = "Estado dos Armários", onVerTodos = onVerTodosArmarios)
+                        SectionHeader(
+                            titulo = "Estado dos Armários",
+                            onVerTodos = onVerTodosArmarios
+                        )
                     }
 
                     items(state.armarios) { armario ->
@@ -130,17 +163,20 @@ private fun BODashboardScreenContent(
 @Composable
 fun BODashboardScreen(
     viewModel: BODashboardViewModel = viewModel(),
-    onMenuClick: () -> Unit = {}
+    onMenuClick: () -> Unit = {},
+    onVerTodosArmarios: () -> Unit = {},
+    onVerTodosUtilizadores: () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsState()
 
     BODashboardScreenContent(
         state = state,
         onMenuClick = onMenuClick,
-        onVerTodosUtilizadores = {},
-        onVerTodosArmarios = {}
+        onVerTodosUtilizadores = onVerTodosUtilizadores,
+        onVerTodosArmarios = onVerTodosArmarios
     )
 }
+
 @Composable
 fun EstatisticaBOSimples(titulo: String, valor: String, modifier: Modifier = Modifier) {
     Card(
@@ -153,7 +189,12 @@ fun EstatisticaBOSimples(titulo: String, valor: String, modifier: Modifier = Mod
             modifier = Modifier.padding(12.dp).fillMaxSize(),
             verticalArrangement = Arrangement.Center
         ) {
-            Text(text = titulo, fontSize = 11.sp, color = TextSecondary, fontWeight = FontWeight.Medium)
+            Text(
+                text = titulo,
+                fontSize = 11.sp,
+                color = TextSecondary,
+                fontWeight = FontWeight.Medium
+            )
             Spacer(modifier = Modifier.height(4.dp))
             Text(text = valor, fontSize = 24.sp, fontWeight = FontWeight.Bold, color = TextTitle)
         }
@@ -180,13 +221,23 @@ fun UtilizadorRecenteCard(user: UtilizadorRecenteUi) {
                     .background(TapSurfaceGrey.copy(alpha = 0.4f)),
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = user.iniciais, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = TapBrandDark)
+                Text(
+                    text = user.iniciais,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = TapBrandDark
+                )
             }
 
             Spacer(modifier = Modifier.width(12.dp))
 
             Column(modifier = Modifier.weight(1f)) {
-                Text(text = user.nome, fontWeight = FontWeight.Bold, fontSize = 14.sp, color = TextTitle)
+                Text(
+                    text = user.nome,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                    color = TextTitle
+                )
                 Text(text = user.cargoSubtitulo, fontSize = 11.sp, color = TextSecondary)
             }
 
@@ -203,7 +254,12 @@ fun UtilizadorRecenteCard(user: UtilizadorRecenteUi) {
                     .background(bgColor)
                     .padding(horizontal = 10.dp, vertical = 4.dp)
             ) {
-                Text(text = user.cargoTag, color = textColor, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    text = user.cargoTag,
+                    color = textColor,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }
@@ -222,7 +278,12 @@ fun ArmarioResumoCard(armario: ArmarioResumoUi) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = armario.nome, fontWeight = FontWeight.Bold, fontSize = 14.sp, color = TextTitle)
+            Text(
+                text = armario.nome,
+                fontWeight = FontWeight.Bold,
+                fontSize = 14.sp,
+                color = TextTitle
+            )
 
             val (bgColor, textColor) = when (armario.estado) {
                 "Online" -> Pair(TapLightGreen.copy(alpha = 0.2f), TapBrandDark)
@@ -236,11 +297,17 @@ fun ArmarioResumoCard(armario: ArmarioResumoUi) {
                     .background(bgColor)
                     .padding(horizontal = 10.dp, vertical = 4.dp)
             ) {
-                Text(text = armario.estado, color = textColor, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    text = armario.estado,
+                    color = textColor,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }
 }
+
 @Preview(showBackground = true)
 @Composable
 private fun PreviewBODashboard() {
@@ -254,9 +321,27 @@ private fun PreviewBODashboard() {
                 turno = "8:00-16:00",
                 estatisticas = EstatisticasBOUi(6, 5, 1, 4),
                 utilizadoresRecentes = listOf(
-                    UtilizadorRecenteUi(1, "Carlos Gonçalves", "CG", "Técnico · Turno Manhã", "Técnico"),
-                    UtilizadorRecenteUi(2, "Gonçalo Charneca", "GC", "Gestor · Turno Manhã", "Gestor"),
-                    UtilizadorRecenteUi(3, "Luísa Sampaio", "LS", "Técnico · Turno Manhã", "Técnico"),
+                    UtilizadorRecenteUi(
+                        1,
+                        "Carlos Gonçalves",
+                        "CG",
+                        "Técnico · Turno Manhã",
+                        "Técnico"
+                    ),
+                    UtilizadorRecenteUi(
+                        2,
+                        "Gonçalo Charneca",
+                        "GC",
+                        "Gestor · Turno Manhã",
+                        "Gestor"
+                    ),
+                    UtilizadorRecenteUi(
+                        3,
+                        "Luísa Sampaio",
+                        "LS",
+                        "Técnico · Turno Manhã",
+                        "Técnico"
+                    ),
                     UtilizadorRecenteUi(4, "Tiago Dias", "TD", "Técnico · Turno Manhã", "Técnico")
                 ),
                 armarios = listOf(
