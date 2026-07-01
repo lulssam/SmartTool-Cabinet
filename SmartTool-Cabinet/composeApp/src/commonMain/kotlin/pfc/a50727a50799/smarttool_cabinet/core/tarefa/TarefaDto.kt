@@ -22,6 +22,7 @@ data class TarefaDto(
     val ferramentas: List<String> = emptyList()
 )
 
+
 /** Converte os dados crus da tarefa no modelo pronto para o card do gestor. */
 fun TarefaDto.toGestorUi(): TarefaUi = TarefaUi(
     id = idTarefa.toString(),

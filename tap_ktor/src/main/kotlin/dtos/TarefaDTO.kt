@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class TarefaDTO(
     val idTarefa: Int,
+    val titulo: String,
     val descricao: String,
     val tecnico: String,
     val estado: String,

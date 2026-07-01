@@ -300,7 +300,7 @@ fun Application.configureRouting() {
 
                 try {
                     val sql = """
-                            SELECT idTarefa, descricao, estado, prioridade, dhAtribuicao, tecnico, ferramenta
+                            SELECT idTarefa, titulo ,descricao, estado, prioridade, dhAtribuicao, tecnico, ferramenta
                             FROM   View_Tarefas_Detalhada
                             ORDER BY dhAtribuicao DESC, idTarefa
                         """.trimIndent()
@@ -314,6 +314,7 @@ fun Application.configureRouting() {
                         val tarefa = porTarefa.getOrPut(id) {
                             TarefaDTO(
                                 idTarefa = id,
+                                titulo = resultSet.getString("titulo"),
                                 descricao = resultSet.getString("descricao"),
                                 tecnico = resultSet.getString("tecnico"),
                                 estado = resultSet.getString("estado"),
@@ -427,11 +428,13 @@ fun Application.configureRouting() {
                     val pedido = call.receive<NovaTarefaDTO>()
 
                     val sqlTarefa =
-                        "INSERT INTO tarefa (descricao, id_gestor, id_tecnico, dhAtribuicao) VALUES (?, ?, ?, NOW())"
+                        "INSERT INTO tarefa (titulo, descricao, id_gestor, id_tecnico, prioridade, dhAtribuicao) VALUES (?, ?, ?, ?, ?, NOW())"
                     val statementTarefa = connection.prepareStatement(sqlTarefa, Statement.RETURN_GENERATED_KEYS)
-                    statementTarefa.setString(1, pedido.descricao)
-                    statementTarefa.setInt(2, pedido.idGestor)
-                    statementTarefa.setInt(3, pedido.idTecnico)
+                    statementTarefa.setString(1, pedido.titulo)
+                    statementTarefa.setString(2, pedido.descricao)
+                    statementTarefa.setInt(3, pedido.idGestor)
+                    statementTarefa.setInt(4, pedido.idTecnico)
+                    statementTarefa.setString(5, pedido.prioridade)
                     statementTarefa.executeUpdate()
 
                     val keys = statementTarefa.generatedKeys
