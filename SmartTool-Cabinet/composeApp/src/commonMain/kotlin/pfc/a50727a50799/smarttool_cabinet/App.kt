@@ -199,7 +199,7 @@ private fun AppNavHost(
                 nomeGestor = SessionManager.atual?.nome ?: "",
                 cargo = "Gestor de Armazém",
                 onNavegar = { id -> navegarGestor(navController, id) },
-                onLogout = {/*todo: terminar sessão*/ },
+                onLogout = { fazerLogout(navController, authRepository) },
             ) { abrirMenu ->
                 GestorScreen(
                     viewModel = viewModel,
@@ -274,7 +274,7 @@ private fun AppNavHost(
                 nomeGestor = SessionManager.atual?.nome ?: "",
                 cargo = "Gestor de Armazém",
                 onNavegar = { id -> navegarGestor(navController, id) },
-                onLogout = {/*todo: terminar sessão*/ },
+                onLogout = { fazerLogout(navController, authRepository) },
             ) { abrirMenu -> ArmariosScreen(viewModel = viewModel, onMenuClick = abrirMenu) }
 
 
@@ -295,7 +295,7 @@ private fun AppNavHost(
                 nomeGestor = SessionManager.atual?.nome ?: "",
                 cargo = "Gestor de Armazém",
                 onNavegar = { id -> navegarGestor(navController, id) },
-                onLogout = {/*todo: terminar sessão*/ },
+                onLogout = { fazerLogout(navController, authRepository) },
             ) { abrirMenu ->
                 AlertasScreen(viewModel = viewModel, onMenuClick = abrirMenu)
             }
@@ -316,7 +316,7 @@ private fun AppNavHost(
                 nomeGestor = SessionManager.atual?.nome ?: "",
                 cargo = "Gestor de Armazém",
                 onNavegar = { id -> navegarGestor(navController, id) },
-                onLogout = {/*todo: terminar sessão*/ },
+                onLogout = { fazerLogout(navController, authRepository) },
             ) { abrirMenu ->
                 FerramentasGestorScreen(viewModel = viewModel, onMenuClick = abrirMenu)
             }
@@ -340,7 +340,7 @@ private fun AppNavHost(
                 nomeGestor = SessionManager.atual?.nome ?: "",
                 cargo = "Gestor de Armazém",
                 onNavegar = { id -> navegarGestor(navController, id) },
-                onLogout = {/*todo: terminar sessão*/ },
+                onLogout = { fazerLogout(navController, authRepository) },
             ) { abrirMenu ->
                 HistoricoGestorScreen(viewModel = viewModel, onMenuClick = abrirMenu)
             }
@@ -364,7 +364,7 @@ private fun AppNavHost(
                 nomeGestor = SessionManager.atual?.nome ?: "",
                 cargo = "Gestor de Armazém",
                 onNavegar = { id -> navegarGestor(navController, id) },
-                onLogout = {/*todo: terminar sessão*/ },
+                onLogout = { fazerLogout(navController, authRepository) },
             ) { abrirMenu ->
                 TarefasGestorScreen(viewModel = viewModel, onMenuClick = abrirMenu)
             }
@@ -384,5 +384,18 @@ private fun navegarGestor(navController: NavController, id: String) {
     }
     rota?.let {
         navController.navigate(it) { launchSingleTop = true }  // evita empilhar o mesmo ecrã
+    }
+}
+
+private fun fazerLogout(
+    navController: NavController,
+    authRepository: AuthRepository
+) {
+    authRepository.logout() // terminar sessão na firebase
+    SessionManager.atual = null // esquecer o user atual na memória
+    navController.navigate(WelcomeRoute) {
+        popUpTo(navController.graph.id) {
+            inclusive = true
+        } // limpar stack para não dar para voltar atrás
     }
 }
