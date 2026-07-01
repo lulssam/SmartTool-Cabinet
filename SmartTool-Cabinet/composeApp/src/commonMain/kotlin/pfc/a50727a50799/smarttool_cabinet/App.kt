@@ -16,8 +16,14 @@ import kotlinx.coroutines.launch
 import pfc.a50727a50799.smarttool_cabinet.core.auth.UserRole
 import pfc.a50727a50799.smarttool_cabinet.core.auth.data.SessionManager
 import pfc.a50727a50799.smarttool_cabinet.di.AppModule
+import pfc.a50727a50799.smarttool_cabinet.feature.backoffice.BOArmariosScreen
+import pfc.a50727a50799.smarttool_cabinet.feature.backoffice.BOArmariosViewModel
 import pfc.a50727a50799.smarttool_cabinet.feature.backoffice.BODashboardScreen
 import pfc.a50727a50799.smarttool_cabinet.feature.backoffice.BODashboardViewModel
+import pfc.a50727a50799.smarttool_cabinet.feature.backoffice.BOHistoricoScreen
+import pfc.a50727a50799.smarttool_cabinet.feature.backoffice.BOHistoricoViewModel
+import pfc.a50727a50799.smarttool_cabinet.feature.backoffice.BOUtilizadoresScreen
+import pfc.a50727a50799.smarttool_cabinet.feature.backoffice.BOUtilizadoresViewModel
 import pfc.a50727a50799.smarttool_cabinet.feature.email.emailScreen
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.alertas.AlertasScreen
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.alertas.AlertasViewModel
@@ -34,6 +40,9 @@ import pfc.a50727a50799.smarttool_cabinet.feature.gestor.tarefas.TarefasGestorSc
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.tarefas.TarefasGestorViewModel
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.AlertasGestorRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.ArmariosGestorRoute
+import pfc.a50727a50799.smarttool_cabinet.feature.navigation.BackOfficeArmariosRoute
+import pfc.a50727a50799.smarttool_cabinet.feature.navigation.BackOfficeHistoricoRoute
+import pfc.a50727a50799.smarttool_cabinet.feature.navigation.BackOfficeUtilizadoresRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.FerramentasGestorRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.FerramentasTecnicoRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.HistoricoGestorRoute
@@ -213,9 +222,46 @@ private fun AppNavHost(
 
         composable<BackOfficeRoute> {
             val viewModel = viewModel {
-                BODashboardViewModel()
+                BODashboardViewModel(
+                    backOfficeDataSource = AppModule.backOfficeRemoteDataSource
+                )
             }
             BODashboardScreen(viewModel = viewModel)
+        }
+
+        composable<BackOfficeUtilizadoresRoute> {
+            val viewModel = viewModel {
+                BOUtilizadoresViewModel(
+                    backOfficeDataSource = AppModule.backOfficeRemoteDataSource
+                )
+            }
+            BOUtilizadoresScreen(viewModel = viewModel)
+        }
+        composable<BackOfficeArmariosRoute> {
+            val viewModel = viewModel {
+                BOArmariosViewModel(
+                    ferramentas = AppModule.ferramentaRemoteDataSource,
+                    armarios = AppModule.armarioRemoteDataSource,
+
+                )
+            }
+
+            BOArmariosScreen(
+                viewModel = viewModel,
+                onMenuClick = { /* TODO: Adicionar menu mais tarde */ }
+            )
+        }
+
+        composable<BackOfficeHistoricoRoute> {
+            val viewModel = viewModel {
+                BOHistoricoViewModel(
+                    historico = AppModule.historicoRemoteDataSource,
+                )
+            }
+            BOHistoricoScreen(
+                viewModel = viewModel,
+                onMenuClick = {}
+            )
         }
 
 
@@ -249,10 +295,12 @@ private fun AppNavHost(
         }
 
         composable<HistoricoTecnicoRoute> {
+            val session = SessionManager.atual
             val viewModel = viewModel {
-
-                HistoricoViewModel()
-
+                HistoricoViewModel(
+                    historicoDataSource = AppModule.historicoRemoteDataSource,
+                    idTecnico = session?.idFunc ?: -1
+                )
             }
             HistoricoScreen(viewModel = viewModel)
         }

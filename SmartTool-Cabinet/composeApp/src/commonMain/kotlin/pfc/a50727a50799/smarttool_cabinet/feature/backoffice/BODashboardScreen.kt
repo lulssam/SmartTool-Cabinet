@@ -90,12 +90,10 @@ private fun BODashboardScreenContent(
                     contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
-                    // 1. Welcome Card Partilhado
                     item {
                         WelcomeCard(nomeGestor = state.nomeBackOffice, turno = state.turno, cargo = state.cargo, color = TapAlmostGreen)
                     }
 
-                    // 2. Grelha de Estatísticas 2x2
                     item {
                         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -109,7 +107,6 @@ private fun BODashboardScreenContent(
                         }
                     }
 
-                    // 3. Utilizadores Recentes
                     item {
                         SectionHeader(titulo = "Utilizadores recentes", onVerTodos = onVerTodosUtilizadores)
                     }
@@ -117,8 +114,6 @@ private fun BODashboardScreenContent(
                     items(state.utilizadoresRecentes) { user ->
                         UtilizadorRecenteCard(user)
                     }
-
-                    // 4. Estado dos Armários
                     item {
                         Spacer(modifier = Modifier.height(4.dp))
                         SectionHeader(titulo = "Estado dos Armários", onVerTodos = onVerTodosArmarios)
@@ -145,11 +140,6 @@ fun BODashboardScreen(
         onVerTodosArmarios = {}
     )
 }
-
-// ==========================================
-// COMPONENTES DESTA PÁGINA
-// ==========================================
-
 @Composable
 fun EstatisticaBOSimples(titulo: String, valor: String, modifier: Modifier = Modifier) {
     Card(
@@ -250,8 +240,6 @@ fun ArmarioResumoCard(armario: ArmarioResumoUi) {
         }
     }
 }
-
-// Preview com injeção de dados mock para visualização perfeita
 @Preview(showBackground = true)
 @Composable
 private fun PreviewBODashboard() {

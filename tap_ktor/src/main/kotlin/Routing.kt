@@ -52,6 +52,36 @@ fun Application.configureRouting() {
                 call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain)
             }
         }
+        get("/api/funcionarios") {
+            val lista = mutableListOf<FuncionariosDTO>()
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver")
+                val connection = DriverManager.getConnection(URL, USER, PASSWORD)
+                try {
+                    // Vai buscar todos os registos sem filtrar por email
+                    val sql = "SELECT id_func, nomeCompleto, email, cargo, turno, ativo FROM View_Email"
+                    val statement = connection.createStatement()
+                    val resultSet = statement.executeQuery(sql)
+
+                    while (resultSet.next()) {
+                        lista.add(
+                            FuncionariosDTO(
+                                idFunc = resultSet.getInt("id_func"),
+                                nome = resultSet.getString("nomeCompleto"),
+                                cargo = resultSet.getString("cargo"),
+                                turno = resultSet.getString("turno"),
+                                ativo = resultSet.getBoolean("ativo")
+                            )
+                        )
+                    }
+                } finally {
+                    connection.close()
+                }
+                call.respond(lista)
+            } catch (e: Exception) {
+                call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain, status = HttpStatusCode.InternalServerError)
+            }
+        }
 
         get("/api/funcionarios/{email}") {
             try {
@@ -86,6 +116,67 @@ fun Application.configureRouting() {
                     "Erro na DB: ${e.message}",
                     ContentType.Text.Plain,
                     status = HttpStatusCode.InternalServerError
+                )
+            }
+        }
+
+        get("/api/historico/tecnico/{id}") {
+            val idTecnico = call.parameters["id"]?.toIntOrNull()
+            if (idTecnico == null) {
+                call.respond(HttpStatusCode.BadRequest, "ID do técnico inválido")
+                return@get
+            }
+
+            val listaHistorico = mutableListOf<HistoricoDTO>()
+
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver")
+                val connection = DriverManager.getConnection(URL, USER, PASSWORD)
+
+                try {
+                    val sql = """
+                        SELECT 
+                            r.idRequisicao, 
+                            func.nomeCompleto AS tecnico, 
+                            f.idFerramenta, 
+                            f.nome_tipo AS ferramenta, 
+                            r.dhRequisicao, 
+                            r.dhDevolucao 
+                        FROM requisicao r
+                        JOIN funcionario func ON r.id_tecnico = func.id_func
+                        JOIN requisicao_ferramenta rf ON r.idRequisicao = rf.idRequisicao
+                        JOIN ferramenta f ON rf.codigo_tipo = f.codigo_tipo AND rf.nFerramenta = f.nFerramenta
+                        WHERE r.id_tecnico = ? 
+                          AND r.dhRequisicao >= CURDATE() - INTERVAL 30 DAY
+                        ORDER BY r.dhRequisicao DESC
+                    """.trimIndent()
+
+                    val statement = connection.prepareStatement(sql)
+                    statement.setInt(1, idTecnico)
+                    val resultSet = statement.executeQuery()
+
+                    while (resultSet.next()) {
+                        listaHistorico.add(
+                            HistoricoDTO(
+                                idRequisicao = resultSet.getInt("idRequisicao"),
+                                nomeFuncionario = resultSet.getString("tecnico"),
+                                idFerramenta = resultSet.getInt("idFerramenta"),
+                                nomeFerramenta = resultSet.getString("ferramenta"),
+                                dhRequisicao = resultSet.getString("dhRequisicao"),
+                                dhDevolucao = resultSet.getString("dhDevolucao")
+                            )
+                        )
+                    }
+                } finally {
+                    connection.close()
+                }
+
+                call.respond(listaHistorico)
+            } catch (e: Exception) {
+                call.respondText(
+                    "Erro na DB: ${e.message}",
+                    ContentType.Text.Plain,
+                    HttpStatusCode.InternalServerError
                 )
             }
         }

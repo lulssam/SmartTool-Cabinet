@@ -11,14 +11,14 @@ data class UtilizadorRecenteUi(
     val id: Int,
     val nome: String,
     val iniciais: String,
-    val cargoSubtitulo: String, // ex: "Técnico · Turno Manhã"
-    val cargoTag: String        // ex: "Técnico"
+    val cargoSubtitulo: String,
+    val cargoTag: String
 )
 
 data class ArmarioResumoUi(
     val id: Int,
     val nome: String,
-    val estado: String // Online, Alerta, Offline
+    val estado: String
 )
 
 data class BODashboardUiState(

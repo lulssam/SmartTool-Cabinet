@@ -1,23 +1,22 @@
 package pfc.a50727a50799.smarttool_cabinet.feature.tecnico
 
-enum class TipoMovimento {
-    RETIROU,
-    DEVOLVEU
-}
+enum class TipoMovimento { RETIROU, DEVOLVEU, MARCOU_AVARIA }
 
 data class HistoricoItemUi(
-    val id: Int,
+    val id: String,
     val nomeFerramenta: String,
+    val detalhe: String,
+    val hora: String,
     val tipo: TipoMovimento
 )
 
-data class SecaoHistoricoUi(
+data class GrupoHistoricoUi(
     val data: String,
-    val movimentos: List<HistoricoItemUi>
+    val movimentos: List<HistoricoItemUi> = emptyList()
 )
 
 data class HistoricoUiState(
-    val secoes: List<SecaoHistoricoUi> = emptyList(),
-    val isLoading: Boolean = true,
+    val grupos: List<GrupoHistoricoUi> = emptyList(),
+    val isLoading: Boolean = false,
     val error: String? = null
 )

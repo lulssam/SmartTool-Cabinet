@@ -29,6 +29,9 @@ import pfc.a50727a50799.smarttool_cabinet.core.auth.UserRole
 
 @Serializable data object FerramentasGestorRoute
 @Serializable data object HistoricoGestorRoute
+@Serializable data object BackOfficeUtilizadoresRoute
+@Serializable data object BackOfficeArmariosRoute
+@Serializable data object BackOfficeHistoricoRoute
 
 @Serializable data object TarefasGestorRoute
 /**
