@@ -1,4 +1,4 @@
-package pfc.a50727a50799.smarttool_cabinet.feature.backoffice
+package pfc.a50727a50799.smarttool_cabinet.feature.backoffice.dashboard
 
 data class EstatisticasBOUi(
     val totalUtilizadores: Int,
