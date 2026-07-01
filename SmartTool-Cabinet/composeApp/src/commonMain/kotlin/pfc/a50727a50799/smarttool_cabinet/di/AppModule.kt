@@ -9,6 +9,7 @@ import pfc.a50727a50799.smarttool_cabinet.core.alerta.AlertaRemoteDataSource
 import pfc.a50727a50799.smarttool_cabinet.core.armario.ArmarioRemoteDataSource
 import pfc.a50727a50799.smarttool_cabinet.core.auth.AuthRepository
 import pfc.a50727a50799.smarttool_cabinet.core.auth.data.funcionario.FuncionarioRemoteDataSource
+import pfc.a50727a50799.smarttool_cabinet.core.backoffice.BackOfficeRemoteDataSource
 import pfc.a50727a50799.smarttool_cabinet.core.ferramenta.FerramentaRemoteDataSource
 import pfc.a50727a50799.smarttool_cabinet.core.historico.HistoricoRemoteDataSource
 import pfc.a50727a50799.smarttool_cabinet.core.tarefa.TarefaRemoteDataSource
@@ -68,6 +69,9 @@ object AppModule {
 
     /** A fonte que vai ao backend buscar o histórico (usa o [httpClient]). */
     val historicoRemoteDataSource by lazy { HistoricoRemoteDataSource(httpClient) }
+    /** A fonte que vai ao backend buscar os dados do backOffice necessaários (usa o [httpClient]). */
+    val backOfficeRemoteDataSource by lazy { BackOfficeRemoteDataSource(httpClient) }
+
 
     /**A fonte que vai ao backend buscar as tarefas (usa o [httpClient]). */
     val tarefaRemoteDataSource by lazy { TarefaRemoteDataSource(httpClient) }
