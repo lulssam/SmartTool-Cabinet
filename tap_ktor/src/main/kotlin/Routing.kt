@@ -52,6 +52,7 @@ fun Application.configureRouting() {
                 call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain)
             }
         }
+
         get("/api/funcionarios") {
             val lista = mutableListOf<FuncionariosDTO>()
             try {
@@ -501,6 +502,100 @@ fun Application.configureRouting() {
             }
         }
 
+        get("/api/ferramentas/em-falta") {
+
+            val listaEmFalta = mutableListOf<FerramentaEmFaltaDTO>()
+
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver")
+                val connection = DriverManager.getConnection(URL, USER, PASSWORD)
+
+                try {
+
+                    val sql = """
+                        SELECT idFerramenta, ferramenta, tecnico, dhRequisicao 
+                        FROM View_Mapa_Emprestimos 
+                        WHERE dhDevolucao IS NULL
+                    """.trimIndent()
+
+                    val statement = connection.createStatement()
+                    val resultSet = statement.executeQuery(sql)
+
+                    while (resultSet.next()) {
+                        listaEmFalta.add(
+                            FerramentaEmFaltaDTO(
+                                idFerramenta = resultSet.getInt("idFerramenta"),
+                                nomeFerramenta = resultSet.getString("ferramenta"),
+                                detentor = resultSet.getString("tecnico"),
+                                dataRequisicao = resultSet.getString("dhRequisicao") ?: "Data desconhecida"
+                            )
+                        )
+                    }
+                } finally {
+                    connection.close()
+                }
+
+                call.respond(listaEmFalta)
+
+            } catch (e: Exception) {
+                call.respondText(
+                    "Erro na DB: ${e.message}",
+                    ContentType.Text.Plain,
+                    status = HttpStatusCode.InternalServerError
+                )
+            }
+        }
+
+        get("/api/tarefas/tecnico/{id}") {
+            val idTecnico = call.parameters["id"]?.toIntOrNull()
+            if (idTecnico == null) {
+                call.respond(HttpStatusCode.BadRequest, "ID do técnico inválido")
+                return@get
+            }
+
+            val porTarefa = LinkedHashMap<Int, TarefaDTO>()
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver")
+                val connection = DriverManager.getConnection(URL, USER, PASSWORD)
+
+                try {
+                    val sql = """
+                SELECT idTarefa, titulo, descricao, estado, prioridade, dhAtribuicao, tecnico, ferramenta
+                FROM   View_Tarefas_Detalhada
+                WHERE  id_tecnico = ?
+                ORDER BY dhAtribuicao DESC, idTarefa
+                    """.trimIndent()
+
+                    val statement = connection.prepareStatement(sql)
+                    statement.setInt(1, idTecnico)
+
+                    val resultSet = statement.executeQuery()
+
+                    while (resultSet.next()) {
+                        val id = resultSet.getInt("idTarefa")
+                        val tarefa = porTarefa.getOrPut(id) {
+                            TarefaDTO(
+                                idTarefa = id,
+                                titulo = resultSet.getString("titulo"),
+                                descricao = resultSet.getString("descricao"),
+                                tecnico = resultSet.getString("tecnico"),
+                                estado = resultSet.getString("estado"),
+                                prioridade = resultSet.getString("prioridade"),
+                                dhAtribuicao = resultSet.getString("dhAtribuicao")
+                            )
+                        }
+                        resultSet.getString("ferramenta")?.let { tarefa.ferramentas.add(it) }
+                    }
+                } finally {
+                    connection.close()
+                }
+                call.respond(porTarefa.values.toList())
+            } catch (e: Exception) {
+                e.printStackTrace()
+                call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain, HttpStatusCode.InternalServerError)
+            }
+        }
+
         // ====== POSTS ======
         post("/api/requisicoes") {
 
@@ -662,6 +757,62 @@ fun Application.configureRouting() {
             }
         }
 
+        post("/api/funcionarios") {
+
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver")
+                val connection = DriverManager.getConnection(URL, USER, PASSWORD)
+                connection.autoCommit = false // Inicia transação
+
+                try {
+                    val pedido = call.receive<NovoFuncionarioDTO>()
+                    val cargoFormatado = pedido.cargo.uppercase()
+
+                    if (cargoFormatado !in listOf("GESTOR", "TECNICO", "BACKOFFICE")) {
+                        call.respond(HttpStatusCode.BadRequest, "Cargo inválido.")
+                        return@post
+                    }
+
+                    val sqlFunc = "INSERT INTO funcionario (nomeCompleto, email, turno) VALUES (?, ?, ?)"
+                    val stmtFunc = connection.prepareStatement(sqlFunc, Statement.RETURN_GENERATED_KEYS)
+                    stmtFunc.setString(1, pedido.nomeCompleto)
+                    stmtFunc.setString(2, pedido.email)
+                    stmtFunc.setString(3, pedido.turno.uppercase())
+                    stmtFunc.executeUpdate()
+
+                    val keys = stmtFunc.generatedKeys
+                    if (!keys.next()) throw Exception("Falha ao obter o ID do funcionário.")
+                    val idFuncGerado = keys.getInt(1)
+
+                    val sqlCargo = when (cargoFormatado) {
+                        "GESTOR" -> "INSERT INTO gestor (id_func) VALUES (?)"
+                        "TECNICO" -> "INSERT INTO tecnico (id_func) VALUES (?)"
+                        "BACKOFFICE" -> "INSERT INTO backoffice (id_func) VALUES (?)"
+                        else -> throw Exception("Erro no mapeamento do cargo.")
+                    }
+
+                    val stmtCargo = connection.prepareStatement(sqlCargo)
+                    stmtCargo.setInt(1, idFuncGerado)
+                    stmtCargo.executeUpdate()
+
+                    connection.commit()
+                    call.respond(HttpStatusCode.Created, "Funcionário $idFuncGerado criado com sucesso.")
+
+                } catch (e: Exception) {
+                    connection.rollback()
+                    throw e
+                } finally {
+                    connection.close()
+                }
+            } catch (e: Exception) {
+                call.respondText(
+                    "Erro na DB: ${e.message}",
+                    ContentType.Text.Plain,
+                    status = HttpStatusCode.InternalServerError
+                )
+            }
+        }
+
         // ====== PATCH ======
         patch("/api/requisicoes/{id}/devolver") {
 
@@ -791,7 +942,10 @@ fun Application.configureRouting() {
 
 
                     if (novoCargo !in listOf("GESTOR", "TECNICO", "BACKOFFICE")) {
-                        call.respond(HttpStatusCode.BadRequest, "Cargo inválido. Usa GESTOR, TECNICO ou BACKOFFICE.")
+                        call.respond(
+                            HttpStatusCode.BadRequest,
+                            "Cargo inválido. Usa GESTOR, TECNICO ou BACKOFFICE."
+                        )
                         return@patch
                     }
 
@@ -828,7 +982,10 @@ fun Application.configureRouting() {
 
                     connection.commit()
 
-                    call.respond(HttpStatusCode.OK, "Cargo do funcionário $id atualizado com sucesso para $novoCargo.")
+                    call.respond(
+                        HttpStatusCode.OK,
+                        "Cargo do funcionário $id atualizado com sucesso para $novoCargo."
+                    )
 
                 } catch (e: Exception) {
                     connection.rollback()
@@ -876,106 +1033,6 @@ fun Application.configureRouting() {
                         call.respond(HttpStatusCode.OK, "Turno do funcionário $id atualizado para $novoTurno.")
                     }
 
-                } finally {
-                    connection.close()
-                }
-            } catch (e: Exception) {
-                call.respondText(
-                    "Erro na DB: ${e.message}",
-                    ContentType.Text.Plain,
-                    status = HttpStatusCode.InternalServerError
-                )
-            }
-        }
-
-        get("/api/ferramentas/em-falta") {
-
-            val listaEmFalta = mutableListOf<FerramentaEmFaltaDTO>()
-
-            try {
-                Class.forName("com.mysql.cj.jdbc.Driver")
-                val connection = DriverManager.getConnection(URL, USER, PASSWORD)
-
-                try {
-
-                    val sql = """
-                        SELECT idFerramenta, ferramenta, tecnico, dhRequisicao 
-                        FROM View_Mapa_Emprestimos 
-                        WHERE dhDevolucao IS NULL
-                    """.trimIndent()
-
-                    val statement = connection.createStatement()
-                    val resultSet = statement.executeQuery(sql)
-
-                    while (resultSet.next()) {
-                        listaEmFalta.add(
-                            FerramentaEmFaltaDTO(
-                                idFerramenta = resultSet.getInt("idFerramenta"),
-                                nomeFerramenta = resultSet.getString("ferramenta"),
-                                detentor = resultSet.getString("tecnico"),
-                                dataRequisicao = resultSet.getString("dhRequisicao") ?: "Data desconhecida"
-                            )
-                        )
-                    }
-                } finally {
-                    connection.close()
-                }
-
-                call.respond(listaEmFalta)
-
-            } catch (e: Exception) {
-                call.respondText(
-                    "Erro na DB: ${e.message}",
-                    ContentType.Text.Plain,
-                    status = HttpStatusCode.InternalServerError
-                )
-            }
-        }
-
-        post("/api/funcionarios") {
-
-            try {
-                Class.forName("com.mysql.cj.jdbc.Driver")
-                val connection = DriverManager.getConnection(URL, USER, PASSWORD)
-                connection.autoCommit = false // Inicia transação
-
-                try {
-                    val pedido = call.receive<NovoFuncionarioDTO>()
-                    val cargoFormatado = pedido.cargo.uppercase()
-
-                    if (cargoFormatado !in listOf("GESTOR", "TECNICO", "BACKOFFICE")) {
-                        call.respond(HttpStatusCode.BadRequest, "Cargo inválido.")
-                        return@post
-                    }
-
-                    val sqlFunc = "INSERT INTO funcionario (nomeCompleto, email, turno) VALUES (?, ?, ?)"
-                    val stmtFunc = connection.prepareStatement(sqlFunc, Statement.RETURN_GENERATED_KEYS)
-                    stmtFunc.setString(1, pedido.nomeCompleto)
-                    stmtFunc.setString(2, pedido.email)
-                    stmtFunc.setString(3, pedido.turno.uppercase())
-                    stmtFunc.executeUpdate()
-
-                    val keys = stmtFunc.generatedKeys
-                    if (!keys.next()) throw Exception("Falha ao obter o ID do funcionário.")
-                    val idFuncGerado = keys.getInt(1)
-
-                    val sqlCargo = when (cargoFormatado) {
-                        "GESTOR" -> "INSERT INTO gestor (id_func) VALUES (?)"
-                        "TECNICO" -> "INSERT INTO tecnico (id_func) VALUES (?)"
-                        "BACKOFFICE" -> "INSERT INTO backoffice (id_func) VALUES (?)"
-                        else -> throw Exception("Erro no mapeamento do cargo.")
-                    }
-
-                    val stmtCargo = connection.prepareStatement(sqlCargo)
-                    stmtCargo.setInt(1, idFuncGerado)
-                    stmtCargo.executeUpdate()
-
-                    connection.commit()
-                    call.respond(HttpStatusCode.Created, "Funcionário $idFuncGerado criado com sucesso.")
-
-                } catch (e: Exception) {
-                    connection.rollback()
-                    throw e
                 } finally {
                     connection.close()
                 }
