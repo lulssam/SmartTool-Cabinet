@@ -11,6 +11,7 @@ import pfc.a50727a50799.smarttool_cabinet.feature.gestor.tarefas.PrioridadeTaref
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.tarefas.TarefaUi
 import kotlin.time.Clock
 
+// region #my_code
 @Serializable
 data class TarefaDto(
     val idTarefa: Int,
@@ -45,8 +46,14 @@ fun TarefaDto.toGestorUi(): TarefaUi = TarefaUi(
     ferramentas = ferramentas
 )
 
-/** "Hoje: 08:00" / "Ontem: 14:00" / "27/06: 16:00" — mesma lógica do histórico. */
-private fun formatarQuando(raw: String): String {
+fun TarefaDto.toTecnicoUi(): TarefaUi = toGestorUi().copy(
+    quando = formatarQuando(dhAtribuicao)
+)
+
+// endregion #my_code
+
+/** Calcula a hora ("08:00") e o dia ("Hoje"/"Ontem"/"27/06") a partir da data crua. */
+private fun horaEDia(raw: String): Pair<String, String> {
     val dt = LocalDateTime.parse(raw.replace(" ", "T"))
     val hoje = Clock.System.todayIn(TimeZone.currentSystemDefault())
     val hora = "${dt.hour.toString().padStart(2, '0')}:${dt.minute.toString().padStart(2, '0')}"
@@ -57,5 +64,11 @@ private fun formatarQuando(raw: String): String {
             dt.monthNumber.toString().padStart(2, '0')
         }"
     }
+    return hora to dia
+}
+
+/** formato do card do gestor. */
+private fun formatarQuando(raw: String): String {
+    val (hora, dia) = horaEDia(raw)
     return "$dia: $hora"
 }

@@ -31,6 +31,8 @@ import pfc.a50727a50799.smarttool_cabinet.ui.theme.AppTheme
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.ScreenBg
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TextSecondary
 
+
+// #mycode
 @Composable
 private fun AlertasScreenContent(
     state: AlertasUiState,

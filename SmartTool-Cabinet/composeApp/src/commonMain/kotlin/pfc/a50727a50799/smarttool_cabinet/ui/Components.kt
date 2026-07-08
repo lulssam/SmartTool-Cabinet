@@ -54,6 +54,8 @@ import pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard.ArmarioUi
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard.EstadoArmario
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard.EstatisticasFerramentas
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard.Gravidade
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.tarefas.EstadoTarefa
+import pfc.a50727a50799.smarttool_cabinet.feature.gestor.tarefas.PrioridadeTarefa
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AlertOrange
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AlertOrangeText
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AppTheme
@@ -595,6 +597,42 @@ fun FilterChip(label: String, isSelected: Boolean, onClick: () -> Unit) {
             fontWeight = FontWeight.Medium
         )
     }
+}
+
+@Composable
+fun Pill(fundo: Color, texto: Color, label: String) {
+    Text(
+        text = label,
+        color = texto,
+        fontSize = 11.sp,
+        fontWeight = FontWeight.SemiBold,
+        modifier = Modifier.clip(PillShape).background(fundo)
+            .padding(horizontal = 10.dp, vertical = 2.dp)
+    )
+}
+
+@Composable
+fun PillEstado(estado: EstadoTarefa) {
+    val (fundo, texto, label) = when (estado) {
+        EstadoTarefa.EM_CURSO -> Triple(TapLightGreen.copy(alpha = 0.2f), TapBrandDark, "Em Curso")
+        EstadoTarefa.PENDENTE -> Triple(AlertOrange.copy(alpha = 0.2f), AlertOrangeText, "Pendente")
+        EstadoTarefa.CONCLUIDA -> Triple(
+            TextSecondary.copy(alpha = 0.2f),
+            TextSecondary,
+            "Concluída"
+        )
+    }
+    Pill(fundo, texto, label)
+}
+
+@Composable
+fun PillPrioridade(prioridade: PrioridadeTarefa) {
+    val (fundo, texto, label) = when (prioridade) {
+        PrioridadeTarefa.ALTA   -> Triple(TapAlert.copy(alpha = 0.2f), TapRedText, "Alta")
+        PrioridadeTarefa.NORMAL -> Triple(TapBrandDark.copy(alpha = 0.2f), TapBrandDark, "Normal")
+        PrioridadeTarefa.BAIXA  -> Triple(TextSecondary.copy(alpha = 0.2f), TextSecondary, "Baixa")
+    }
+    Pill(fundo, texto, label)
 }
 
 /**

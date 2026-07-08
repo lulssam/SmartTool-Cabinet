@@ -3,6 +3,7 @@ package pfc.a50727a50799.smarttool_cabinet.core.tarefa
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
+import io.ktor.client.request.patch
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
@@ -38,6 +39,31 @@ class TarefaRemoteDataSource(
                 println("criarTarefa falhou (${post.status}): ${post.bodyAsText()}")
                 ApiResult.Error(ApiError.Unknown(post.status.toString()))
             }
+        }
+    } catch (e: IOException) {
+        ApiResult.Error(ApiError.NetworkError)
+    } catch (e: Exception) {
+        ApiResult.Error(ApiError.Unknown(e.message))
+    }
+
+    suspend fun getTarefasTecnico(id: Int): ApiResult<List<TarefaDto>> = try {
+        val response = httpClient.get("/api/tarefas/tecnico/$id")
+        when (response.status) {
+            HttpStatusCode.OK -> ApiResult.Success(response.body())
+            else -> ApiResult.Error(ApiError.Unknown(response.status.toString()))
+        }
+    } catch (e: IOException) {
+        ApiResult.Error(ApiError.NetworkError)
+    } catch (e: Exception) {
+        ApiResult.Error(ApiError.Unknown(e.message))
+    }
+
+    suspend fun concluirTarefa(idTarefa: Int): ApiResult<Unit> = try {
+        val response = httpClient.patch("/api/tarefas/$idTarefa/concluir")
+        when (response.status) {
+            HttpStatusCode.OK -> ApiResult.Success(Unit)
+            HttpStatusCode.Conflict -> ApiResult.Error(ApiError.Unknown(response.bodyAsText()))
+            else -> ApiResult.Error(ApiError.Unknown(response.status.toString()))
         }
     } catch (e: IOException) {
         ApiResult.Error(ApiError.NetworkError)
