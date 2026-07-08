@@ -77,6 +77,9 @@ import pfc.a50727a50799.smarttool_cabinet.ui.theme.TextSecondary
 import smarttoolcabinet.composeapp.generated.resources.Res
 import smarttoolcabinet.composeapp.generated.resources.tool
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.ferramentas.FerramentaUi
+import pfc.a50727a50799.smarttool_cabinet.ui.Pill
+import pfc.a50727a50799.smarttool_cabinet.ui.PillEstado
+import pfc.a50727a50799.smarttool_cabinet.ui.PillPrioridade
 
 /**
  * Parte visual do ecrã Tarefas (Gestor).
@@ -496,42 +499,6 @@ private fun TarefaCard(t: TarefaUi) {
             }
         }
     }
-}
-
-@Composable
-private fun PillEstado(estado: EstadoTarefa) {
-    val (fundo, texto, label) = when (estado) {
-        EstadoTarefa.EM_CURSO -> Triple(TapLightGreen.copy(alpha = 0.2f), TapBrandDark, "Em Curso")
-        EstadoTarefa.PENDENTE -> Triple(AlertOrange.copy(alpha = 0.2f), AlertOrangeText, "Pendente")
-        EstadoTarefa.CONCLUIDA -> Triple(
-            TextSecondary.copy(alpha = 0.2f),
-            TextSecondary,
-            "Concluída"
-        )
-    }
-    Pill(fundo, texto, label)
-}
-
-@Composable
-private fun PillPrioridade(prioridade: PrioridadeTarefa) {
-    val (fundo, texto, label) = when (prioridade) {
-        PrioridadeTarefa.ALTA -> Triple(TapAlert.copy(alpha = 0.2f), TapRedText, "Alta")
-        PrioridadeTarefa.NORMAL -> Triple(TapBrandDark.copy(alpha = 0.2f), TapBrandDark, "Normal")
-        PrioridadeTarefa.BAIXA -> Triple(TextSecondary.copy(alpha = 0.2f), TextSecondary, "Baixa")
-    }
-    Pill(fundo, texto, label)
-}
-
-@Composable
-private fun Pill(fundo: Color, texto: Color, label: String) {
-    Text(
-        text = label,
-        color = texto,
-        fontSize = 11.sp,
-        fontWeight = FontWeight.SemiBold,
-        modifier = Modifier.clip(PillShape).background(fundo)
-            .padding(horizontal = 10.dp, vertical = 2.dp)
-    )
 }
 
 private fun corBordaPrioridade(prioridade: PrioridadeTarefa): Color = when (prioridade) {
