@@ -56,6 +56,7 @@ class FerramentasViewModel(
                     val estadoVis = when {
                         isDisponivel -> EstadoFerramentaLista.DISPONIVEL
                         isDanificada -> EstadoFerramentaLista.MANUTENCAO
+                        isReservadaParaMim -> EstadoFerramentaLista.RESERVADA
                         else -> EstadoFerramentaLista.EM_USO
                     }
 

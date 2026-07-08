@@ -51,6 +51,7 @@ import pfc.a50727a50799.smarttool_cabinet.feature.navigation.HistoricoTecnicoRou
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.LoginEmailRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.SSORoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.TarefasGestorRoute
+import pfc.a50727a50799.smarttool_cabinet.feature.navigation.TarefasTecnicoRoute
 import pfc.a50727a50799.smarttool_cabinet.feature.navigation.routeForRole
 import pfc.a50727a50799.smarttool_cabinet.feature.session.SessionUiState
 import pfc.a50727a50799.smarttool_cabinet.feature.session.SessionViewModel
@@ -63,6 +64,8 @@ import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.historico.HistoricoVie
 import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.dashboard.TecnicoScreen
 import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.dashboard.TecnicoViewModel
 import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.menu.TecnicoScaffold
+import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.tarefas.TarefasTecnicoScreen
+import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.tarefas.TarefasTecnicoViewModel
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AppTheme
 
 
@@ -489,6 +492,28 @@ private fun AppNavHost(
                 HistoricoScreen(viewModel = viewModel, onMenuClick = abrirMenu)
             }
         }
+
+        composable<TarefasTecnicoRoute> {
+            val session = SessionManager.atual
+            val viewModel = viewModel {
+                TarefasTecnicoViewModel(
+                    tarefas = AppModule.tarefaRemoteDataSource,
+                    idTecnico = session?.idFunc ?: -1,
+                    turno = session?.turno ?: ""
+                )
+            }
+
+            TecnicoScaffold(
+                itemSelecionado = "tarefas",
+                nomeTecnico = SessionManager.atual?.nome ?: "",
+                cargo = "Técnico",
+                onNavegar = { id -> navegarTecnico(navController, id) },
+                onLogout = { fazerLogout(navController, authRepository) }
+            ) {
+                abrirMenu ->
+                TarefasTecnicoScreen(viewModel = viewModel, onMenuClick = abrirMenu)
+            }
+        }
     }
 }
 
@@ -512,6 +537,7 @@ private fun navegarTecnico(navController: NavController, id: String) {
         "dashboard" -> TecnicoRoute
         "ferramentas" -> FerramentasTecnicoRoute
         "historico" -> HistoricoTecnicoRoute
+        "tarefas" -> TarefasTecnicoRoute
         else -> null
     }
     rota?.let {
