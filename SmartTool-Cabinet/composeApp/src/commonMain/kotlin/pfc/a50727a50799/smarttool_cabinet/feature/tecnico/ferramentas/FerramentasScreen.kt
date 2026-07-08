@@ -396,7 +396,11 @@ fun TemplateCard(template: TemplateDiarioUi, onClick: () -> Unit) {
                                 .background(FieldBg).padding(12.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text("🔧", fontSize = 12.sp)
+                            Icon(
+                                painter = painterResource(Res.drawable.tool),
+                                contentDescription = null,
+                                tint = null
+                            )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 text = nomeFerramenta,
