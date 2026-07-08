@@ -63,14 +63,13 @@ WHERE   r.dhDevolucao IS NULL;
 
 -- View usada pelo endpoint GET /api/tarefas
 CREATE OR REPLACE VIEW View_Tarefas_Detalhada AS
-SELECT  t.idTarefa, t.titulo, t.descricao, t.estado, t.prioridade, t.dhAtribuicao,
+SELECT  t.idTarefa, t.id_tecnico, t.titulo, t.descricao, t.estado, t.prioridade, t.dhAtribuicao,
         f.nomeCompleto AS tecnico,
         fe.nome_tipo   AS ferramenta
 FROM    tarefa t
 JOIN    funcionario f ON t.id_tecnico = f.id_func
 LEFT JOIN tarefa_ferramenta_permitida tfp ON t.idTarefa = tfp.idTarefa
 LEFT JOIN ferramenta fe ON tfp.codigo_tipo = fe.codigo_tipo AND tfp.nFerramenta = fe.nFerramenta;
-
 
 -- View usada pelo endpoint GET /api/tecnicos
 CREATE OR REPLACE VIEW View_Tecnicos_Disponibilidade AS
@@ -99,3 +98,4 @@ JOIN    tarefa_ferramenta_permitida tfp ON t.idTarefa = tfp.idTarefa
 JOIN    ferramenta fe ON tfp.codigo_tipo = fe.codigo_tipo AND tfp.nFerramenta = fe.nFerramenta
 JOIN    tipo_ferramenta tf ON fe.codigo_tipo = tf.codigo
 WHERE   t.estado <> 'CONCLUIDA';
+
