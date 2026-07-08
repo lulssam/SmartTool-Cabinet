@@ -1083,5 +1083,76 @@ fun Application.configureRouting() {
                 )
             }
         }
+
+        patch("/api/tarefas/{id}/concluir") {
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver")
+                val connection = DriverManager.getConnection(URL, USER, PASSWORD)
+                connection.autoCommit = false
+
+                try {
+                    val id = call.parameters["id"]?.toIntOrNull()
+                    if (id == null) {
+                        call.respond(HttpStatusCode.BadRequest, "id da tarefa inválido")
+                        return@patch
+                    }
+
+                    // verifcar se ainda há alguma ferramenta desta tarefa ainda fora
+                    val stmtCheck = connection.prepareStatement(
+                        """
+                SELECT 1
+                FROM tarefa_ferramenta_permitida tfp
+                JOIN ferramenta f
+                  ON f.codigo_tipo = tfp.codigo_tipo AND f.nFerramenta = tfp.nFerramenta
+                WHERE tfp.idTarefa = ? AND f.disponibilidade = 'Requisitada'
+                LIMIT 1
+                """.trimIndent()
+                    )
+                    stmtCheck.setInt(1, id)
+                    if (stmtCheck.executeQuery().next()) {
+                        connection.rollback()
+                        call.respond(
+                            HttpStatusCode.Conflict,
+                            "Devolve as ferramentas antes de concluir a tarefa."
+                        )
+                        return@patch
+                    }
+
+                    //  marcar concluída
+                    val stmtTarefa = connection.prepareStatement(
+                        "UPDATE tarefa SET estado = 'CONCLUIDA' WHERE idTarefa = ?"
+                    )
+                    stmtTarefa.setInt(1, id)
+                    if (stmtTarefa.executeUpdate() == 0) {
+                        connection.rollback()
+                        call.respond(HttpStatusCode.NotFound, "Tarefa $id não encontrada")
+                        return@patch
+                    }
+
+                    // libertar as que ficaram só reservadas (nunca levantadas)
+                    val stmtLibertar = connection.prepareStatement(
+                        """
+                UPDATE ferramenta f
+                JOIN tarefa_ferramenta_permitida tfp
+                  ON tfp.codigo_tipo = f.codigo_tipo AND tfp.nFerramenta = f.nFerramenta
+                SET f.disponibilidade = 'Disponivel'
+                WHERE tfp.idTarefa = ? AND f.disponibilidade = 'Reservada'
+                """.trimIndent()
+                    )
+                    stmtLibertar.setInt(1, id)
+                    stmtLibertar.executeUpdate()
+
+                    connection.commit()
+                    call.respond(HttpStatusCode.OK, "Tarefa $id concluída")
+                } catch (e: Exception) {
+                    connection.rollback()
+                    throw e
+                } finally {
+                    connection.close()
+                }
+            } catch (e: Exception) {
+                call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain, HttpStatusCode.InternalServerError)
+            }
+        }
     }
 }
