@@ -28,7 +28,7 @@ class TarefasTecnicoViewModel(
     turno: String
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(TarefasTecnicoUiState(isLoading = true))
+    private val _state = MutableStateFlow(TarefasTecnicoUiState(isLoading = true, turno = turno))
 
     /**
      * O estado atual do ecrã, disponível para o Composable observar.
@@ -83,6 +83,7 @@ class TarefasTecnicoViewModel(
 
     fun onFiltroChange(filtroTarefa: FiltroTarefa) {
         _state.update { it.copy(filtroAtual = filtroTarefa) }
+        recomputar()
     }
 
     /**

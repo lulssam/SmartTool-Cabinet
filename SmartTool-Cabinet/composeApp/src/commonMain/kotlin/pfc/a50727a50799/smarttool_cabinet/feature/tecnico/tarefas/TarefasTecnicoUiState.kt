@@ -18,7 +18,7 @@ data class TarefasTecnicoUiState(
     val isLoading: Boolean = false,
     val error: String? = null,
     val turno: String = "",
-    val mensagem: String? = "",
+    val mensagem: String? = null,
     val filtroAtual: FiltroTarefa = FiltroTarefa.TODAS,
     val tarefas: List<TarefaUi> = emptyList(),
     val expandidas: Set<String> = emptySet(),
