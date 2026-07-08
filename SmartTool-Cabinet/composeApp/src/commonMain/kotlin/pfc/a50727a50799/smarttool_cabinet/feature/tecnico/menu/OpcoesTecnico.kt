@@ -9,7 +9,7 @@ import smarttoolcabinet.composeapp.generated.resources.tool
 
 fun opcoesTecnico(): List<MenuOpcao> = listOf(
     MenuOpcao("dashboard", "Dashboard", Res.drawable.dashboard_icon),
+    MenuOpcao("tarefas", "Tarefas", Res.drawable.clipboard),
     MenuOpcao("ferramentas", "Ferramentas", Res.drawable.tool),
-    MenuOpcao("historico", "Histórico", Res.drawable.clock),
-    MenuOpcao("tarefas", "Tarefas", Res.drawable.clipboard)
+    MenuOpcao("historico", "Histórico", Res.drawable.clock)
 )

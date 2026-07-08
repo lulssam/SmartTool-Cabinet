@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -90,30 +91,29 @@ private fun TarefasTecnicoScreenContent(
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
-
+    // REATIVO: sempre que surge uma mensagem nova, mostra-a no snackbar e limpa.
     LaunchedEffect(state.mensagem) {
-        val msg = state.mensagem ?: return@LaunchedEffect
+        val msg = state.mensagem?.takeIf { it.isNotBlank() } ?: return@LaunchedEffect
         snackbarHostState.showSnackbar(msg)
         onMensagemMostrada()
     }
 
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        containerColor = ScreenBg
-    ) { inner ->
-        when {
-            state.isLoading -> Box(Modifier.fillMaxSize().padding(inner), Alignment.Center) {
-                CircularProgressIndicator(color = TapBrandDark)
-            }
+    Box(Modifier.fillMaxSize()) {
 
-            state.error != null -> Box(Modifier.fillMaxSize().padding(inner), Alignment.Center) {
-                Text(state.error, color = MaterialTheme.colorScheme.error)
-            }
+        Column(Modifier.fillMaxSize().background(ScreenBg)) {
 
-            else -> Column(Modifier.fillMaxSize().padding(inner)) {
-                TopBar(titulo = "Tarefas", mostrarAlertas = false, onMenu = onMenuClick)
+            TopBar(titulo = "Tarefas", mostrarAlertas = false, onMenu = onMenuClick)
 
-                LazyColumn(
+            when {
+                state.isLoading -> Box(Modifier.fillMaxSize(), Alignment.Center) {
+                    CircularProgressIndicator(color = TapBrandDark)
+                }
+
+                state.error != null -> Box(Modifier.fillMaxSize(), Alignment.Center) {
+                    Text(state.error, color = MaterialTheme.colorScheme.error)
+                }
+
+                else -> LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -122,8 +122,10 @@ private fun TarefasTecnicoScreenContent(
                     item {
                         Column {
                             Text(
-                                "As minhas tarefas", fontSize = 28.sp,
-                                fontWeight = FontWeight.Bold, color = Color.Black
+                                "As minhas tarefas",
+                                fontSize = 28.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Black
                             )
                             Text(
                                 "Turno ${state.turno} - Hoje",
@@ -133,34 +135,19 @@ private fun TarefasTecnicoScreenContent(
                         }
                     }
 
-                    // ⭐ RESPONSIVO: 3 cartões que dividem sempre a largura (weight), sem px fixos
+                    // cartões de contagem
                     item {
                         Row(
                             Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            CartaoContagem(
-                                Modifier.weight(1f),
-                                state.nPendentes,
-                                "Pendentes",
-                                AlertOrangeText
-                            )
-                            CartaoContagem(
-                                Modifier.weight(1f),
-                                state.nEmCurso,
-                                "Em curso",
-                                TapGreenishBlue
-                            )
-                            CartaoContagem(
-                                Modifier.weight(1f),
-                                state.nConcluidas,
-                                "Concluídas",
-                                TextSecondary
-                            )
+                            CartaoContagem(Modifier.weight(1f), state.nPendentes, "Pendentes", AlertOrangeText)
+                            CartaoContagem(Modifier.weight(1f), state.nEmCurso, "Em curso", TapGreenishBlue)
+                            CartaoContagem(Modifier.weight(1f), state.nConcluidas, "Concluídas", TextSecondary)
                         }
                     }
 
-                    // chips
+                    // chips de filtro
                     item {
                         Row(
                             Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
@@ -172,12 +159,14 @@ private fun TarefasTecnicoScreenContent(
                         }
                     }
 
-                    // lista
+                    // lista de tarefas
                     if (state.tarefas.isEmpty()) {
                         item {
                             Text(
-                                "Sem tarefas para mostrar.", fontSize = 14.sp,
-                                color = TextSecondary, modifier = Modifier.padding(top = 16.dp)
+                                "Sem tarefas para mostrar.",
+                                fontSize = 14.sp,
+                                color = TextSecondary,
+                                modifier = Modifier.padding(top = 16.dp)
                             )
                         }
                     } else {
@@ -193,6 +182,11 @@ private fun TarefasTecnicoScreenContent(
                 }
             }
         }
+
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
     }
 }
 
