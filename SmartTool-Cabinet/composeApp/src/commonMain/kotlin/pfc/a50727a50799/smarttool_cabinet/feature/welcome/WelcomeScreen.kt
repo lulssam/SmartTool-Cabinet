@@ -1,5 +1,7 @@
 package pfc.a50727a50799.smarttool_cabinet.feature.welcome
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,8 +20,14 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -31,6 +39,7 @@ import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapGreenishBlue
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapLightGreen
 import smarttoolcabinet.composeapp.generated.resources.Res
 import smarttoolcabinet.composeapp.generated.resources.tap_logo
+import kotlin.collections.mutableSetOf
 
 /**
  * A parte visual do login. Não sabe nada da lógica — só mostra o que recebe
@@ -41,6 +50,14 @@ fun WelcomeScreenContent(
     onLoginEmailClick: () -> Unit,
     onSSOClick: () -> Unit = {}
 ) {
+
+    var visivel by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) { visivel = true }
+    val alpha by animateFloatAsState(
+        targetValue = if (visivel) 1f else 0f,
+        animationSpec = tween(700),
+        label = "fadeIn"
+    )
 
     Column(
         modifier = Modifier
@@ -60,6 +77,10 @@ fun WelcomeScreenContent(
             modifier = Modifier
                 .fillMaxWidth(0.8f)
                 .widthIn(max = 260.dp)
+                .graphicsLayer {
+                    this.alpha = alpha
+                    translationY = (1f - alpha) * 40f
+                }
         )
 
         Spacer(Modifier.height(28.dp))
