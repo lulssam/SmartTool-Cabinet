@@ -9,6 +9,8 @@ import pfc.a50727a50799.smarttool_cabinet.core.ferramenta.FerramentaDto
  * @property isLoading True enquanto esperamos pelos dados.
  * @property error Mensagem a mostrar se algo correr mal. Null = sem erro.
  */
+
+//#my_code
 data class GestorUiState(
     val ferramentas: List<FerramentaDto> = emptyList(),
     val isLoading: Boolean = false,

@@ -1,5 +1,5 @@
 package pfc.a50727a50799.smarttool_cabinet.feature.backoffice.historico
-
+//#my_code
 enum class TipoMovimentoBO { RETIROU, DEVOLVEU, MARCOU_AVARIA }
 
 data class SecaoBOHistoricoUi(

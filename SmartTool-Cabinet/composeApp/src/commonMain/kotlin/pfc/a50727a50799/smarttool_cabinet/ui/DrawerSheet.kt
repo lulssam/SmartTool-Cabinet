@@ -65,12 +65,14 @@ import smarttoolcabinet.composeapp.generated.resources.tool
  * @property icone Ícone à esquerda do texto.
  * @property badge Número no badge vermelho (ex: alertas). 0 = sem badge.
  */
+//#my_code
 data class MenuOpcao(
     val id: String,
     val label: String,
     val icone: DrawableResource,
     val badge: Int = 0
 )
+//#my_code end
 
 
 @Composable
@@ -222,6 +224,7 @@ private fun iniciais(nome: String): String {
     }.uppercase()
 }
 
+//#my_code
 @Composable
 private fun DrawerItem(
     opcao: MenuOpcao,
@@ -275,7 +278,7 @@ private fun DrawerItem(
         }
     }
 }
-
+//#my_code end
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun DrawerSheetPreview() {

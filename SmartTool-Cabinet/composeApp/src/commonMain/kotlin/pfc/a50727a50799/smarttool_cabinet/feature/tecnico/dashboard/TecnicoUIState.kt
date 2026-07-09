@@ -1,5 +1,5 @@
 package pfc.a50727a50799.smarttool_cabinet.feature.tecnico.dashboard
-
+//#my_code
 data class TecnicoUiState(
     val nomeTecnico: String = "",
     val cargo: String = "",
