@@ -5,7 +5,7 @@ import pfc.a50727a50799.smarttool_cabinet.feature.gestor.ferramentas.Disponibili
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.ferramentas.EstadoFerramenta
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.ferramentas.FerramentaUi
 import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.dashboard.FerramentaTecnicoUi
-
+//#my_code
 @Serializable
 data class FerramentaDto(
     val idRequisicao: Int? = null,
@@ -26,6 +26,7 @@ fun FerramentaDto.toTecnicoUi(): FerramentaTecnicoUi = FerramentaTecnicoUi(
         else -> disponibilidade
     }
 )
+//#my_code end
 
 /**
  * Junta os dados crus da ferramenta com o detentor (vindo do endpoint /em-falta)

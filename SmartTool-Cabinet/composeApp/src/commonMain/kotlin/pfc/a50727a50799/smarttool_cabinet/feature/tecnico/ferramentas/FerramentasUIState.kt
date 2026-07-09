@@ -1,5 +1,6 @@
 package pfc.a50727a50799.smarttool_cabinet.feature.tecnico.ferramentas
 
+//#my_code
 enum class EstadoFerramentaLista {
     DISPONIVEL, EM_USO, MANUTENCAO, RESERVADA
 }

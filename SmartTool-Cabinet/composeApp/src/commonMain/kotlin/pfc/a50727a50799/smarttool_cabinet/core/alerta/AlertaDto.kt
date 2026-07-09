@@ -8,6 +8,7 @@ import pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard.Gravidade
  * O alerta tal como vem do backend (GET /api/alertas).
  * Os nomes TÊM de bater certo com o JSON: tipo, descricao, referencia.
  */
+//#my_code
 @Serializable
 data class AlertaDto(
     val tipo: String,

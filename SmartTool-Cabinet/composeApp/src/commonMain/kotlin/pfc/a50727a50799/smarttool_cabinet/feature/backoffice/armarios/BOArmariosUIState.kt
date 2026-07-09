@@ -1,14 +1,14 @@
 package pfc.a50727a50799.smarttool_cabinet.feature.backoffice.armarios
 
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard.ArmarioUi
-
+//#my_code
 enum class FiltroBOArmario(val label: String) {
     TODOS("Todos"),
     ONLINE("Online"),
     ALERTA("Alerta"),
     OFFLINE("Offline")
 }
-
+//#my_code end
 data class BOArmariosUiState(
     val armarios: List<ArmarioUi> = emptyList(),
     val searchQuery: String = "",

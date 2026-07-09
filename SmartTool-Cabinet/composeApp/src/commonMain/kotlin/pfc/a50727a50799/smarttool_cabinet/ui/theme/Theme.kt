@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
+//#my_code
 private val SmartToolColors = lightColorScheme(
     primary = TapBrandDark,        onPrimary = Color.White,
     secondary = TapBrandGreen,     onSecondary = Color.White,
@@ -32,3 +33,4 @@ fun AppTheme(content: @Composable () -> Unit) {
         content = content
     )
 }
+//#my_code end

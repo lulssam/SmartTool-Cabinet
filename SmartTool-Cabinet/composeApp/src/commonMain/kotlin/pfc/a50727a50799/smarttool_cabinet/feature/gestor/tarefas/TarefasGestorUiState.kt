@@ -13,6 +13,8 @@ import pfc.a50727a50799.smarttool_cabinet.feature.gestor.ferramentas.FerramentaU
  * @property error Mensagem de erro para mostrar ao utilizador.
  *                 Null significa que não há nenhum erro.
  */
+
+//#my_code
 data class TarefasGestorUiState(
     val tarefas: List<TarefaUi> = emptyList(),
     val isLoading: Boolean = false,
