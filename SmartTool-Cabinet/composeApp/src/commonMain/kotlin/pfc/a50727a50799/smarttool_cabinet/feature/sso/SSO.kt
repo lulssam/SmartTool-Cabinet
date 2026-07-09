@@ -51,7 +51,18 @@ import smarttoolcabinet.composeapp.generated.resources.arrowleft
 import smarttoolcabinet.composeapp.generated.resources.google_logo
 import smarttoolcabinet.composeapp.generated.resources.tap_logo
 
-
+/**
+ * Apresenta o ecrã de autenticação federada.
+ *
+ * Este componente mostra o logótipo da aplicação, o cartão de autenticação
+ * e uma eventual mensagem de erro. Toda a lógica é fornecida através
+ * dos parâmetros recebidos.
+ *
+ * @param onBackClick Função chamada quando o utilizador pretende voltar ao ecrã anterior.
+ * @param onGoogleClick Função chamada quando o utilizador seleciona a autenticação com Google.
+ * @param isLoading Indica se o processo de autenticação está em execução.
+ * @param error Mensagem de erro a apresentar, caso exista.
+ */
 @Composable
 fun SSOScreenContent(
     onBackClick: () -> Unit,
@@ -103,7 +114,17 @@ fun SSOScreenContent(
 
     }
 }
-
+/**
+ * Liga o ecrã de autenticação federada ao respetivo ViewModel.
+ *
+ * Obtém o estado atual da autenticação e encaminha as ações
+ * do utilizador para as funções responsáveis pela navegação
+ * e autenticação.
+ *
+ * @param viewModel ViewModel responsável pela gestão do estado do ecrã.
+ * @param onBackClick Função chamada quando o utilizador pretende voltar ao ecrã anterior.
+ * @param onGoogleClick Função chamada quando o utilizador seleciona a autenticação com Google.
+ */
 @Composable
 fun SSOScreen(
     viewModel: WelcomeViewModel,
@@ -139,7 +160,12 @@ private fun Preview() {
         )
     }
 }
-
+/**
+ * Preview do cartão de autenticação federada.
+ *
+ * Permite visualizar apenas o cartão de autenticação
+ * durante o desenvolvimento.
+ */
 @Preview
 @Composable
 private fun PreviewCard() {
@@ -151,7 +177,12 @@ private fun PreviewCard() {
         )
     }
 }
-
+/**
+ * Preview do botão de autenticação com Google.
+ *
+ * Permite visualizar apenas o botão de autenticação
+ * durante o desenvolvimento.
+ */
 @Preview
 @Composable
 private fun PreviewGoogleButton() {
@@ -163,7 +194,17 @@ private fun PreviewGoogleButton() {
     }
 }
 
-
+/**
+ * Apresenta o cartão de autenticação federada.
+ *
+ * O cartão contém a opção para regressar ao ecrã anterior
+ * e o botão para iniciar a autenticação através do fornecedor
+ * de identidade.
+ *
+ * @param onBackClick Função chamada quando o utilizador seleciona a opção para voltar.
+ * @param onGoogleClick Função chamada quando o utilizador seleciona a autenticação com Google.
+ * @param isLoading Indica se o processo de autenticação está em execução.
+ */
 @Composable
 private fun SSOCard(
     onBackClick: () -> Unit,
@@ -224,7 +265,15 @@ private fun SSOCard(
         GoogleProviderButton(onGoogleClick = onGoogleClick, enabled = !isLoading)
     }
 }
-
+/**
+ * Apresenta o botão de autenticação com Google.
+ *
+ * Permite ao utilizador iniciar o processo de autenticação
+ * através da sua conta Google.
+ *
+ * @param onGoogleClick Função chamada quando o botão é selecionado.
+ * @param enabled Indica se o botão pode ser utilizado.
+ */
 @Composable
 private fun GoogleProviderButton(
     onGoogleClick: () -> Unit,

@@ -12,6 +12,21 @@ import pfc.a50727a50799.smarttool_cabinet.feature.gestor.tarefas.TarefaUi
 import kotlin.time.Clock
 
 //#my_code
+/**
+ * Representa a informação de uma tarefa recebida da API.
+ *
+ * Contém todos os dados necessários para apresentar a tarefa
+ * na interface da aplicação.
+ *
+ * @property idTarefa Identificador da tarefa.
+ * @property titulo Título da tarefa.
+ * @property descricao Descrição da tarefa.
+ * @property tecnico Nome do técnico responsável pela tarefa.
+ * @property estado Estado atual da tarefa.
+ * @property prioridade Prioridade atribuída à tarefa.
+ * @property dhAtribuicao Data e hora em que a tarefa foi atribuída.
+ * @property ferramentas Lista das ferramentas associadas à tarefa.
+ */
 @Serializable
 data class TarefaDto(
     val idTarefa: Int,
@@ -24,8 +39,14 @@ data class TarefaDto(
     val ferramentas: List<String> = emptyList()
 )
 
-
-/** Converte os dados crus da tarefa no modelo pronto para o card do gestor. */
+/**
+ * Converte a tarefa para o modelo utilizado pelo ecrã do gestor.
+ *
+ * Durante a conversão são adaptados os valores recebidos da API
+ * para o formato esperado pela interface.
+ *
+ * @return Objeto utilizado para apresentar a tarefa ao gestor.
+ */
 fun TarefaDto.toGestorUi(): TarefaUi = TarefaUi(
     id = idTarefa.toString(),
     titulo = titulo,
@@ -45,14 +66,26 @@ fun TarefaDto.toGestorUi(): TarefaUi = TarefaUi(
     },
     ferramentas = ferramentas
 )
-
+/**
+ * Converte a tarefa para o modelo utilizado pelo ecrã do técnico.
+ *
+ * @return Objeto utilizado para apresentar a tarefa ao técnico.
+ */
 fun TarefaDto.toTecnicoUi(): TarefaUi = toGestorUi().copy(
     quando = formatarQuando(dhAtribuicao)
 )
 
 //#my_code end
 
-/** Calcula a hora ("08:00") e o dia ("Hoje"/"Ontem"/"27/06") a partir da data crua. */
+/**
+ * Obtém a hora e uma descrição simples do dia a partir de uma data.
+ *
+ * A data é convertida para um formato mais fácil de apresentar
+ * ao utilizador, indicando se corresponde a hoje, ontem ou outra data.
+ *
+ * @param raw Data e hora no formato recebido pela API.
+ * @return Um par composto pela hora e pela descrição do dia.
+ */
 private fun horaEDia(raw: String): Pair<String, String> {
     val dt = LocalDateTime.parse(raw.replace(" ", "T"))
     val hoje = Clock.System.todayIn(TimeZone.currentSystemDefault())
@@ -67,7 +100,13 @@ private fun horaEDia(raw: String): Pair<String, String> {
     return hora to dia
 }
 
-/** formato do card do gestor. */
+/**
+ * Formata a data de atribuição de uma tarefa para apresentação
+ * na interface da aplicação.
+ *
+ * @param raw Data e hora no formato recebido pela API.
+ * @return Texto formatado com o dia e a hora.
+ */
 private fun formatarQuando(raw: String): String {
     val (hora, dia) = horaEDia(raw)
     return "$dia: $hora"
