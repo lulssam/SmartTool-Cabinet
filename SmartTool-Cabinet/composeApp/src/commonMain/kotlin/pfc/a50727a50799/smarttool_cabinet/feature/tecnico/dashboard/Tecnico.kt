@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import org.jetbrains.compose.resources.painterResource
 
 // Importações a partir da tua nova pasta UI global
 import pfc.a50727a50799.smarttool_cabinet.ui.SectionHeader
@@ -45,11 +47,14 @@ import pfc.a50727a50799.smarttool_cabinet.ui.WelcomeCard
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AlertOrange
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AlertOrangeText
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AppTheme
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.AzulReservou
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.CardBorder
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.PillShape
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.ScreenBg
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapAlert
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapGreenishBlue
+import smarttoolcabinet.composeapp.generated.resources.Res
+import smarttoolcabinet.composeapp.generated.resources.tool
 
 @Composable
 private fun TecnicoScreenContent(
@@ -187,6 +192,19 @@ fun EstatisticaCard(
 
 @Composable
 fun FerramentaTecnicoCard(ferramenta: FerramentaTecnicoUi) {
+
+    val pillColor = when (ferramenta.estado) {
+        "Em Uso" -> AlertOrange.copy(0.2f)
+        "Reservada" -> AzulReservou.copy(0.2f)
+        else -> TapGreenishBlue
+    }
+
+    val pillTextColor = when (ferramenta.estado) {
+        "Em Uso" -> AlertOrangeText
+        "Reservada" -> AzulReservou
+        else -> TapGreenishBlue
+    }
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
@@ -201,7 +219,11 @@ fun FerramentaTecnicoCard(ferramenta: FerramentaTecnicoUi) {
                 modifier = Modifier.size(42.dp).clip(RoundedCornerShape(8.dp))
                     .background(TapGreenishBlue.copy(alpha = 0.08f)),
                 contentAlignment = Alignment.Center
-            ) { Text("🔧", fontSize = 18.sp) }
+            ) { Icon(
+                painter = painterResource(Res.drawable.tool),
+                contentDescription = null,
+                tint = TapGreenishBlue,
+            ) }
 
             Spacer(modifier = Modifier.width(12.dp))
 
@@ -216,12 +238,12 @@ fun FerramentaTecnicoCard(ferramenta: FerramentaTecnicoUi) {
             }
 
             Box(
-                modifier = Modifier.clip(PillShape).background(AlertOrange.copy(alpha = 0.15f))
+                modifier = Modifier.clip(PillShape).background(pillColor)
                     .padding(horizontal = 12.dp, vertical = 2.dp)
             ) {
                 Text(
                     text = ferramenta.estado,
-                    color = AlertOrangeText,
+                    color = pillTextColor,
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold
                 )
