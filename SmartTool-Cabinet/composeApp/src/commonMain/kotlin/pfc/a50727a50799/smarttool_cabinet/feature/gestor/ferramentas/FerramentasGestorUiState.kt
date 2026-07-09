@@ -21,7 +21,9 @@ data class FerramentasUiState(
     val error: String? = null,
     val searchQuery: String = "",
     val filtroAtual: FiltroFerramenta = FiltroFerramenta.TODAS,
-    val alertasAtivos: Int = 0
+    val alertasAtivos: Int = 0,
+    val armarios: List<ArmarioOpcaoUi> = emptyList(),
+    val categorias: List<String> = emptyList(),
 )
 
 
@@ -78,7 +80,7 @@ data class FerramentaUi(
     val localizacao: String,
     val disponibilidade: DisponibilidadeFerramenta,
     val estado: EstadoFerramenta,
-    val funcionario: String? = null
+    val funcionario: String? = null,
 )
 
 /**
@@ -94,3 +96,12 @@ data class SecaoFerramentas(
     val categoria: String,
     val ferramentas: List<FerramentaUi>
 )
+
+enum class EstadoInicial(val label: String) {
+    DISPONIVEL("Disponível"),
+    EM_USO("Em Uso"),
+    MANUTENCAO("Manutenção")
+}
+
+/** Opção de armário mostrada na lista do pop-up. */
+data class ArmarioOpcaoUi(val id: Int, val nome: String, val detalhe: String)

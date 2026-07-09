@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import pfc.a50727a50799.smarttool_cabinet.core.alerta.AlertaRemoteDataSource
+import pfc.a50727a50799.smarttool_cabinet.core.armario.ArmarioRemoteDataSource
 import pfc.a50727a50799.smarttool_cabinet.core.ferramenta.FerramentaRemoteDataSource
 import pfc.a50727a50799.smarttool_cabinet.core.ferramenta.toGestorUi
 import pfc.a50727a50799.smarttool_cabinet.core.network.ApiError
@@ -22,7 +23,8 @@ import pfc.a50727a50799.smarttool_cabinet.core.network.ApiResult
  */
 class FerramentasGestorViewModel(
     private val ferramentas: FerramentaRemoteDataSource,
-    private val alertas: AlertaRemoteDataSource
+    private val alertas: AlertaRemoteDataSource,
+    private val armarios: ArmarioRemoteDataSource
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(FerramentasUiState(isLoading = true))
@@ -72,13 +74,33 @@ class FerramentasGestorViewModel(
                 is ApiResult.Error -> 0
             }
 
+            // armários
+            val armariosUi = when (val r = armarios.getArmarios()) {
+                is ApiResult.Success -> r.data.map {
+                    ArmarioOpcaoUi(
+                        id = it.nArmario,
+                        nome = "Armário ${it.nArmario}",
+                        detalhe = "Capacidade ${it.capacidade} - ${it.estado}"
+                    )
+                }
+
+                is ApiResult.Error -> emptyList()
+            }
+
             // juntar tudo: cada ferramenta recebe o seu detentor (ou null)
             todasFerramentas = lista.map { dto ->
                 dto.toGestorUi(detentor = porDetentor[dto.idFerramenta])
             }
 
             //guardar campos
-            _state.update { it.copy(isLoading = false, alertasAtivos = nAlertas) }
+            _state.update {
+                it.copy(
+                    isLoading = false,
+                    alertasAtivos = nAlertas,
+                    categorias = todasFerramentas.map { f -> f.categoria }.distinct().sorted(),
+                    armarios = armariosUi
+                )
+            }
 
             recomputarSeccoes()
         }
@@ -103,6 +125,23 @@ class FerramentasGestorViewModel(
     fun onFiltroChange(filtro: FiltroFerramenta) {
         _state.update { it.copy(filtroAtual = filtro) }
         recomputarSeccoes()
+    }
+
+    fun criarFerramenta(
+        nome: String,
+        categoria: String,
+        nArmario: Int?,
+        disponibilidade: String
+    ) {
+        viewModelScope.launch {
+            _state.update { it.copy(isLoading = true, error = null) }
+            when (val r = ferramentas.criarFerramenta(nome, categoria, nArmario, disponibilidade)) {
+                is ApiResult.Success -> carregar()
+                is ApiResult.Error -> {
+                    _state.update { it.copy(isLoading = false, error = mensagem(r.error)) }
+                }
+            }
+        }
     }
 
     /**

@@ -2,6 +2,7 @@ package pfc.a50727a50799.smarttool_cabinet.feature.gestor.tarefas
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -238,7 +239,7 @@ private fun NovaTarefaDialog(
             modifier = Modifier
                 .fillMaxWidth(0.95f)
                 .widthIn(max = 480.dp)
-                .fillMaxHeight(0.9f)
+                .heightIn(max = 620.dp)
         ) {
             Column(Modifier.fillMaxSize()) {
 
