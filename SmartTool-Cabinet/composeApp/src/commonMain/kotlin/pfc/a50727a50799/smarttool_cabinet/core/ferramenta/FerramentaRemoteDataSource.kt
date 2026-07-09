@@ -126,4 +126,26 @@ class FerramentaRemoteDataSource(
             ApiResult.Error(ApiError.Unknown(e.message))
         }
     }
+
+    suspend fun criarFerramenta(
+        nome: String,
+        categoria: String,
+        nArmario: Int?,
+        disponibilidade: String
+    ): ApiResult<Unit> {
+        return try {
+            val response = httpClient.post("/api/ferramentas") {
+                contentType(ContentType.Application.Json)
+                setBody(NovaFerramentaDto(nome, categoria, nArmario, disponibilidade))
+            }
+            when (response.status) {
+                HttpStatusCode.OK, HttpStatusCode.Created -> ApiResult.Success(Unit)
+                else -> ApiResult.Error(ApiError.Unknown(response.status.toString()))
+            }
+        } catch (e: IOException) {
+            ApiResult.Error(ApiError.NetworkError)
+        } catch (e: Exception) {
+            ApiResult.Error(ApiError.Unknown(e.message))
+        }
+    }
 }
