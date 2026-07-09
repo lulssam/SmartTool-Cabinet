@@ -6,15 +6,12 @@ data class TecnicoUiState(
     val turno: String = "",
     val ferramentasEmUso: Int = 0,
     val ferramentasParaDevolver: Int = 0,
+    val ferramentasReservadas: Int = 0,
     val minhasFerramentas: List<FerramentaTecnicoUi> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null
 )
 
-/**
- * Modelo visual específico para o ecrã do Técnico para preencher
- * os detalhes exatos do Figma (nome, armário/categoria e estado).
- */
 data class FerramentaTecnicoUi(
     val id: Int,
     val nome: String,
