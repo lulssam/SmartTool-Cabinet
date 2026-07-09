@@ -70,7 +70,22 @@ import smarttoolcabinet.composeapp.generated.resources.lock
 import smarttoolcabinet.composeapp.generated.resources.mail
 import smarttoolcabinet.composeapp.generated.resources.tap_logo
 
-
+/**
+ * Apresenta o ecrã de autenticação por email.
+ *
+ * Este componente mostra o logótipo da aplicação e o formulário
+ * de autenticação, encaminhando as ações do utilizador para
+ * as funções fornecidas.
+ *
+ * @param email Endereço de correio eletrónico introduzido pelo utilizador.
+ * @param password Palavra-passe introduzida pelo utilizador.
+ * @param isLoading Indica se o processo de autenticação está em execução.
+ * @param error Mensagem de erro a apresentar, caso exista.
+ * @param onEmailChange Função chamada quando o email é alterado.
+ * @param onPasswordChange Função chamada quando a palavra-passe é alterada.
+ * @param onBackClick Função chamada quando o utilizador seleciona a opção para voltar.
+ * @param onEntrarClick Função chamada quando o utilizador seleciona a opção para iniciar sessão.
+ */
 @Composable
 fun emailScreenContent(
     email: String,
@@ -125,7 +140,16 @@ fun emailScreenContent(
         )
     }
 }
-
+/**
+ * Liga o ecrã de autenticação ao respetivo ViewModel.
+ *
+ * Obtém o estado atual da autenticação, atualiza a interface
+ * e notifica quando o utilizador é autenticado com sucesso.
+ *
+ * @param viewModel ViewModel responsável pela gestão do estado do ecrã.
+ * @param onBackClick Função chamada quando o utilizador pretende voltar ao ecrã anterior.
+ * @param onAuthenticated Função chamada após uma autenticação bem-sucedida.
+ */
 @Composable
 fun emailScreen(
     viewModel: WelcomeViewModel,
@@ -175,6 +199,12 @@ private fun Preview() {
         )
     }
 }
+/**
+ * Preview do cartão de autenticação.
+ *
+ * Permite visualizar apenas o formulário de autenticação
+ * durante o desenvolvimento.
+ */
 
 @Preview
 @Composable

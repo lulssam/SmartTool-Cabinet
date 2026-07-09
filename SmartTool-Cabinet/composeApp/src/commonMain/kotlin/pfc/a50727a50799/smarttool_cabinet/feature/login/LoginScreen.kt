@@ -25,8 +25,20 @@ import androidx.compose.ui.unit.dp
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AppTheme
 
 /**
- * A parte visual do login. Não sabe nada da lógica — só mostra o que recebe
- * e avisa quando o user faz algo. Totalmente previewável sem ViewModel.
+ * Apresenta o conteúdo visual do ecrã de autenticação.
+ *
+ * Este componente mostra os campos de email e palavra-passe,
+ * o botão para iniciar sessão e as mensagens de sucesso ou erro.
+ * Toda a lógica é fornecida através dos parâmetros recebidos.
+ *
+ * @param email Endereço de correio eletrónico introduzido pelo utilizador.
+ * @param password Palavra-passe introduzida pelo utilizador.
+ * @param isLoading Indica se o processo de autenticação está em execução.
+ * @param error Mensagem de erro a apresentar, caso exista.
+ * @param resultado Mensagem de sucesso a apresentar após a autenticação.
+ * @param onEmailChange Função chamada quando o email é alterado.
+ * @param onPasswordChange Função chamada quando a palavra-passe é alterada.
+ * @param onLoginClick Função chamada quando o utilizador seleciona a opção para iniciar sessão.
  */
 @Composable
 fun LoginScreenContent(
@@ -80,23 +92,14 @@ fun LoginScreenContent(
     }
 }
 
-/** Liga o ViewModel ao conteúdo visual. */
-@Composable
-fun LoginScreen(viewModel: LoginViewModel) {
-    val state by viewModel.state.collectAsState()
-    LoginScreenContent(
-        email = state.email,
-        password = state.password,
-        isLoading = state.isLoading,
-        error = state.error,
-        resultado = state.sessao?.let { "OK! ${it.email} — ${it.role}" },
-        onEmailChange = viewModel::onEmailChange,
-        onPasswordChange = viewModel::onPasswordChange,
-        onLoginClick = viewModel::onLoginClick
-    )
-}
 
-/** Preview com dados falsos — vês o ecrã sem precisar de Firebase nem backend. */
+/**
+ * Preview do ecrã de autenticação.
+ *
+ * Utiliza dados de exemplo para permitir a visualização
+ * da interface durante o desenvolvimento, sem necessidade
+ * de ligação ao backend ou ao serviço de autenticação.
+ */
 @Preview
 @Composable
 fun LoginPreview() {

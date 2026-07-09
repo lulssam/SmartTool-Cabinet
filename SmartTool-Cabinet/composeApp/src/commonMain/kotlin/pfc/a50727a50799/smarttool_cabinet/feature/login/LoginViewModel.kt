@@ -12,20 +12,43 @@ import pfc.a50727a50799.smarttool_cabinet.core.auth.AuthRepository
 import pfc.a50727a50799.smarttool_cabinet.core.auth.AuthResult
 import pfc.a50727a50799.smarttool_cabinet.di.AppModule.authRepository
 /**
- * Trata da lógica do login. Fala com o [AuthRepository] (a interface),
- * nunca diretamente com o Firebase.
+ * Gere a lógica de autenticação por email.
+ *
+ * Este ViewModel mantém o estado do ecrã de autenticação,
+ * valida as ações do utilizador e comunica com o repositório
+ * responsável pelo processo de login.
+ *
+ * @property authRepository Repositório utilizado para autenticar o utilizador.
  */
 class LoginViewModel(
     private val authRepository: AuthRepository
 ) : ViewModel() {
-
+    /**
+     * Estado observado pela interface.
+     */
     private val _state = MutableStateFlow(LoginUiState())
     val state: StateFlow<LoginUiState> = _state.asStateFlow()
-
+    /**
+     * Atualiza o endereço de correio eletrónico introduzido pelo utilizador.
+     *
+     * @param novo Novo endereço de correio eletrónico.
+     */
     fun onEmailChange(novo: String) = _state.update { it.copy(email = novo) }
+    /**
+     * Atualiza a palavra-passe introduzida pelo utilizador.
+     *
+     * @param nova Nova palavra-passe.
+     */
     fun onPasswordChange(nova: String) = _state.update { it.copy(password = nova) }
 
-    /** Chamado quando o user carrega em "Entrar". */
+    /**
+     * Inicia o processo de autenticação.
+     *
+     * Caso a autenticação seja bem-sucedida, o estado é atualizado
+     * com a sessão do utilizador. Em caso de erro, é apresentada
+     * uma mensagem adequada.
+     */
+
     fun onLoginClick() {
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null, sessao = null) }
@@ -37,7 +60,13 @@ class LoginViewModel(
         }
     }
 
-    /** Transforma o erro tipado numa frase legível para o user. */
+    /**
+     * Converte um erro de autenticação numa mensagem adequada
+     * para apresentar ao utilizador.
+     *
+     * @param erro Erro devolvido durante o processo de autenticação.
+     * @return Mensagem correspondente ao erro.
+     */
     private fun mensagem(erro: AuthError): String = when (erro) {
         AuthError.InvalidCredentials -> "Email ou password errados"
         AuthError.RoleNotFound       -> "Email não registado no sistema"
