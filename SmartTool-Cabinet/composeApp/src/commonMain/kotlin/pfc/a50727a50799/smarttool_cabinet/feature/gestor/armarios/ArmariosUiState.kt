@@ -8,6 +8,7 @@ import pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard.EstadoArmario
  * Estado do ecrã de Armários: a lista vinda do backend mais o que o
  * utilizador escolheu na pesquisa e nos filtros.
  */
+//#my_code
 data class ArmariosUiState(
     val armarios: List<ArmarioUi> = emptyList(),
     val isLoading: Boolean = false,

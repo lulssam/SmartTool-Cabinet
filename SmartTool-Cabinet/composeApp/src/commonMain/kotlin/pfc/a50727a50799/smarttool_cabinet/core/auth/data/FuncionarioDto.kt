@@ -2,6 +2,7 @@ package pfc.a50727a50799.smarttool_cabinet.core.auth.data
 
 import kotlinx.serialization.Serializable
 import pfc.a50727a50799.smarttool_cabinet.core.auth.UserRole
+//#my_code
 
 /**
  * endpoint /api/funcionarios/{email} devolve*/

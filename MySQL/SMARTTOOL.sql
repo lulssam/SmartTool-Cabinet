@@ -1,5 +1,6 @@
 CREATE DATABASE smarttool;
 USE SMARTTOOL;
+-- #my_code
 
 CREATE TABLE funcionario (
   id_func INT NOT NULL AUTO_INCREMENT,

@@ -13,6 +13,8 @@ package pfc.a50727a50799.smarttool_cabinet.feature.gestor.historico
  *                 Null significa que não há nenhum erro.
  * @property alertasAtivos Número de alertas ativos.
  */
+
+//#my_code
 data class HistoricoGestorUiState(
     val secoes: List<SecaoHistoricoUi> = emptyList(),
     val isLoading: Boolean = false,

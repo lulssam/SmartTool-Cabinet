@@ -1,5 +1,5 @@
 package pfc.a50727a50799.smarttool_cabinet.feature.backoffice.dashboard
-
+//#my_code
 data class EstatisticasBOUi(
     val totalUtilizadores: Int,
     val ativosHoje: Int,

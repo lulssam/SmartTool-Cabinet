@@ -125,7 +125,6 @@ private fun AppNavHost(
     NavHost(navController = navController, startDestination = startDestination) {
         composable<WelcomeRoute> {
             val viewModel = viewModel { WelcomeViewModel(authRepository) }
-            val scope = rememberCoroutineScope() // lançar corrotina do click
 
             val state by viewModel.state.collectAsState()
 
@@ -142,7 +141,7 @@ private fun AppNavHost(
                     }
                 }
             }
-
+//#my_code
             WelcomeScreen(
                 onLoginEmailClick = { navController.navigate(LoginEmailRoute) },
                 onSSOClick = { navController.navigate(SSORoute) }
@@ -571,3 +570,4 @@ private fun fazerLogout(
         } // limpar stack para não dar para voltar atrás
     }
 }
+//#my_code end

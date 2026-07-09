@@ -85,6 +85,7 @@ import smarttoolcabinet.composeapp.generated.resources.search
 import smarttoolcabinet.composeapp.generated.resources.tool
 import smarttoolcabinet.composeapp.generated.resources.unlock
 
+//#my_code
 @Composable
 fun TopBar(
     titulo: String,
@@ -174,7 +175,7 @@ fun WelcomeCard(
         Text(text = "$cargo - Turno: $turno", color = Color.White, fontSize = 13.sp)
     }
 }
-
+//#my_code end
 private data class Segmento(
     val label: String,
     val valor: Int,
@@ -239,6 +240,7 @@ fun EstadoFerramentasCard(
     }
 }
 
+//#my_code
 @Composable
 private fun LegendaRow(
     segmento: Segmento,
@@ -279,7 +281,7 @@ private fun LegendaRow(
         Text("$percent%", fontSize = 11.sp, color = TextSecondary)
     }
 }
-
+//#my_code end
 @Composable
 private fun Donut(
     segmentos: List<Segmento>,
@@ -326,6 +328,7 @@ private fun Donut(
     }
 }
 
+//#my_code
 @Composable
 fun SectionHeader(
     titulo: String,
@@ -373,6 +376,7 @@ fun SectionHeader(
     }
 }
 
+//#my_code end
 @Composable
 fun ArmarioCard(
     armario: ArmarioUi
@@ -473,6 +477,7 @@ fun ArmarioCard(
     }
 }
 
+//#my_code
 @Composable
 fun AlertaCard(
     gravidade: Gravidade,
@@ -543,6 +548,7 @@ fun AlertaCard(
         }
     }
 }
+//#my_code end
 
 @Composable
 fun BarraPesquisa(
@@ -574,6 +580,7 @@ fun BarraPesquisa(
     )
 }
 
+//#my_code
 @Composable
 fun FilterChip(label: String, isSelected: Boolean, onClick: () -> Unit) {
     val bgColor = if (isSelected) TapLightGreen.copy(alpha = 0.15f) else Color.White
@@ -632,6 +639,7 @@ fun PillPrioridade(prioridade: PrioridadeTarefa) {
     }
     Pill(fundo, texto, label)
 }
+//#my_code end
 
 /**
  * Card de um movimento de histórico, partilhado entre perfis. É "burro": não
@@ -759,7 +767,7 @@ private fun RowScope.InfoBox(
         content = content
     )
 }
-
+//#my_code
 /** pill de estados: verde -> Online ou laranja -> Alerta, cinzento -> Offline*/
 @Composable
 private fun StatusPill(
@@ -795,7 +803,7 @@ private fun StatusPill(
             .padding(horizontal = 15.dp, vertical = 2.dp)
     )
 }
-
+//#my_code end
 /*@Preview
 @Composable
 fun PreviewWelcomeCard() {
