@@ -272,7 +272,8 @@ private fun AppNavHost(
             val viewModel = viewModel {
                 FerramentasGestorViewModel(
                     ferramentas = AppModule.ferramentaRemoteDataSource,
-                    alertas = AppModule.alertaRemoteDataSource
+                    alertas = AppModule.alertaRemoteDataSource,
+                    armarios = AppModule.armarioRemoteDataSource
                 )
             }
             val state by viewModel.state.collectAsState()
