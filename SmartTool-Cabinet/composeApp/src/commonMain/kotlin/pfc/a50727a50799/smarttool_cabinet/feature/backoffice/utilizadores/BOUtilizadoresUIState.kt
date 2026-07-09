@@ -7,6 +7,13 @@ enum class FiltroUtilizador(val label: String) {
     BACK_OFFICE("Back Office")
 }
 
+enum class PerfilOpcao(val label: String, val valor: String) {
+    TECNICO("Técnico", "TECNICO"), GESTOR("Gestor", "GESTOR"), BACKOFFICE("Back Office", "BACKOFFICE")
+}
+enum class TurnoOpcao(val label: String, val valor: String) {
+    MANHA("Manhã", "MANHA"), TARDE("Tarde", "TARDE"), NOITE("Noite", "NOITE")
+}
+
 data class UtilizadorListaUi(
     val id: Int,
     val nome: String,
