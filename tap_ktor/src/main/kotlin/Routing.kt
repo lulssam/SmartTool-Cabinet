@@ -758,7 +758,6 @@ fun Application.configureRouting() {
         }
 
         post("/api/funcionarios") {
-
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver")
                 val connection = DriverManager.getConnection(URL, USER, PASSWORD)
@@ -798,6 +797,68 @@ fun Application.configureRouting() {
                     connection.commit()
                     call.respond(HttpStatusCode.Created, "Funcionário $idFuncGerado criado com sucesso.")
 
+                } catch (e: Exception) {
+                    connection.rollback()
+                    throw e
+                } finally {
+                    connection.close()
+                }
+            } catch (e: Exception) {
+                call.respondText(
+                    "Erro na DB: ${e.message}",
+                    ContentType.Text.Plain,
+                    status = HttpStatusCode.InternalServerError
+                )
+            }
+        }
+
+        post("/api/ferramentas") {
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver")
+                val connection = DriverManager.getConnection(URL, USER, PASSWORD)
+                connection.autoCommit = false
+
+                try {
+                    val pedido = call.receive<NovaFerramentaDto>()
+
+                    if (pedido.nome.isBlank() || pedido.categoria.isBlank()) {
+                        call.respond(HttpStatusCode.BadRequest, "Nome e categoria são obrigatórios")
+                        return@post
+                    }
+
+                    if (pedido.disponibilidade !in listOf("Disponivel", "Requisitada", "Em Manutencao")) {
+                        call.respond(HttpStatusCode.BadRequest, "Disponibilidade inválida")
+                        return@post
+                    }
+
+                    // novo código de tipo
+                    val rs = connection.prepareStatement(
+                        "SELECT COALESCE(MAX(codigo), 0) + 1 AS novo FROM tipo_ferramenta"
+                    ).executeQuery()
+                    rs.next()
+                    val novoCodigo = rs.getInt("novo")
+
+                    val stmtTipo = connection.prepareStatement(
+                        "INSERT INTO tipo_ferramenta (codigo, nome, categoria) VALUES (?, ?, ?)"
+                    )
+                    stmtTipo.setInt(1, novoCodigo)
+                    stmtTipo.setString(2, pedido.nome)
+                    stmtTipo.setString(3, pedido.categoria)
+                    stmtTipo.executeUpdate()
+
+                    val stmtFerr = connection.prepareStatement(
+                        "INSERT INTO ferramenta (codigo_tipo, nFerramenta, estado, disponibilidade, nome_tipo, nArmario) " +
+                                "VALUES (?, 1, 'Operacional', ?, ?, ?)"
+                    )
+                    stmtFerr.setInt(1, novoCodigo)
+                    stmtFerr.setString(2, pedido.disponibilidade)
+                    stmtFerr.setString(3, pedido.nome)
+                    if (pedido.nArmario != null) stmtFerr.setInt(4, pedido.nArmario)
+                    else stmtFerr.setNull(4, java.sql.Types.INTEGER)
+                    stmtFerr.executeUpdate()
+
+                    connection.commit()
+                    call.respond(HttpStatusCode.Created, "Ferramenta criada (tipo ${novoCodigo}).")
                 } catch (e: Exception) {
                     connection.rollback()
                     throw e
