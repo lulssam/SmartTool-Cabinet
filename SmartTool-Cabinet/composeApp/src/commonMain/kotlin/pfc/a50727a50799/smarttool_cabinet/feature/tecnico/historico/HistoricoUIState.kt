@@ -1,5 +1,6 @@
 package pfc.a50727a50799.smarttool_cabinet.feature.tecnico.historico
 
+//#my_code
 enum class TipoMovimento { RETIROU, DEVOLVEU, MARCOU_AVARIA }
 
 data class HistoricoItemUi(

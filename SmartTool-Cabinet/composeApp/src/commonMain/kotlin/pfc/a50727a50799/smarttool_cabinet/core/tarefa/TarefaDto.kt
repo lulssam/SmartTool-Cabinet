@@ -11,7 +11,7 @@ import pfc.a50727a50799.smarttool_cabinet.feature.gestor.tarefas.PrioridadeTaref
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.tarefas.TarefaUi
 import kotlin.time.Clock
 
-// region #my_code
+//#my_code
 @Serializable
 data class TarefaDto(
     val idTarefa: Int,
@@ -50,7 +50,7 @@ fun TarefaDto.toTecnicoUi(): TarefaUi = toGestorUi().copy(
     quando = formatarQuando(dhAtribuicao)
 )
 
-// endregion #my_code
+//#my_code end
 
 /** Calcula a hora ("08:00") e o dia ("Hoje"/"Ontem"/"27/06") a partir da data crua. */
 private fun horaEDia(raw: String): Pair<String, String> {

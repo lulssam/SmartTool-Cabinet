@@ -2,7 +2,7 @@ package pfc.a50727a50799.smarttool_cabinet.feature.tecnico.tarefas
 
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.tarefas.TarefaUi
 
-// region #my_code
+//#my_code
 /**
  * Tudo o que o ecrã TarefasTecnico precisa para se mostrar corretamente.
  *
@@ -34,4 +34,4 @@ enum class FiltroTarefa(val label: String) {
     CONCLUIDAS("Concluídas")
 }
 
-//endregion #my_code
+//#my_code end

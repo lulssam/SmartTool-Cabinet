@@ -15,6 +15,8 @@ package pfc.a50727a50799.smarttool_cabinet.feature.gestor.ferramentas
  * @property filtroAtual O chip de filtro selecionado atualmente.
  * @property alertasAtivos Número de alertas ativos mostrado na TopBar.
  */
+
+//#my_code
 data class FerramentasUiState(
     val seccoes: List<SecaoFerramentas> = emptyList(),
     val isLoading: Boolean = false,

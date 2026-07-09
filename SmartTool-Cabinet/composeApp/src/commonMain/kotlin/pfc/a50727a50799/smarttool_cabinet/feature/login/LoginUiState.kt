@@ -11,6 +11,8 @@ import pfc.a50727a50799.smarttool_cabinet.core.auth.Session
  * @property error Mensagem a mostrar se algo correr mal. Null = sem erro.
  * @property sessao Preenchida quando o login corre bem (para confirmarmos que funcionou).
  */
+
+//#my_code
 data class LoginUiState(
     val email: String = "",
     val password: String = "",
