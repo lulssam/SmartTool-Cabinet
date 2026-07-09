@@ -3,6 +3,7 @@ package pfc.a50727a50799.smarttool_cabinet.feature.gestor.ferramentas
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -11,12 +12,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -26,9 +30,15 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -38,12 +48,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.jetbrains.compose.resources.painterResource
 import pfc.a50727a50799.smarttool_cabinet.ui.BarraPesquisa
@@ -53,7 +64,6 @@ import pfc.a50727a50799.smarttool_cabinet.ui.theme.AlertOrange
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AlertOrangeText
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AppTheme
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AzulReservou
-import pfc.a50727a50799.smarttool_cabinet.ui.theme.AzulRetirou
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.CardBorder
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.FieldBg
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.PillShape
@@ -66,6 +76,7 @@ import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapRedText
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TextSecondary
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TextTitle
 import smarttoolcabinet.composeapp.generated.resources.Res
+import smarttoolcabinet.composeapp.generated.resources.armarios_icon
 import smarttoolcabinet.composeapp.generated.resources.chevron_down
 import smarttoolcabinet.composeapp.generated.resources.tool
 
@@ -73,9 +84,8 @@ import smarttoolcabinet.composeapp.generated.resources.tool
  * Parte visual do ecrã Ferramentas.
  *
  * Não sabe nada sobre a lógica da aplicação — apenas mostra o que recebe
- * e avisa quando o utilizador faz algo. Fácil de testar e de pré-visualizar.
- *
- * @param state Tudo o que o ecrã precisa para se mostrar corretamente.
+ * e avisa quando o utilizador faz algo. O estado que é só de UI (secções
+ * fechadas, pop-up aberto, campos do formulário) vive aqui em `remember`.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -84,9 +94,7 @@ private fun FerramentasGestorScreenContent(
     onMenuClick: () -> Unit = {},
     onSearchChange: (String) -> Unit = {},
     onFiltroChange: (FiltroFerramenta) -> Unit = {},
-    onAdicionarClick: () -> Unit = {},
-    categoriasFechadas: Set<String> = emptySet(),
-    onAbrirCategoria: (String) -> Unit = {}
+    onCriarFerramenta: (nome: String, categoria: String, nArmario: Int?, disponibilidade: String) -> Unit = { _, _, _, _ -> }
 ) {
     when {
         state.isLoading ->
@@ -100,6 +108,14 @@ private fun FerramentasGestorScreenContent(
             }
 
         else -> {
+            var categoriasFechadas by remember { mutableStateOf(emptySet<String>()) }
+
+            var mostrarDialog by remember { mutableStateOf(false) }
+            var nome by remember { mutableStateOf("") }
+            var categoria by remember { mutableStateOf("") }
+            var armarioSel by remember { mutableStateOf<Int?>(null) }
+            var estadoInicial by remember { mutableStateOf(EstadoInicial.DISPONIVEL) }
+
             Column(modifier = Modifier.fillMaxSize().background(ScreenBg)) {
                 TopBar(
                     titulo = "Ferramentas",
@@ -120,9 +136,7 @@ private fun FerramentasGestorScreenContent(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.Top
                         ) {
-                            Column(
-                                modifier = Modifier.weight(1f)
-                            ) {
+                            Column(modifier = Modifier.weight(1f)) {
                                 Text(
                                     text = "Ferramentas",
                                     fontSize = 28.sp,
@@ -137,7 +151,7 @@ private fun FerramentasGestorScreenContent(
                             }
 
                             Button(
-                                onClick = onAdicionarClick,
+                                onClick = { mostrarDialog = true },
                                 colors = ButtonDefaults.buttonColors(containerColor = TapGreenishBlue),
                                 shape = RoundedCornerShape(10.dp),
                                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
@@ -182,7 +196,7 @@ private fun FerramentasGestorScreenContent(
                         }
                     }
 
-                    // lista agrupada por categoria
+                    // lista agrupada por categoria (secções colapsáveis)
                     if (state.seccoes.isEmpty()) {
                         item {
                             Text(
@@ -200,10 +214,15 @@ private fun FerramentasGestorScreenContent(
                                     categoria = seccao.categoria,
                                     total = seccao.ferramentas.size,
                                     fechada = fechada,
-                                    onClick = { onAbrirCategoria(seccao.categoria) }
+                                    onClick = {
+                                        categoriasFechadas =
+                                            if (seccao.categoria in categoriasFechadas)
+                                                categoriasFechadas - seccao.categoria
+                                            else
+                                                categoriasFechadas + seccao.categoria
+                                    }
                                 )
                             }
-
                             if (!fechada) {
                                 items(seccao.ferramentas, key = { it.idFerramenta }) { ferramenta ->
                                     FerramentaGestorCard(ferramenta)
@@ -213,16 +232,43 @@ private fun FerramentasGestorScreenContent(
                     }
                 }
             }
+
+            // pop-up "Adicionar Ferramenta"
+            if (mostrarDialog) {
+                AdicionarFerramentaDialog(
+                    nome = nome,
+                    categoria = categoria,
+                    categorias = state.categorias,
+                    armarios = state.armarios,
+                    armarioSelecionado = armarioSel,
+                    estadoSelecionado = estadoInicial,
+                    onNome = { nome = it },
+                    onCategoria = { categoria = it },
+                    onArmario = { armarioSel = it },
+                    onEstado = { estadoInicial = it },
+                    onFechar = { mostrarDialog = false },
+                    onAdicionar = {
+                        val disponibilidade = when (estadoInicial) {
+                            EstadoInicial.DISPONIVEL -> "Disponivel"
+                            EstadoInicial.EM_USO -> "Requisitada"
+                            EstadoInicial.MANUTENCAO -> "Em Manutencao"
+                        }
+                        onCriarFerramenta(nome, categoria, armarioSel, disponibilidade)
+                        // limpar e fechar
+                        nome = ""; categoria = ""; armarioSel = null
+                        estadoInicial = EstadoInicial.DISPONIVEL
+                        mostrarDialog = false
+                    }
+                )
+            }
         }
     }
 }
-
 
 /**
  * Um card de ferramenta. A cor e o texto da pill (e a cor do nome do detentor)
  * vêm todos da disponibilidade da ferramenta.
  */
-
 @Composable
 private fun FerramentaGestorCard(ferramenta: FerramentaUi) {
     val (corFundo, corTexto, label) = when (ferramenta.disponibilidade) {
@@ -314,8 +360,8 @@ private fun FerramentaGestorCard(ferramenta: FerramentaUi) {
 }
 
 /**
- * O cabeçalho fixo de cada categoria. Tem fundo igual ao do ecrã para "tapar"
- * os cards que passam por baixo enquanto ele fica colado no topo.
+ * O cabeçalho de cada categoria. Clicável para abrir/fechar a secção;
+ * a setinha muda entre ▾ (aberta) e ▸ (fechada).
  */
 @Composable
 private fun CategoriaHeader(
@@ -324,7 +370,6 @@ private fun CategoriaHeader(
     fechada: Boolean,
     onClick: () -> Unit
 ) {
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -340,24 +385,221 @@ private fun CategoriaHeader(
             color = TextTitle,
             modifier = Modifier.weight(1f)
         )
-
-        Icon(
-            painter = painterResource(Res.drawable.chevron_down),
-            contentDescription = null,
-            modifier =
-                if (!fechada) Modifier.rotate(180f) else Modifier
+        Text(
+            text = if (fechada) "▸" else "▾",
+            fontSize = 14.sp,
+            color = TextSecondary
         )
     }
 }
 
+@Composable
+private fun AdicionarFerramentaDialog(
+    nome: String,
+    categoria: String,
+    categorias: List<String>,
+    armarios: List<ArmarioOpcaoUi>,
+    armarioSelecionado: Int?,
+    estadoSelecionado: EstadoInicial,
+    onNome: (String) -> Unit,
+    onCategoria: (String) -> Unit,
+    onArmario: (Int) -> Unit,
+    onEstado: (EstadoInicial) -> Unit,
+    onFechar: () -> Unit,
+    onAdicionar: () -> Unit
+) {
+    Dialog(
+        onDismissRequest = onFechar,
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        Surface(
+            shape = RoundedCornerShape(20.dp),
+            color = Color.White,
+            modifier = Modifier
+                .fillMaxWidth(0.95f)
+                .widthIn(max = 480.dp)
+                .heightIn(max = 620.dp)
+                .imePadding()
+        ) {
+            Column(Modifier.fillMaxSize()) {
+                // cabeçalho: título + subtítulo + X
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(Modifier.weight(1f)) {
+                        Text("Adicionar Ferramenta", fontWeight = FontWeight.Bold, fontSize = 20.sp, color = Color.Black)
+                        Text("Registar nova ferramenta no inventário", fontSize = 13.sp, color = TextSecondary)
+                    }
+                    Box(
+                        Modifier
+                            .size(34.dp)
+                            .clip(RoundedCornerShape(11.dp))
+                            .background(TextSecondary.copy(alpha = 0.2f))
+                            .clickable(onClick = onFechar),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("✕", color = TextSecondary, fontSize = 16.sp)
+                    }
+                }
+
+                HorizontalDivider()
+
+                LazyColumn(
+                    modifier = Modifier.weight(1f).fillMaxWidth(),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(19.dp)
+                ) {
+                    item { CampoTexto("Nome da ferramenta", nome, onNome) }
+
+                    item { CategoriaDropdown(categorias, categoria, onCategoria) }
+
+                    item { Text("Armário", fontWeight = FontWeight.SemiBold, fontSize = 14.sp, color = Color.Black) }
+                    items(armarios, key = { it.id }) { arm ->
+                        ArmarioSelecionavel(arm, arm.id == armarioSelecionado) { onArmario(arm.id) }
+                    }
+
+                    item { EstadoInicialSelector(estadoSelecionado, onEstado) }
+                }
+
+                Button(
+                    onClick = onAdicionar,
+                    colors = ButtonDefaults.buttonColors(containerColor = TapGreenishBlue),
+                    shape = RoundedCornerShape(10.dp),
+                    enabled = nome.isNotBlank() && categoria.isNotBlank() && armarioSelecionado != null,
+                    modifier = Modifier.fillMaxWidth().padding(16.dp).height(48.dp)
+                ) {
+                    Text("+ Adicionar Ferramenta", color = Color.White, fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun CampoTexto(label: String, valor: String, onChange: (String) -> Unit) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(label, fontWeight = FontWeight.SemiBold, fontSize = 14.sp, color = Color.Black)
+        TextField(
+            value = valor, onValueChange = onChange, singleLine = true,
+            modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp),
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = FieldBg,
+                unfocusedContainerColor = FieldBg,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent
+            )
+        )
+    }
+}
+
+@Composable
+private fun CategoriaDropdown(
+    categorias: List<String>,
+    selecionada: String,
+    onSelecionar: (String) -> Unit
+) {
+    var aberto by remember { mutableStateOf(false) }
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text("Categoria", fontWeight = FontWeight.SemiBold, fontSize = 14.sp, color = Color.Black)
+        Box {
+            Row(
+                Modifier.fillMaxWidth()
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(FieldBg)
+                    .clickable { aberto = true }
+                    .padding(horizontal = 16.dp, vertical = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = selecionada.ifBlank { "Escolher categoria" },
+                    color = if (selecionada.isBlank()) TextSecondary else Color.Black,
+                    fontSize = 14.sp
+                )
+                Icon(
+                    painter = painterResource(Res.drawable.chevron_down),
+                    contentDescription = null
+                )
+            }
+            DropdownMenu(expanded = aberto, onDismissRequest = { aberto = false }) {
+                categorias.forEach { cat ->
+                    DropdownMenuItem(
+                        text = { Text(cat) },
+                        onClick = { onSelecionar(cat); aberto = false }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ArmarioSelecionavel(arm: ArmarioOpcaoUi, selecionado: Boolean, onClick: () -> Unit) {
+    Row(
+        Modifier.fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(if (selecionado) TapLightGreen.copy(alpha = 0.1f) else Color.White)
+            .border(
+                if (selecionado) 1.5.dp else 1.dp,
+                if (selecionado) TapGreenishBlue else CardBorder,
+                RoundedCornerShape(12.dp)
+            )
+            .clickable(onClick = onClick)
+            .padding(12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            Modifier.size(30.dp).clip(RoundedCornerShape(6.dp)).background(TapGreenishBlue),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                painter = painterResource(Res.drawable.armarios_icon),
+                contentDescription = null,
+                tint = Color.White,
+                modifier = Modifier.size(16.dp)
+            )
+        }
+        Spacer(Modifier.width(12.dp))
+        Column(Modifier.weight(1f)) {
+            Text(arm.nome, fontWeight = FontWeight.SemiBold, fontSize = 13.sp, color = Color.Black)
+            Text(arm.detalhe, fontSize = 10.sp, color = TextSecondary)
+        }
+    }
+}
+
+@Composable
+private fun EstadoInicialSelector(selecionado: EstadoInicial, onSelect: (EstadoInicial) -> Unit) {
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Text("Estado inicial", fontWeight = FontWeight.SemiBold, fontSize = 14.sp, color = Color.Black)
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            EstadoInicial.entries.forEach { e ->
+                val sel = e == selecionado
+                Box(
+                    Modifier.weight(1f)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(if (sel) TapGreenishBlue.copy(alpha = 0.1f) else Color.White)
+                        .border(1.5.dp, if (sel) TapGreenishBlue else CardBorder, RoundedCornerShape(12.dp))
+                        .clickable { onSelect(e) }
+                        .padding(vertical = 12.dp, horizontal = 4.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        e.label,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 13.sp,
+                        color = if (sel) TapGreenishBlue else Color.Black,
+                        maxLines = 1
+                    )
+                }
+            }
+        }
+    }
+}
+
+
 /**
  * Liga o [FerramentasGestorViewModel] ao [FerramentasGestorScreenContent].
- *
- * Observa o estado do ViewModel e passa-o para o ecrã.
- * Não contém lógica de UI — apenas faz a ligação.
- *
- * @param viewModel O ViewModel que gere o estado deste ecrã.
- *                  É criado automaticamente pelo Compose se não for fornecido.
  */
 @Composable
 fun FerramentasGestorScreen(
@@ -365,28 +607,15 @@ fun FerramentasGestorScreen(
     onMenuClick: () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsState()
-    var categoriasFechadas by remember { mutableStateOf(emptySet<String>()) }
-
     FerramentasGestorScreenContent(
         state = state,
         onMenuClick = onMenuClick,
         onSearchChange = viewModel::onSearchChange,
         onFiltroChange = viewModel::onFiltroChange,
-        onAdicionarClick = {}, // todo: adicionar no viewmodel esta função,
-        categoriasFechadas = categoriasFechadas,
-        onAbrirCategoria = { cat ->
-            categoriasFechadas =
-                if (cat in categoriasFechadas) categoriasFechadas - cat
-                else categoriasFechadas + cat
-        }
+        onCriarFerramenta = viewModel::criarFerramenta
     )
 }
 
-/**
- * Pré-visualização do ecrã Ferramentas para usar durante o desenvolvimento.
- *
- * Usa dados fictícios para simular como o ecrã ficará com informação real.
- */
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun Preview() {
@@ -394,6 +623,7 @@ private fun Preview() {
         FerramentasGestorScreenContent(
             state = FerramentasUiState(
                 alertasAtivos = 4,
+                categorias = listOf("Chaves", "Alicates"),
                 seccoes = listOf(
                     SecaoFerramentas(
                         categoria = "Chaves",
@@ -432,8 +662,7 @@ private fun Preview() {
             ),
             onMenuClick = {},
             onSearchChange = {},
-            onFiltroChange = {},
-            onAdicionarClick = {}
+            onFiltroChange = {}
         )
     }
 }
