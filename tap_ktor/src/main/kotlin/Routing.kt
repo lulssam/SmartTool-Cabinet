@@ -16,7 +16,7 @@ fun Application.configureRouting() {
     val PASSWORD = environment.config.property("storage.password").getString()
 
     routing {
-
+//#my_code
         // ====== GETS ======
         get("/api/ferramentas") {
             val lista = mutableListOf<FerramentaDTO>()
@@ -124,6 +124,7 @@ fun Application.configureRouting() {
                 )
             }
         }
+
 
         get("/api/historico/tecnico/{id}") {
             val idTecnico = call.parameters["id"]?.toIntOrNull()
@@ -595,6 +596,7 @@ fun Application.configureRouting() {
                 call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain, HttpStatusCode.InternalServerError)
             }
         }
+        //#my_code end
 
         // ====== POSTS ======
         post("/api/requisicoes") {
