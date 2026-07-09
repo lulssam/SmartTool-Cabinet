@@ -13,20 +13,43 @@ import pfc.a50727a50799.smarttool_cabinet.core.auth.AuthResult
 import pfc.a50727a50799.smarttool_cabinet.core.auth.data.SessionManager
 
 /**
- * Trata da lógica do login. Fala com o [AuthRepository] (a interface),
- * nunca diretamente com o Firebase.
+ * Gere a lógica de autenticação da aplicação.
+ *
+ * Este ViewModel mantém o estado do ecrã inicial e comunica
+ * com o repositório responsável pelos processos de autenticação
+ * por email e autenticação federada.
+ *
+ * @property authRepository Repositório utilizado para autenticar o utilizador.
  */
 class WelcomeViewModel(
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(WelcomeUiState())
+    /**
+     * Estado observado pela interface.
+     */
     val state: StateFlow<WelcomeUiState> = _state.asStateFlow()
-
+    /**
+     * Atualiza o endereço de correio eletrónico introduzido pelo utilizador.
+     *
+     * @param novo Novo endereço de correio eletrónico.
+     */
     fun onEmailChange(novo: String) = _state.update { it.copy(email = novo) }
+    /**
+     * Atualiza a palavra-passe introduzida pelo utilizador.
+     *
+     * @param nova Nova palavra-passe.
+     */
     fun onPasswordChange(nova: String) = _state.update { it.copy(password = nova) }
 
-    /** Chamado quando o user carrega em "Entrar". */
+    /**
+     * Inicia o processo de autenticação por email.
+     *
+     * Caso a autenticação seja bem-sucedida, a sessão é armazenada
+     * e o estado da interface é atualizado. Em caso de erro, é
+     * apresentada uma mensagem adequada ao utilizador.
+     */
     fun onLoginClick() {
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null, sessao = null) }
@@ -48,7 +71,15 @@ class WelcomeViewModel(
         }
     }
 
-    /** Chamado quando o user carrega em "Entrar Com Google". */
+    /**
+     * Inicia o processo de autenticação federada através
+     * de um token de identidade.
+     *
+     * Caso a autenticação seja bem-sucedida, a sessão é armazenada
+     * e o estado da interface é atualizado.
+     *
+     * @param idToken Token de autenticação devolvido pelo fornecedor de identidade.
+     */
     fun onGoogleToken(idToken: String) {
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null, sessao = null) }
@@ -69,7 +100,13 @@ class WelcomeViewModel(
         }
     }
 
-    /** Transforma o erro tipado numa frase legível para o user. */
+    /**
+     * Converte um erro de autenticação numa mensagem
+     * adequada para apresentar ao utilizador.
+     *
+     * @param erro Erro devolvido durante o processo de autenticação.
+     * @return Mensagem correspondente ao erro.
+     */
     private fun mensagem(erro: AuthError): String = when (erro) {
         AuthError.InvalidCredentials -> "Email ou password errados"
         AuthError.RoleNotFound -> "Email não registado no sistema"
