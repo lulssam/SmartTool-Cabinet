@@ -1,10 +1,19 @@
 package pfc.a50727a50799.smarttool_cabinet.ui
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -34,14 +43,21 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -84,6 +100,7 @@ import smarttoolcabinet.composeapp.generated.resources.menu
 import smarttoolcabinet.composeapp.generated.resources.search
 import smarttoolcabinet.composeapp.generated.resources.tool
 import smarttoolcabinet.composeapp.generated.resources.unlock
+import kotlin.math.roundToInt
 
 //#my_code
 @Composable
@@ -124,6 +141,11 @@ fun TopBar(
             )
 
             if (mostrarAlertas) {
+                val contagemAlertas by animateIntAsState(
+                    alertasAtivos,
+                    tween(600),
+                    label = "alertas"
+                )
                 Row(
                     modifier = Modifier
                         .clip(PillShape)
@@ -139,8 +161,8 @@ fun TopBar(
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = when {
-                            alertasAtivos > 1 -> "$alertasAtivos alertas ativo"
-                            alertasAtivos == 1 -> "$alertasAtivos alerta ativo"
+                            alertasAtivos > 1 -> "$contagemAlertas alertas ativo"
+                            alertasAtivos == 1 -> "$contagemAlertas alerta ativo"
                             else -> "Nenhum alerta ativo"
                         },
                         color = TapAlert,
@@ -171,10 +193,16 @@ fun WelcomeCard(
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Text(text = "Bem-vindo de volta,", color = TapSurfaceGrey, fontSize = 13.sp)
-        Text(text = nomeFuncionario, color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+        Text(
+            text = nomeFuncionario,
+            color = Color.White,
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold
+        )
         Text(text = "$cargo - Turno: $turno", color = Color.White, fontSize = 13.sp)
     }
 }
+
 //#my_code end
 private data class Segmento(
     val label: String,
@@ -281,6 +309,7 @@ private fun LegendaRow(
         Text("$percent%", fontSize = 11.sp, color = TextSecondary)
     }
 }
+
 //#my_code end
 @Composable
 private fun Donut(
@@ -290,7 +319,17 @@ private fun Donut(
 ) {
     Box(contentAlignment = Alignment.Center, modifier = Modifier.size(tamanho)) {
 
+        val emPreview = LocalInspectionMode.current
+        val progress = remember { Animatable(if (emPreview) 1f else 0f) }
+        LaunchedEffect(total > 0) {
+            if (!emPreview && total > 0) {
+                progress.snapTo(0f)
+                progress.animateTo(1f, tween(900, easing = FastOutSlowInEasing))
+            }
+        }
+
         Canvas(modifier = Modifier.fillMaxSize()) {
+            val p = progress.value
             val stroke = size.minDimension * 0.18f               // espessura do aro
             val arcSize = Size(size.width - stroke, size.height - stroke)
             val topLeft = Offset(stroke / 2, stroke / 2)   // encolhe para o aro não sair do canvas
@@ -305,7 +344,7 @@ private fun Donut(
             } else {
                 var startAngle = -90f                  // começa no topo
                 segmentos.forEach { seg ->
-                    val sweep = 360f * seg.valor / total
+                    val sweep = 360f * seg.valor / total * p
                     drawArc(
                         color = seg.cor,
                         startAngle = startAngle,
@@ -322,7 +361,13 @@ private fun Donut(
 
         // texto central, sobreposto ao Canvas (estão os dois dentro do Box)
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("$total", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+            val totalAnimado = (total * progress.value).roundToInt()
+            Text(
+                "$totalAnimado",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
             Text("total", fontSize = 11.sp, color = TextSecondary)
         }
     }
@@ -583,9 +628,18 @@ fun BarraPesquisa(
 //#my_code
 @Composable
 fun FilterChip(label: String, isSelected: Boolean, onClick: () -> Unit) {
-    val bgColor = if (isSelected) TapLightGreen.copy(alpha = 0.15f) else Color.White
-    val borderColor = if (isSelected) TapBrandDark else CardBorder
-    val textColor = if (isSelected) TapBrandDark else TextSecondary
+    val bgColor by animateColorAsState(
+        if (isSelected) TapLightGreen.copy(alpha = 0.15f) else Color.White,
+        label = "chipBg"
+    )
+    val borderColor by animateColorAsState(
+        if (isSelected) TapBrandDark else CardBorder,
+        label = "chipBorder"
+    )
+    val textColor by animateColorAsState(
+        if (isSelected) TapBrandDark else TextSecondary,
+        label = "chipText"
+    )
 
     Box(
         modifier = Modifier
@@ -633,9 +687,9 @@ fun PillEstado(estado: EstadoTarefa) {
 @Composable
 fun PillPrioridade(prioridade: PrioridadeTarefa) {
     val (fundo, texto, label) = when (prioridade) {
-        PrioridadeTarefa.ALTA   -> Triple(TapAlert.copy(alpha = 0.2f), TapRedText, "Alta")
+        PrioridadeTarefa.ALTA -> Triple(TapAlert.copy(alpha = 0.2f), TapRedText, "Alta")
         PrioridadeTarefa.NORMAL -> Triple(TapBrandDark.copy(alpha = 0.2f), TapBrandDark, "Normal")
-        PrioridadeTarefa.BAIXA  -> Triple(TextSecondary.copy(alpha = 0.2f), TextSecondary, "Baixa")
+        PrioridadeTarefa.BAIXA -> Triple(TextSecondary.copy(alpha = 0.2f), TextSecondary, "Baixa")
     }
     Pill(fundo, texto, label)
 }
@@ -804,6 +858,26 @@ private fun StatusPill(
     )
 }
 //#my_code end
+
+fun Modifier.clicavelComEscala(
+    escalaAoPressionar: Float = 0.97f,
+    onClick: () -> Unit
+): Modifier = composed {
+    val interacao = remember { MutableInteractionSource() }
+    val pressionado by interacao.collectIsPressedAsState()
+    val escala by animateFloatAsState(
+        targetValue = if (pressionado) escalaAoPressionar else 1f,
+        animationSpec = tween(120),
+        label = "escala"
+    )
+    graphicsLayer { scaleX = escala; scaleX = escala }
+        .clickable(
+            interactionSource = interacao,
+            indication = LocalIndication.current,
+            onClick = onClick
+        )
+}
+
 /*@Preview
 @Composable
 fun PreviewWelcomeCard() {
