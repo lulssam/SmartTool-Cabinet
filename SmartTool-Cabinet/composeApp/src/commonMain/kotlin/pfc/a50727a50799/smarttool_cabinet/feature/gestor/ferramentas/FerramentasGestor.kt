@@ -1,5 +1,7 @@
 package pfc.a50727a50799.smarttool_cabinet.feature.gestor.ferramentas
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -49,6 +51,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -225,7 +228,10 @@ private fun FerramentasGestorScreenContent(
                             }
                             if (!fechada) {
                                 items(seccao.ferramentas, key = { it.idFerramenta }) { ferramenta ->
-                                    FerramentaGestorCard(ferramenta)
+                                    FerramentaGestorCard(
+                                        ferramenta,
+                                        modifier = Modifier.animateItem()
+                                    )
                                 }
                             }
                         }
@@ -270,7 +276,10 @@ private fun FerramentasGestorScreenContent(
  * vêm todos da disponibilidade da ferramenta.
  */
 @Composable
-private fun FerramentaGestorCard(ferramenta: FerramentaUi) {
+private fun FerramentaGestorCard(
+    ferramenta: FerramentaUi,
+    modifier: Modifier = Modifier
+) {
     val (corFundo, corTexto, label) = when (ferramenta.disponibilidade) {
         DisponibilidadeFerramenta.DISPONIVEL ->
             Triple(TapLightGreen.copy(alpha = 0.2f), TapBrandDark, "Disponível")
@@ -289,7 +298,7 @@ private fun FerramentaGestorCard(ferramenta: FerramentaUi) {
     }
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(10.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         border = BorderStroke(0.5.dp, CardBorder)
@@ -385,10 +394,19 @@ private fun CategoriaHeader(
             color = TextTitle,
             modifier = Modifier.weight(1f)
         )
-        Text(
-            text = if (fechada) "▸" else "▾",
-            fontSize = 14.sp,
-            color = TextSecondary
+
+        val rotacaoSeta by animateFloatAsState(
+            targetValue = if (fechada) .90f else 0f,
+            animationSpec = tween(300),
+            label = "seta"
+        )
+
+        Icon(
+            painter = painterResource(Res.drawable.chevron_down),
+            contentDescription = null,
+            modifier = Modifier
+                .padding(start = 8.dp)
+                .graphicsLayer {rotationZ = rotacaoSeta}
         )
     }
 }
@@ -428,8 +446,17 @@ private fun AdicionarFerramentaDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column(Modifier.weight(1f)) {
-                        Text("Adicionar Ferramenta", fontWeight = FontWeight.Bold, fontSize = 20.sp, color = Color.Black)
-                        Text("Registar nova ferramenta no inventário", fontSize = 13.sp, color = TextSecondary)
+                        Text(
+                            "Adicionar Ferramenta",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp,
+                            color = Color.Black
+                        )
+                        Text(
+                            "Registar nova ferramenta no inventário",
+                            fontSize = 13.sp,
+                            color = TextSecondary
+                        )
                     }
                     Box(
                         Modifier
@@ -454,7 +481,14 @@ private fun AdicionarFerramentaDialog(
 
                     item { CategoriaDropdown(categorias, categoria, onCategoria) }
 
-                    item { Text("Armário", fontWeight = FontWeight.SemiBold, fontSize = 14.sp, color = Color.Black) }
+                    item {
+                        Text(
+                            "Armário",
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 14.sp,
+                            color = Color.Black
+                        )
+                    }
                     items(armarios, key = { it.id }) { arm ->
                         ArmarioSelecionavel(arm, arm.id == armarioSelecionado) { onArmario(arm.id) }
                     }
@@ -469,7 +503,12 @@ private fun AdicionarFerramentaDialog(
                     enabled = nome.isNotBlank() && categoria.isNotBlank() && armarioSelecionado != null,
                     modifier = Modifier.fillMaxWidth().padding(16.dp).height(48.dp)
                 ) {
-                    Text("+ Adicionar Ferramenta", color = Color.White, fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
+                    Text(
+                        "+ Adicionar Ferramenta",
+                        color = Color.White,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 16.sp
+                    )
                 }
             }
         }
@@ -571,7 +610,12 @@ private fun ArmarioSelecionavel(arm: ArmarioOpcaoUi, selecionado: Boolean, onCli
 @Composable
 private fun EstadoInicialSelector(selecionado: EstadoInicial, onSelect: (EstadoInicial) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Text("Estado inicial", fontWeight = FontWeight.SemiBold, fontSize = 14.sp, color = Color.Black)
+        Text(
+            "Estado inicial",
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 14.sp,
+            color = Color.Black
+        )
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             EstadoInicial.entries.forEach { e ->
                 val sel = e == selecionado
@@ -579,7 +623,11 @@ private fun EstadoInicialSelector(selecionado: EstadoInicial, onSelect: (EstadoI
                     Modifier.weight(1f)
                         .clip(RoundedCornerShape(12.dp))
                         .background(if (sel) TapGreenishBlue.copy(alpha = 0.1f) else Color.White)
-                        .border(1.5.dp, if (sel) TapGreenishBlue else CardBorder, RoundedCornerShape(12.dp))
+                        .border(
+                            1.5.dp,
+                            if (sel) TapGreenishBlue else CardBorder,
+                            RoundedCornerShape(12.dp)
+                        )
                         .clickable { onSelect(e) }
                         .padding(vertical = 12.dp, horizontal = 4.dp),
                     contentAlignment = Alignment.Center

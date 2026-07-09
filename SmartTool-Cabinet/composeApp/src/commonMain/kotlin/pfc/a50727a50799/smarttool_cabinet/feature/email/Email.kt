@@ -37,13 +37,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
@@ -215,11 +218,21 @@ private fun signInCard(
     onBackClick: () -> Unit,
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth().background(
-            Color.White.copy(alpha = 0.9f), shape = CardShape
-        ).border(
-            0.5.dp, Color.Black.copy(alpha = 0.04f), shape = CardShape
-        ).padding(24.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .dropShadow(
+                shape = CardShape, shadow = Shadow(
+                    radius = 10.dp,
+                    spread = 3.dp,
+                    color = Color.Black.copy(alpha = 0.1f),
+                    offset = DpOffset(2.dp, 2.dp)
+                )
+            )
+            .background(
+                Color.White.copy(alpha = 0.9f), shape = CardShape
+            ).border(
+                0.5.dp, Color.Black.copy(alpha = 0.04f), shape = CardShape
+            ).padding(24.dp)
     ) {
         // Voltar
         Row(
