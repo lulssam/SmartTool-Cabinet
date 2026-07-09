@@ -3,6 +3,7 @@ package pfc.a50727a50799.smarttool_cabinet.feature.gestor.ferramentas
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,9 +32,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -61,6 +66,7 @@ import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapRedText
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TextSecondary
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TextTitle
 import smarttoolcabinet.composeapp.generated.resources.Res
+import smarttoolcabinet.composeapp.generated.resources.chevron_down
 import smarttoolcabinet.composeapp.generated.resources.tool
 
 /**
@@ -78,7 +84,9 @@ private fun FerramentasGestorScreenContent(
     onMenuClick: () -> Unit = {},
     onSearchChange: (String) -> Unit = {},
     onFiltroChange: (FiltroFerramenta) -> Unit = {},
-    onAdicionarClick: () -> Unit = {}
+    onAdicionarClick: () -> Unit = {},
+    categoriasFechadas: Set<String> = emptySet(),
+    onAbrirCategoria: (String) -> Unit = {}
 ) {
     when {
         state.isLoading ->
@@ -186,13 +194,20 @@ private fun FerramentasGestorScreenContent(
                         }
                     } else {
                         state.seccoes.forEach { seccao ->
-                            stickyHeader(
-                                key = "header_${seccao.categoria}"
-                            ) {
-                                CategoriaHeader(seccao.categoria, seccao.ferramentas.size)
+                            val fechada = seccao.categoria in categoriasFechadas
+                            stickyHeader(key = "header_${seccao.categoria}") {
+                                CategoriaHeader(
+                                    categoria = seccao.categoria,
+                                    total = seccao.ferramentas.size,
+                                    fechada = fechada,
+                                    onClick = { onAbrirCategoria(seccao.categoria) }
+                                )
                             }
-                            items(seccao.ferramentas, key = { it.idFerramenta }) { ferramenta ->
-                                FerramentaGestorCard(ferramenta)
+
+                            if (!fechada) {
+                                items(seccao.ferramentas, key = { it.idFerramenta }) { ferramenta ->
+                                    FerramentaGestorCard(ferramenta)
+                                }
                             }
                         }
                     }
@@ -303,17 +318,36 @@ private fun FerramentaGestorCard(ferramenta: FerramentaUi) {
  * os cards que passam por baixo enquanto ele fica colado no topo.
  */
 @Composable
-private fun CategoriaHeader(categoria: String, total: Int) {
-    Text(
-        text = "$categoria ($total)",
-        fontSize = 14.sp,
-        fontWeight = FontWeight.Bold,
-        color = TextTitle,
+private fun CategoriaHeader(
+    categoria: String,
+    total: Int,
+    fechada: Boolean,
+    onClick: () -> Unit
+) {
+
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .background(ScreenBg)
-            .padding(vertical = 6.dp)
-    )
+            .clickable { onClick() }
+            .padding(vertical = 6.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = "$categoria ($total)",
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold,
+            color = TextTitle,
+            modifier = Modifier.weight(1f)
+        )
+
+        Icon(
+            painter = painterResource(Res.drawable.chevron_down),
+            contentDescription = null,
+            modifier =
+                if (!fechada) Modifier.rotate(180f) else Modifier
+        )
+    }
 }
 
 /**
@@ -331,12 +365,20 @@ fun FerramentasGestorScreen(
     onMenuClick: () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsState()
+    var categoriasFechadas by remember { mutableStateOf(emptySet<String>()) }
+
     FerramentasGestorScreenContent(
         state = state,
         onMenuClick = onMenuClick,
         onSearchChange = viewModel::onSearchChange,
         onFiltroChange = viewModel::onFiltroChange,
-        onAdicionarClick = {} // todo: adicionar no viewmodel esta função
+        onAdicionarClick = {}, // todo: adicionar no viewmodel esta função,
+        categoriasFechadas = categoriasFechadas,
+        onAbrirCategoria = { cat ->
+            categoriasFechadas =
+                if (cat in categoriasFechadas) categoriasFechadas - cat
+                else categoriasFechadas + cat
+        }
     )
 }
 
