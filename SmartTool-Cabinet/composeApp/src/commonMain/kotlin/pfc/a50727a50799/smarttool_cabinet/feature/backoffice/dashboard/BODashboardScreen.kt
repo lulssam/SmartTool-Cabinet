@@ -92,7 +92,7 @@ private fun BODashboardScreenContent(
                 ) {
                     item {
                         WelcomeCard(
-                            nomeGestor = state.nomeBackOffice,
+                            nomeFuncionario = state.nomeBackOffice,
                             turno = state.turno,
                             cargo = state.cargo,
                             color = TapAlmostGreen
