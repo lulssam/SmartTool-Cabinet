@@ -6,6 +6,20 @@ import pfc.a50727a50799.smarttool_cabinet.feature.gestor.ferramentas.EstadoFerra
 import pfc.a50727a50799.smarttool_cabinet.feature.gestor.ferramentas.FerramentaUi
 import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.dashboard.FerramentaTecnicoUi
 //#my_code
+/**
+ * Representa a informação de uma ferramenta recebida da API.
+ *
+ * Contém os dados necessários para identificar a ferramenta
+ * e conhecer o seu estado, disponibilidade e localização.
+ *
+ * @property idRequisicao Identificador da requisição associada à ferramenta, caso exista.
+ * @property idFerramenta Identificador único da ferramenta.
+ * @property nome Nome da ferramenta.
+ * @property estado Estado atual da ferramenta.
+ * @property categoria Categoria à qual a ferramenta pertence.
+ * @property disponibilidade Indica se a ferramenta está disponível para utilização.
+ * @property localizacao Local onde a ferramenta se encontra.
+ */
 @Serializable
 data class FerramentaDto(
     val idRequisicao: Int? = null,
@@ -16,7 +30,14 @@ data class FerramentaDto(
     val disponibilidade: String,
     val localizacao: String
 )
-
+/**
+ * Converte a ferramenta para o modelo utilizado pela interface do técnico.
+ *
+ * Esta conversão adapta a informação recebida da API para o formato
+ * apresentado no ecrã do técnico.
+ *
+ * @return Objeto utilizado pela interface para apresentar a ferramenta.
+ */
 fun FerramentaDto.toTecnicoUi(): FerramentaTecnicoUi = FerramentaTecnicoUi(
     id = idFerramenta,
     nome = nome,
