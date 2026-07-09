@@ -62,7 +62,6 @@ import pfc.a50727a50799.smarttool_cabinet.ui.theme.AppTheme
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AzulRetirou
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.CardBorder
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.CardShape
-import pfc.a50727a50799.smarttool_cabinet.ui.theme.FieldBg
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.FieldShape
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.FundoAzulRetirou
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.InfoBoxBg
@@ -70,7 +69,6 @@ import pfc.a50727a50799.smarttool_cabinet.ui.theme.PillShape
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.SearchFieldBg
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.SearchFieldText
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapAlert
-import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapAlmostGreen
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapBrandDark
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapLightGreen
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapRedText
@@ -157,7 +155,7 @@ fun TopBar(
 
 @Composable
 fun WelcomeCard(
-    nomeGestor: String,
+    nomeFuncionario: String,
     turno: String,
     cargo: String = "",
     color: Color
@@ -172,7 +170,7 @@ fun WelcomeCard(
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Text(text = "Bem-vindo de volta,", color = TapSurfaceGrey, fontSize = 13.sp)
-        Text(text = nomeGestor, color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+        Text(text = nomeFuncionario, color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold)
         Text(text = "$cargo - Turno: $turno", color = Color.White, fontSize = 13.sp)
     }
 }
