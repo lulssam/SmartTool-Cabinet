@@ -230,7 +230,6 @@ private fun signInPreview() {
  * @param error Mensagem a mostrar se o login falhar. Null = sem erro.
  * @param onEmailChange Avisado sempre que o utilizador escreve no campo de email.
  * @param onPasswordChange Avisado sempre que o utilizador escreve na palavra-passe.
- * @param onLoginClick Chamado quando carrega em "Entrar".
  * @param onBackClick Chamado quando carrega em "Voltar".
  */
 @Composable
