@@ -410,7 +410,25 @@ private fun CategoriaHeader(
         )
     }
 }
-
+/**
+ * Mostra o diálogo para adicionar uma nova ferramenta.
+ *
+ * Permite preencher os dados necessários e confirmar
+ * o registo de uma nova ferramenta no inventário.
+ *
+ * @param nome Nome da ferramenta.
+ * @param categoria Categoria selecionada.
+ * @param categorias Lista de categorias disponíveis.
+ * @param armarios Lista de armários disponíveis.
+ * @param armarioSelecionado Armário atualmente selecionado.
+ * @param estadoSelecionado Estado inicial da ferramenta.
+ * @param onNome Função chamada quando o nome é alterado.
+ * @param onCategoria Função chamada quando a categoria é alterada.
+ * @param onArmario Função chamada quando é selecionado um armário.
+ * @param onEstado Função chamada quando é selecionado o estado inicial.
+ * @param onFechar Função chamada para fechar o diálogo.
+ * @param onAdicionar Função chamada quando o utilizador confirma a criação da ferramenta.
+ */
 @Composable
 private fun AdicionarFerramentaDialog(
     nome: String,
@@ -514,7 +532,13 @@ private fun AdicionarFerramentaDialog(
         }
     }
 }
-
+/**
+ * Mostra um campo para introdução de texto.
+ *
+ * @param label Texto apresentado como identificação do campo.
+ * @param valor Valor atualmente apresentado.
+ * @param onChange Função chamada quando o texto é alterado.
+ */
 @Composable
 private fun CampoTexto(label: String, valor: String, onChange: (String) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -531,7 +555,16 @@ private fun CampoTexto(label: String, valor: String, onChange: (String) -> Unit)
         )
     }
 }
-
+/**
+ * Mostra a lista de categorias disponíveis.
+ *
+ * Permite selecionar a categoria da ferramenta
+ * através de um menu de opções.
+ *
+ * @param categorias Lista de categorias disponíveis.
+ * @param selecionada Categoria atualmente selecionada.
+ * @param onSelecionar Função chamada quando é escolhida uma categoria.
+ */
 @Composable
 private fun CategoriaDropdown(
     categorias: List<String>,
@@ -572,6 +605,16 @@ private fun CategoriaDropdown(
         }
     }
 }
+/**
+ * Mostra um armário que pode ser selecionado.
+ *
+ * Apresenta o nome e os detalhes do armário,
+ * destacando o armário atualmente selecionado.
+ *
+ * @param arm Informação do armário apresentado.
+ * @param selecionado Indica se o armário está selecionado.
+ * @param onClick Função chamada quando o armário é selecionado.
+ */
 
 @Composable
 private fun ArmarioSelecionavel(arm: ArmarioOpcaoUi, selecionado: Boolean, onClick: () -> Unit) {
@@ -606,7 +649,15 @@ private fun ArmarioSelecionavel(arm: ArmarioOpcaoUi, selecionado: Boolean, onCli
         }
     }
 }
-
+/**
+ * Mostra as opções para selecionar o estado inicial da ferramenta.
+ *
+ * Permite escolher o estado que será atribuído
+ * à ferramenta quando for criada.
+ *
+ * @param selecionado Estado atualmente selecionado.
+ * @param onSelect Função chamada quando é selecionado um estado.
+ */
 @Composable
 private fun EstadoInicialSelector(selecionado: EstadoInicial, onSelect: (EstadoInicial) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -645,9 +696,14 @@ private fun EstadoInicialSelector(selecionado: EstadoInicial, onSelect: (EstadoI
     }
 }
 
-
 /**
- * Liga o [FerramentasGestorViewModel] ao [FerramentasGestorScreenContent].
+ * Ecrã principal de gestão de ferramentas.
+ *
+ * Obtém o estado atual através do ViewModel e liga as ações
+ * do utilizador às funções responsáveis por atualizar os dados.
+ *
+ * @param viewModel ViewModel responsável por fornecer os dados das ferramentas.
+ * @param onMenuClick Função chamada quando o utilizador abre o menu lateral.
  */
 @Composable
 fun FerramentasGestorScreen(
@@ -663,7 +719,9 @@ fun FerramentasGestorScreen(
         onCriarFerramenta = viewModel::criarFerramenta
     )
 }
-
+/**
+ * Preview do ecrã Ferramentas para visualização no Android Studio.
+ */
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun Preview() {

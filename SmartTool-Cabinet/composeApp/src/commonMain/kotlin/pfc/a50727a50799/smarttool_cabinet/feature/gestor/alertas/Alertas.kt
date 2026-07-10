@@ -33,6 +33,15 @@ import pfc.a50727a50799.smarttool_cabinet.ui.theme.TextSecondary
 
 
 // #mycode
+/**
+ * Mostra o conteúdo do ecrã de alertas.
+ *
+ * Dependendo do estado atual, apresenta um indicador de carregamento,
+ * uma mensagem de erro ou a lista de alertas disponíveis.
+ *
+ * @param state Informação necessária para apresentar o estado atual do ecrã.
+ * @param onMenuClick Função chamada quando o utilizador abre o menu lateral.
+ */
 @Composable
 private fun AlertasScreenContent(
     state: AlertasUiState,
@@ -96,7 +105,15 @@ private fun AlertasScreenContent(
 
     }
 }
-
+/**
+ * Ecrã principal dos alertas do gestor.
+ *
+ * Obtém o estado atual através do ViewModel e entrega os dados
+ * ao conteúdo visual do ecrã.
+ *
+ * @param viewModel ViewModel responsável por fornecer os dados dos alertas.
+ * @param onMenuClick Função chamada quando o utilizador abre o menu lateral.
+ */
 @Composable
 fun AlertasScreen(
     viewModel: AlertasViewModel = viewModel(),
@@ -108,7 +125,9 @@ fun AlertasScreen(
         onMenuClick = onMenuClick
     )
 }
-
+/**
+ * Preview do ecrã de alertas para visualização no Android Studio.
+ */
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun Preview() {

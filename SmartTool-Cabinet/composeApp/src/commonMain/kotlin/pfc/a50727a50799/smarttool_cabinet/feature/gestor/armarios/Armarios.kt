@@ -36,7 +36,18 @@ import androidx.compose.ui.unit.sp
 import pfc.a50727a50799.smarttool_cabinet.ui.BarraPesquisa
 import pfc.a50727a50799.smarttool_cabinet.ui.FilterChip
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TextSecondary
-
+/**
+ * Mostra o conteúdo do ecrã de Armários.
+ *
+ * Dependendo do estado atual, apresenta um indicador de carregamento,
+ * uma mensagem de erro ou a lista de armários, permitindo pesquisar
+ * e filtrar os resultados apresentados.
+ *
+ * @param state Informação necessária para mostrar o estado atual do ecrã.
+ * @param onSearchChange Função chamada quando o texto da pesquisa é alterado.
+ * @param onFiltroChange Função chamada quando o utilizador seleciona um filtro.
+ * @param onMenuClick Função chamada quando o utilizador abre o menu lateral.
+ */
 @Composable
 private fun ArmariosScreenContent(
     state: ArmariosUiState,
@@ -126,7 +137,15 @@ private fun ArmariosScreenContent(
             }
     }
 }
-
+/**
+ * Ecrã principal de gestão de armários.
+ *
+ * Obtém o estado atual através do ViewModel e liga as ações
+ * do utilizador às funções responsáveis por atualizar os dados.
+ *
+ * @param viewModel ViewModel responsável por fornecer os dados dos armários.
+ * @param onMenuClick Função chamada quando o utilizador abre o menu lateral.
+ */
 @Composable
 fun ArmariosScreen(
     viewModel: ArmariosViewModel = viewModel(),
@@ -141,7 +160,9 @@ fun ArmariosScreen(
         onMenuClick = onMenuClick
     )
 }
-
+/**
+ * Preview do ecrã Armários para visualização no Android Studio.
+ */
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun Preview() {
