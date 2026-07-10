@@ -47,6 +47,7 @@ import pfc.a50727a50799.smarttool_cabinet.ui.WelcomeCard
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AlertOrange
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AlertOrangeText
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.AppTheme
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.AzulReservou
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.CardBorder
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.PillShape
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.ScreenBg
@@ -231,6 +232,19 @@ fun EstatisticaCard(
  */
 @Composable
 fun FerramentaTecnicoCard(ferramenta: FerramentaTecnicoUi) {
+
+    val pillColor = when (ferramenta.estado) {
+        "Em Uso" -> AlertOrange.copy(0.2f)
+        "Reservada" -> AzulReservou.copy(0.2f)
+        else -> TapGreenishBlue
+    }
+
+    val pillTextColor = when (ferramenta.estado) {
+        "Em Uso" -> AlertOrangeText
+        "Reservada" -> AzulReservou
+        else -> TapGreenishBlue
+    }
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
@@ -245,9 +259,11 @@ fun FerramentaTecnicoCard(ferramenta: FerramentaTecnicoUi) {
                 modifier = Modifier.size(42.dp).clip(RoundedCornerShape(8.dp))
                     .background(TapGreenishBlue.copy(alpha = 0.08f)),
                 contentAlignment = Alignment.Center
-            ) {
-                Icon(painter = painterResource(Res.drawable.tool), contentDescription = null, tint = TapBrandDark)
-            }
+            ) { Icon(
+                painter = painterResource(Res.drawable.tool),
+                contentDescription = null,
+                tint = TapGreenishBlue,
+            ) }
 
             Spacer(modifier = Modifier.width(12.dp))
 
@@ -262,12 +278,12 @@ fun FerramentaTecnicoCard(ferramenta: FerramentaTecnicoUi) {
             }
 
             Box(
-                modifier = Modifier.clip(PillShape).background(AlertOrange.copy(alpha = 0.15f))
+                modifier = Modifier.clip(PillShape).background(pillColor)
                     .padding(horizontal = 12.dp, vertical = 2.dp)
             ) {
                 Text(
                     text = ferramenta.estado,
-                    color = AlertOrangeText,
+                    color = pillTextColor,
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold
                 )

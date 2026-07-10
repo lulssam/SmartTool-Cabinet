@@ -56,25 +56,37 @@ class TecnicoViewModel(
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }
 
-            when (val r = ferramentas.getFerramentaTecnico(idTecnico)) {
-                is ApiResult.Success -> {
-                    val lista = r.data.map { it.toTecnicoUi() }
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            nomeTecnico = nomeTecnico,
-                            cargo = "Técnico",
-                            turno = turno,
-                            minhasFerramentas = lista,
-                            ferramentasEmUso = lista.size,
-                            ferramentasParaDevolver = lista.size
-                        )
-                    }
+            // ferramentas já levantadas
+            val listaEmUso = when (val r = ferramentas.getFerramentaTecnico(idTecnico)) {
+                is ApiResult.Success -> r.data.map { it.toTecnicoUi() }
+                is ApiResult.Error -> {
+                    _state.update { it.copy(isLoading = false, error = mensagem(r.error)) }
+                    return@launch
                 }
+            }
 
-                is ApiResult.Error -> _state.update {
-                    it.copy(isLoading = false, error = mensagem(r.error))
+            // ferramentas reservadas para as tarefas do técnico
+            val listaReservadas = when (val r = ferramentas.getReservadasTecnico(idTecnico)) {
+                is ApiResult.Success -> r.data
+                    .filter { it.disponibilidade == "Reservada" } // só as que ainda não foram levantadas
+                    .map { it.toTecnicoUi() }
+                is ApiResult.Error -> {
+                    _state.update { it.copy(isLoading = false, error = mensagem(r.error)) }
+                    return@launch
                 }
+            }
+
+            _state.update {
+                it.copy(
+                    isLoading = false,
+                    nomeTecnico = nomeTecnico,
+                    cargo = "Técnico",
+                    turno = turno,
+                    minhasFerramentas = listaReservadas + listaEmUso, // reservadas aparecem primeiro
+                    ferramentasEmUso = listaEmUso.size,
+                    ferramentasReservadas = listaReservadas.size,
+                    ferramentasParaDevolver = listaEmUso.size
+                )
             }
         }
     }

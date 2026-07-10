@@ -1,5 +1,10 @@
 package pfc.a50727a50799.smarttool_cabinet
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -122,9 +127,20 @@ private fun AppNavHost(
 ) {
 
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = startDestination) {
+    NavHost(
+        navController = navController,
+        startDestination = startDestination,
+        enterTransition = { fadeIn(tween(250)) + slideIntoContainer(SlideDirection.Start, tween(250)) },
+        exitTransition  = { fadeOut(tween(250)) + slideOutOfContainer(SlideDirection.Start, tween(250)) },
+        popEnterTransition = { fadeIn(tween(250)) + slideIntoContainer(
+            SlideDirection.End, tween(250)) },
+        popExitTransition  = { fadeOut(tween(250)) + slideOutOfContainer(
+            SlideDirection.End, tween(250)) },
+    ) {
+
         composable<WelcomeRoute> {
             val viewModel = viewModel { WelcomeViewModel(authRepository) }
+            val scope = rememberCoroutineScope()
 
             val state by viewModel.state.collectAsState()
 
@@ -272,7 +288,8 @@ private fun AppNavHost(
             val viewModel = viewModel {
                 FerramentasGestorViewModel(
                     ferramentas = AppModule.ferramentaRemoteDataSource,
-                    alertas = AppModule.alertaRemoteDataSource
+                    alertas = AppModule.alertaRemoteDataSource,
+                    armarios = AppModule.armarioRemoteDataSource
                 )
             }
             val state by viewModel.state.collectAsState()

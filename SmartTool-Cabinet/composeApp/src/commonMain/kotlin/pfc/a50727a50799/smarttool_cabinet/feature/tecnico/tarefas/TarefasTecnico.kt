@@ -97,7 +97,6 @@ private fun TarefasTecnicoScreenContent(
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
-    // REATIVO: sempre que surge uma mensagem nova, mostra-a no snackbar e limpa.
     LaunchedEffect(state.mensagem) {
         val msg = state.mensagem?.takeIf { it.isNotBlank() } ?: return@LaunchedEffect
         snackbarHostState.showSnackbar(msg)
@@ -252,7 +251,7 @@ private fun TarefaCardTecnico(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
 
-            // cabeçalho (o clique aqui abre/fecha)
+            // cabeçalho
             Row(
                 Modifier.fillMaxWidth().clickable(onClick = onToggle),
                 verticalAlignment = Alignment.CenterVertically,
