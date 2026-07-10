@@ -29,7 +29,18 @@ import pfc.a50727a50799.smarttool_cabinet.ui.theme.AppTheme
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.ScreenBg
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapBrandDark
 
-
+/**
+ * Mostra o conteúdo do dashboard do gestor.
+ *
+ * Dependendo do estado atual, apresenta um indicador de carregamento,
+ * uma mensagem de erro ou a informação principal do gestor, incluindo
+ * estatísticas, estado dos armários e alertas recentes.
+ *
+ * @param state Informação necessária para mostrar o estado atual do ecrã.
+ * @param onVerArmarios Função chamada quando o utilizador escolhe ver todos os armários.
+ * @param onVerAlertas Função chamada quando o utilizador escolhe ver todos os alertas.
+ * @param onMenuClick Função chamada quando o utilizador abre o menu lateral.
+ */
 @Composable
 private fun GestorScreenContent(
     state: GestorUiState,
@@ -87,7 +98,17 @@ private fun GestorScreenContent(
     }
 }
 
-
+/**
+ * Ecrã principal do dashboard do gestor.
+ *
+ * Obtém o estado atual através do ViewModel e entrega os dados
+ * ao conteúdo visual do ecrã.
+ *
+ * @param viewModel ViewModel responsável por fornecer os dados do dashboard.
+ * @param onVerArmarios Função chamada quando o utilizador escolhe ver todos os armários.
+ * @param onVerAlertas Função chamada quando o utilizador escolhe ver todos os alertas.
+ * @param onMenuClick Função chamada quando o utilizador abre o menu lateral.
+ */
 @Composable
 fun GestorScreen(
     viewModel: GestorViewModel = viewModel(),

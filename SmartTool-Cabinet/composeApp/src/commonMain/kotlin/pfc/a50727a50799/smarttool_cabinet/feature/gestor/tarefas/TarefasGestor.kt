@@ -221,7 +221,26 @@ private fun TarefasGestorScreenContent(
 
     }
 }
-
+/**
+ * Mostra o diálogo utilizado para criar uma nova tarefa.
+ *
+ * Permite preencher os dados da tarefa, selecionar o técnico responsável,
+ * definir a prioridade e escolher as ferramentas necessárias antes de
+ * confirmar a criação.
+ *
+ * O estado apresentado é recebido através do [state], enquanto as
+ * interações do utilizador são comunicadas através dos callbacks.
+ *
+ * @param state Estado atual do formulário.
+ * @param onFechar Chamado quando o diálogo deve ser fechado.
+ * @param onTitulo Atualiza o título da tarefa.
+ * @param onDescricao Atualiza a descrição da tarefa.
+ * @param onTecnico Seleciona o técnico responsável.
+ * @param onPrioridade Define a prioridade da tarefa.
+ * @param onQuery Atualiza o texto da pesquisa de ferramentas.
+ * @param onToggleFerramenta Seleciona ou remove uma ferramenta.
+ * @param onAdicionar Confirma a criação da tarefa.
+ */
 @Composable
 private fun NovaTarefaDialog(
     state: TarefasGestorUiState,
@@ -332,7 +351,16 @@ private fun NovaTarefaDialog(
         }
     }
 }
-
+/**
+ * Mostra uma ferramenta com uma caixa de seleção.
+ *
+ * Permite ao utilizador adicionar ou remover a ferramenta da
+ * lista de ferramentas necessárias para a tarefa.
+ *
+ * @param f Ferramenta apresentada.
+ * @param checked Indica se a ferramenta está selecionada.
+ * @param onToggle Chamado quando o estado da seleção muda.
+ */
 @Composable
 private fun FerramentaCheck(f: FerramentaUi, checked: Boolean, onToggle: () -> Unit) {
     Row(
@@ -356,7 +384,15 @@ private fun FerramentaCheck(f: FerramentaUi, checked: Boolean, onToggle: () -> U
     }
 }
 
-
+/**
+ * Campo de texto reutilizável utilizado no formulário de criação
+ * de tarefas.
+ *
+ * @param label Texto apresentado acima do campo.
+ * @param valor Valor atual do campo.
+ * @param onChange Chamado sempre que o texto é alterado.
+ * @param minLines Número mínimo de linhas visíveis.
+ */
 @Composable
 private fun CampoTexto(
     label: String,
@@ -379,7 +415,16 @@ private fun CampoTexto(
         )
     }
 }
-
+/**
+ * Mostra um técnico que pode ser escolhido para executar a tarefa.
+ *
+ * O cartão altera o seu aspeto conforme o técnico esteja disponível
+ * ou ocupado.
+ *
+ * @param t Técnico apresentado.
+ * @param selecionado Indica se o técnico está atualmente selecionado.
+ * @param onClick Chamado quando o técnico é selecionado.
+ */
 @Composable
 private fun TecnicoSelecionavel(t: TecnicoUi, selecionado: Boolean, onClick: () -> Unit) {
     Row(
@@ -405,7 +450,15 @@ private fun TecnicoSelecionavel(t: TecnicoUi, selecionado: Boolean, onClick: () 
         else Pill(AlertOrange.copy(0.2f), AlertOrangeText, "Ocupado")
     }
 }
-
+/**
+ * Permite selecionar a prioridade da nova tarefa.
+ *
+ * Mostra todas as prioridades disponíveis e destaca a que
+ * está atualmente selecionada.
+ *
+ * @param selecionada Prioridade atualmente escolhida.
+ * @param onSelect Chamado quando o utilizador seleciona outra prioridade.
+ */
 @Composable
 private fun PrioridadeSelector(
     selecionada: PrioridadeTarefa,
@@ -439,7 +492,15 @@ private fun PrioridadeSelector(
         }
     }
 }
-
+/**
+ * Mostra um cartão com a informação resumida de uma tarefa.
+ *
+ * Apresenta o título, estado, técnico responsável, prioridade
+ * e as ferramentas necessárias.
+ *
+ * @param t Tarefa a apresentar.
+ * @param modifier Modifier aplicado ao cartão.
+ */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun TarefaCard(
@@ -509,20 +570,38 @@ private fun TarefaCard(
         }
     }
 }
-
+/**
+ * Devolve a cor da borda do cartão de acordo com a prioridade
+ * da tarefa.
+ *
+ * @param prioridade Prioridade da tarefa.
+ * @return Cor utilizada na borda do cartão.
+ */
 private fun corBordaPrioridade(prioridade: PrioridadeTarefa): Color = when (prioridade) {
     PrioridadeTarefa.ALTA -> TapAlert.copy(alpha = 0.25f)
     PrioridadeTarefa.NORMAL -> TapBrandDark.copy(alpha = 0.25f)
     PrioridadeTarefa.BAIXA -> CardBorder
 }
 
-
+/**
+ * Devolve a cor associada a uma prioridade.
+ *
+ * @param p Prioridade da tarefa.
+ * @return Cor representativa da prioridade.
+ */
 private fun corPrioridade(p: PrioridadeTarefa): Color = when (p) {
     PrioridadeTarefa.ALTA -> TapRedText
     PrioridadeTarefa.NORMAL -> TapBrandDark
     PrioridadeTarefa.BAIXA -> TextSecondary
 }
-
+/**
+ * Mostra uma ferramenta num pequeno chip.
+ *
+ * É utilizado para apresentar as ferramentas associadas
+ * a uma tarefa.
+ *
+ * @param nome Nome da ferramenta.
+ */
 @Composable
 private fun ChipFerramenta(nome: String) {
     Row(
@@ -543,7 +622,11 @@ private fun ChipFerramenta(nome: String) {
         Text(nome, fontSize = 12.sp, color = TextSecondary)
     }
 }
-
+/**
+ * Mostra um avatar simples com as iniciais de um utilizador.
+ *
+ * @param nome Nome completo do utilizador.
+ */
 @Composable
 private fun Avatar(nome: String) {
     Box(
@@ -558,7 +641,16 @@ private fun Avatar(nome: String) {
         )
     }
 }
-
+/**
+ * Obtém as iniciais de um nome.
+ *
+ * Se o nome tiver várias palavras, utiliza a primeira letra
+ * da primeira e da última palavra. Caso contrário, utiliza
+ * apenas a primeira letra.
+ *
+ * @param nome Nome completo.
+ * @return Iniciais correspondentes ao nome.
+ */
 private fun iniciais(nome: String): String {
     val partes = nome.trim().split(" ").filter { it.isNotEmpty() }
     return when {

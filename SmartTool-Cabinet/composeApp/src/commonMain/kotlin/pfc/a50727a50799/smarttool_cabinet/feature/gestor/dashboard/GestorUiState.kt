@@ -23,7 +23,9 @@ data class GestorUiState(
     val nomeGestor: String = "",
     val turno: String = ""
 )
-
+/**
+ * Representa as estatísticas das ferramentas apresentadas no dashboard.
+ */
 data class EstatisticasFerramentas(
     val disponiveis: Int,
     val requisitada: Int,
@@ -32,9 +34,13 @@ data class EstatisticasFerramentas(
 ) {
     val total get() = disponiveis + requisitada + indisponivel + manutencao
 }
-
+/**
+ * Estados possíveis de um armário.
+ */
 enum class EstadoArmario { OPERACIONAL, AVARIADO, ALERTA }
-
+/**
+ * Representa a informação resumida de um armário.
+ */
 data class ArmarioUi(
     val nome: String,
     val slotsOcupados: Int,
@@ -43,9 +49,13 @@ data class ArmarioUi(
     val emFalta: Int,
     val estadoArmario: EstadoArmario
 )
-
+/**
+ * Níveis de gravidade de um alerta.
+ */
 enum class Gravidade { CRITICO, AVISO, }
-
+/**
+ * Representa um alerta apresentado no dashboard.
+ */
 data class AlertaUi(
     val titulo: String,
     val descricao: String,
