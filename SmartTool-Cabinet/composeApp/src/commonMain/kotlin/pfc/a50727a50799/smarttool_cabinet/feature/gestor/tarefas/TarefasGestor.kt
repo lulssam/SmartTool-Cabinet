@@ -1,7 +1,10 @@
 package pfc.a50727a50799.smarttool_cabinet.feature.gestor.tarefas
 
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -102,18 +105,17 @@ private fun TarefasGestorScreenContent(
     onToggleFerramenta: (Int) -> Unit = {},
     onAdicionarTarefa: () -> Unit = {}
 ) {
-    when {
-        state.isLoading ->
+
+    Crossfade(
+        targetState = state.isLoading,
+        animationSpec = tween(300),
+        label = "loading"
+    ) { loading ->
+        if (loading) {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
             }
-
-        state.error != null ->
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(state.error, color = MaterialTheme.colorScheme.error)
-            }
-
-        else -> {
+        } else {
             Column(modifier = Modifier.fillMaxSize().background(ScreenBg)) {
                 TopBar(
                     titulo = "Tarefas",
@@ -193,7 +195,10 @@ private fun TarefasGestorScreenContent(
                         }
                     } else {
                         items(state.tarefas, key = { it.id }) { tarefa ->
-                            TarefaCard(tarefa)
+                            TarefaCard(
+                                tarefa,
+                                modifier = Modifier.animateItem()
+                            )
                         }
                     }
                 }
@@ -213,6 +218,7 @@ private fun TarefasGestorScreenContent(
                 }
             }
         }
+
     }
 }
 
@@ -238,7 +244,7 @@ private fun NovaTarefaDialog(
             modifier = Modifier
                 .fillMaxWidth(0.95f)
                 .widthIn(max = 480.dp)
-                .fillMaxHeight(0.9f)
+                .heightIn(max = 620.dp)
         ) {
             Column(Modifier.fillMaxSize()) {
 
@@ -436,9 +442,12 @@ private fun PrioridadeSelector(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun TarefaCard(t: TarefaUi) {
+private fun TarefaCard(
+    t: TarefaUi,
+    modifier: Modifier = Modifier
+) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         border = BorderStroke(1.dp, corBordaPrioridade(t.prioridade))

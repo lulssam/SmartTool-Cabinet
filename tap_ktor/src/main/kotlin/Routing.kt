@@ -760,7 +760,6 @@ fun Application.configureRouting() {
         }
 
         post("/api/funcionarios") {
-
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver")
                 val connection = DriverManager.getConnection(URL, USER, PASSWORD)
@@ -812,6 +811,85 @@ fun Application.configureRouting() {
                     ContentType.Text.Plain,
                     status = HttpStatusCode.InternalServerError
                 )
+            }
+        }
+
+        post("/api/ferramentas") {
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver")
+                val connection = DriverManager.getConnection(URL, USER, PASSWORD)
+                connection.autoCommit = false
+
+                try {
+                    val pedido = call.receive<NovaFerramentaDto>()
+
+                    if (pedido.nome.isBlank() || pedido.categoria.isBlank()) {
+                        call.respond(HttpStatusCode.BadRequest, "Nome e categoria são obrigatórios.")
+                        return@post
+                    }
+                    if (pedido.disponibilidade !in listOf("Disponivel", "Requisitada", "Em Manutencao")) {
+                        call.respond(HttpStatusCode.BadRequest, "Disponibilidade inválida.")
+                        return@post
+                    }
+
+                    // verificar se já existe um tipo com este nome
+                    val stmtProcura = connection.prepareStatement(
+                        "SELECT codigo FROM tipo_ferramenta WHERE nome = ? LIMIT 1"
+                    )
+                    stmtProcura.setString(1, pedido.nome)
+                    val rsProcura = stmtProcura.executeQuery()
+
+                    val codigoTipo: Int
+                    if (rsProcura.next()) {
+                        codigoTipo = rsProcura.getInt("codigo")
+                    } else {
+                        val rsMax = connection.prepareStatement(
+                            "SELECT COALESCE(MAX(codigo), 0) + 1 AS novo FROM tipo_ferramenta"
+                        ).executeQuery()
+                        rsMax.next()
+                        codigoTipo = rsMax.getInt("novo")
+
+                        val stmtTipo = connection.prepareStatement(
+                            "INSERT INTO tipo_ferramenta (codigo, nome, categoria) VALUES (?, ?, ?)"
+                        )
+                        stmtTipo.setInt(1, codigoTipo)
+                        stmtTipo.setString(2, pedido.nome)
+                        stmtTipo.setString(3, pedido.categoria)
+                        stmtTipo.executeUpdate()
+                    }
+
+                    // próxima unidade (nFerramenta) dentro deste tipo
+                    val stmtN = connection.prepareStatement(
+                        "SELECT COALESCE(MAX(nFerramenta), 0) + 1 AS proximo FROM ferramenta WHERE codigo_tipo = ?"
+                    )
+                    stmtN.setInt(1, codigoTipo)
+                    val rsN = stmtN.executeQuery()
+                    rsN.next()
+                    val proximoN = rsN.getInt("proximo")
+
+                    // inserir a unidade nova
+                    val stmtFerr = connection.prepareStatement(
+                        "INSERT INTO ferramenta (codigo_tipo, nFerramenta, estado, disponibilidade, nome_tipo, nArmario) " +
+                                "VALUES (?, ?, 'Operacional', ?, ?, ?)"
+                    )
+                    stmtFerr.setInt(1, codigoTipo)
+                    stmtFerr.setInt(2, proximoN)
+                    stmtFerr.setString(3, pedido.disponibilidade)
+                    stmtFerr.setString(4, pedido.nome)
+                    if (pedido.nArmario != null) stmtFerr.setInt(5, pedido.nArmario)
+                    else stmtFerr.setNull(5, java.sql.Types.INTEGER)
+                    stmtFerr.executeUpdate()
+
+                    connection.commit()
+                    call.respond(HttpStatusCode.Created, "Ferramenta criada (tipo $codigoTipo, unidade $proximoN).")
+                } catch (e: Exception) {
+                    connection.rollback()
+                    throw e
+                } finally {
+                    connection.close()
+                }
+            } catch (e: Exception) {
+                call.respondText("Erro na DB: ${e.message}", ContentType.Text.Plain, status = HttpStatusCode.InternalServerError)
             }
         }
 

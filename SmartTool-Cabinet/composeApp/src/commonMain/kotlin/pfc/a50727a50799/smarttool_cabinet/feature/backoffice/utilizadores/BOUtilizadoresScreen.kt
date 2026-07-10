@@ -2,6 +2,7 @@ package pfc.a50727a50799.smarttool_cabinet.feature.backoffice.utilizadores
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -9,15 +10,23 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.foundation.border
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.jetbrains.compose.resources.painterResource
 import pfc.a50727a50799.smarttool_cabinet.ui.BarraPesquisa
@@ -93,18 +102,18 @@ private fun BOUtilizadoresScreenContent(
                                 color = TextTitle
                             )
                             Text(
-                                "Controlo de permissões e turnos",
+                                "Controlo de permissões",
                                 fontSize = 14.sp,
                                 color = TextSecondary
                             )
                         }
                         Button(
                             onClick = { showCriarDialog = true },
-                            shape = RoundedCornerShape(20.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = TapBrandDark),
+                            shape = RoundedCornerShape(10.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = TapGreenishBlue),
                             modifier = Modifier.height(36.dp)
                         ) {
-                            Text("+ Novo", fontSize = 13.sp, fontWeight = FontWeight.Medium)
+                            Text("+ Novo", fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
                         }
                     }
                 }
@@ -275,14 +284,14 @@ fun UtilizadorDetalheCard(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
+        shape = CardShape,
         colors = CardDefaults.cardColors(containerColor = Color.White),
         border = BorderStroke(1.dp, CardBorder)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Box(
-                    modifier = Modifier.size(42.dp).clip(CircleShape)
+                    modifier = Modifier.size(38.dp).clip(CircleShape)
                         .background(TapLightGreen.copy(alpha = 0.2f)),
                     contentAlignment = Alignment.Center
                 ) {
@@ -293,15 +302,21 @@ fun UtilizadorDetalheCard(
                         color = TapBrandDark
                     )
                 }
-                Spacer(modifier = Modifier.width(12.dp))
+                Spacer(modifier = Modifier.width(10.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = user.nome,
                         fontWeight = FontWeight.Bold,
                         fontSize = 14.sp,
+                        lineHeight = 16.sp,
                         color = TextTitle
                     )
-                    Text(text = user.email, fontSize = 11.sp, color = TextSecondary)
+                    Text(
+                        text = user.email,
+                        fontSize = 11.sp,
+                        lineHeight = 12.sp,
+                        color = TextSecondary
+                    )
                 }
                 val (bgColor, textColor) = when (user.cargoTag) {
                     "Gestor" -> Pair(AlertOrange.copy(alpha = 0.15f), AlertOrangeText)
@@ -309,8 +324,8 @@ fun UtilizadorDetalheCard(
                     else -> Pair(TapSurfaceGrey.copy(alpha = 0.3f), TextSecondary)
                 }
                 Box(
-                    modifier = Modifier.clip(RoundedCornerShape(12.dp)).background(bgColor)
-                        .padding(horizontal = 10.dp, vertical = 4.dp)
+                    modifier = Modifier.clip(PillShape).background(bgColor)
+                        .padding(horizontal = 12.dp, vertical = 1.dp)
                 ) {
                     Text(
                         text = user.cargoTag,
@@ -320,14 +335,33 @@ fun UtilizadorDetalheCard(
                     )
                 }
             }
+
+
             Spacer(modifier = Modifier.height(16.dp))
+
+            HorizontalDivider()
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = "Turno: ${user.turno}", fontSize = 12.sp, color = TextSecondary)
+                    Text(
+                        text = buildAnnotatedString {
+                            withStyle(SpanStyle(color = TextSecondary)) {
+                                append("Turno: ")
+                            }
+                            withStyle(
+                                SpanStyle(
+                                    color = Color.Black,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            ) {
+                                append(user.turno)
+                            }
+                        },
+                        fontSize = 12.sp
+                    )
                     Spacer(modifier = Modifier.width(8.dp))
                     Box(
                         modifier = Modifier.size(8.dp).clip(CircleShape)
@@ -337,7 +371,7 @@ fun UtilizadorDetalheCard(
                     Text(
                         text = if (user.isAtivo) "Ativo" else "Inativo",
                         fontSize = 12.sp,
-                        color = TextSecondary
+                        color = if (user.isAtivo) TapLightGreen else Color.LightGray
                     )
                 }
                 if (user.isAtivo) {
@@ -414,80 +448,215 @@ fun CriarUtilizadorDialog(
     onDismiss: () -> Unit,
     onConfirm: (nome: String, email: String, cargo: String, turno: String) -> Unit
 ) {
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        CriarUtilizadorContent(onFechar = onDismiss, onCriar = onConfirm)
+    }
+}
+
+@Composable
+private fun CriarUtilizadorContent(
+    onFechar: () -> Unit,
+    onCriar: (nome: String, email: String, cargo: String, turno: String) -> Unit
+) {
     var nome by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
-    var cargo by remember { mutableStateOf("TECNICO") }
-    var turno by remember { mutableStateOf("MANHA") }
+    var perfil by remember { mutableStateOf(PerfilOpcao.TECNICO) }
+    var turno by remember { mutableStateOf(TurnoOpcao.MANHA) }
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("Novo Utilizador", fontWeight = FontWeight.Bold) },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                OutlinedTextField(
-                    value = nome,
-                    onValueChange = { nome = it },
-                    label = { Text("Nome Completo") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                OutlinedTextField(
-                    value = email,
-                    onValueChange = { email = it },
-                    label = { Text("Email da TAP") },
-                    modifier = Modifier.fillMaxWidth()
-                )
+    Surface(
+        shape = RoundedCornerShape(20.dp),
+        color = Color.White,
+        modifier = Modifier
+            .fillMaxWidth(0.95f)
+            .widthIn(max = 480.dp)
+            .imePadding()
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState())
+        ) {
+            // titulo + subtitulo + x
 
-                Text("Cargo:", fontSize = 12.sp, color = TextSecondary)
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    listOf("GESTOR", "TECNICO", "BACKOFFICE").forEach { c ->
-                        val isSelected = cargo == c
-                        OutlinedButton(
-                            onClick = { cargo = c },
-                            colors = ButtonDefaults.outlinedButtonColors(
-                                containerColor = if (isSelected) TapBrandDark.copy(alpha = 0.1f) else Color.Transparent,
-                                contentColor = if (isSelected) TapBrandDark else Color.Gray
-                            ),
-                            border = BorderStroke(
-                                1.dp,
-                                if (isSelected) TapBrandDark else Color.LightGray
-                            ),
-                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp),
-                            modifier = Modifier.height(32.dp)
-                        ) { Text(c, fontSize = 10.sp) }
-                    }
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(20.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(Modifier.weight(1f)) {
+                    Text(
+                        "Novo Utilizador",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+                        color = TextTitle
+                    )
+                    Text(
+                        "Adicionar novo funcionário",
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 13.sp,
+                        color = TextSecondary
+                    )
                 }
 
-                Text("Turno:", fontSize = 12.sp, color = TextSecondary)
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    listOf("MANHA", "TARDE", "NOITE").forEach { t ->
-                        val isSelected = turno == t
-                        OutlinedButton(
-                            onClick = { turno = t },
-                            colors = ButtonDefaults.outlinedButtonColors(
-                                containerColor = if (isSelected) TapLightGreen.copy(alpha = 0.2f) else Color.Transparent,
-                                contentColor = if (isSelected) TapBrandDark else Color.Gray
-                            ),
-                            border = BorderStroke(
-                                1.dp,
-                                if (isSelected) TapBrandDark else Color.LightGray
-                            ),
-                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp),
-                            modifier = Modifier.height(32.dp)
-                        ) { Text(t, fontSize = 10.sp) }
-                    }
+                Box(
+                    modifier = Modifier.size(34.dp).clip(RoundedCornerShape(11.dp))
+                        .background(TextSecondary.copy(alpha = 0.2f))
+                        .clickable(onClick = onFechar),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("x", color = TextSecondary, fontSize = 16.sp)
                 }
             }
-        },
-        confirmButton = {
-            Button(
-                onClick = { onConfirm(nome, email, cargo, turno) },
-                colors = ButtonDefaults.buttonColors(containerColor = TapBrandDark),
-                enabled = nome.isNotBlank() && email.isNotBlank()
-            ) { Text("Criar") }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancelar", color = Color.Gray) }
-        },
-        containerColor = Color.White
-    )
+
+            HorizontalDivider()
+
+            // forms
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                CampoUtilizador("Nome completo", nome, { nome = it })
+                CampoUtilizador(
+                    "Email empresarial",
+                    email,
+                    { email = it },
+                    placeholder = "nome@tap.pt"
+                )
+
+                SeletorSegmentado("Perfil", PerfilOpcao.entries, perfil, { it.label }) {
+                    perfil = it
+                }
+                SeletorSegmentado("Turno", TurnoOpcao.entries, turno, { it.label }) { turno = it }
+
+                Button(
+                    onClick = { onCriar(nome, email, perfil.valor, turno.valor) },
+                    colors = ButtonDefaults.buttonColors(containerColor = TapGreenishBlue),
+                    shape = RoundedCornerShape(10.dp),
+                    enabled = nome.isNotBlank() && email.isNotBlank(),
+                    modifier = Modifier.fillMaxWidth().height(48.dp)
+                ) {
+                    Text(
+                        "Criar Utilizador",
+                        color = Color.White,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 16.sp
+                    )
+                }
+            }
+        }
+    }
 }
+
+@Composable
+private fun CampoUtilizador(
+    label: String, valor: String, onValor: (String) -> Unit, placeholder: String? = null
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Text(label, fontWeight = FontWeight.SemiBold, fontSize = 14.sp, color = TextTitle)
+        TextField(
+            value = valor, onValueChange = onValor, singleLine = true,
+            placeholder = placeholder?.let { texto ->
+                @Composable {
+                    Text(
+                        texto,
+                        color = TextSecondary
+                    )
+                }
+            },
+            modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp),
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = FieldBg,
+                unfocusedContainerColor = FieldBg,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent
+            )
+        )
+    }
+}
+
+@Composable
+private fun <T> SeletorSegmentado(
+    titulo: String, opcoes: List<T>, selecionada: T, label: (T) -> String, onSelecionar: (T) -> Unit
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Text(titulo, fontWeight = FontWeight.SemiBold, fontSize = 14.sp, color = TextTitle)
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            opcoes.forEach { opcao ->
+                val sel = opcao == selecionada
+                Box(
+                    modifier = Modifier.weight(1f).clip(RoundedCornerShape(12.dp))
+                        .background(if (sel) TapGreenishBlue.copy(alpha = 0.1f) else Color.White)
+                        .border(
+                            1.5.dp,
+                            if (sel) TapGreenishBlue else CardBorder,
+                            RoundedCornerShape(12.dp)
+                        )
+                        .clickable { onSelecionar(opcao) }
+                        .padding(vertical = 12.dp, horizontal = 4.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        label(opcao), fontWeight = FontWeight.SemiBold, fontSize = 14.sp,
+                        color = if (sel) TapGreenishBlue else Color.Black, maxLines = 1
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun CriarUtilizadorDialogPreview() {
+    AppTheme {
+        CriarUtilizadorDialog(
+            onDismiss = {},
+            onConfirm = { _, _, _, _ -> }
+        )
+    }
+}
+
+/*
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+private fun BOUtilizadoresScreenPreview() {
+    AppTheme {
+        BOUtilizadoresScreenContent(
+            state = BOUtilizadoresUiState(
+                isLoading = false,               // sem isto mostra só o spinner
+                utilizadores = listOf(
+                    UtilizadorListaUi(
+                        1,
+                        "Carlos Gonçalves",
+                        "carlos.goncalves@tap.pt",
+                        "CG",
+                        "Técnico",
+                        "Manhã",
+                        true
+                    ),
+                    UtilizadorListaUi(
+                        2,
+                        "Gonçalo Charneca",
+                        "goncalo.charneca@tap.pt",
+                        "GC",
+                        "Gestor",
+                        "Manhã",
+                        true
+                    ),
+                    UtilizadorListaUi(
+                        3,
+                        "Matilde Valente",
+                        "matilde.valente@tap.pt",
+                        "MV",
+                        "Back Office",
+                        "Manhã",
+                        true
+                    ),
+                ),
+            ),
+            onMenuClick = {}, onSearchChange = {}, onFiltroChange = {},
+            onNovoClick = { _, _, _, _ -> }, onAlterarCargo = { _, _ -> },
+            onAlterarTurno = { _, _ -> }, onDesativar = {}, onClearError = {},
+        )
+    }
+}*/
