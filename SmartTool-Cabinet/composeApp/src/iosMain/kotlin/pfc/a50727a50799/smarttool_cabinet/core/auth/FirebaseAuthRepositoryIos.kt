@@ -32,6 +32,13 @@ class FirebaseAuthRepositoryIos(
     private val scope = CoroutineScope(Dispatchers.Default)
 
     /**
+     * O accessToken da Google, guardado a partir do ecrã de login (lado Swift).
+     * No iOS o Firebase precisa do idToken E do accessToken para o login com Google;
+     * no Android bastava o idToken.
+     */
+    var googleAccessToken: String? = null
+
+    /**
      * Tenta iniciar sessão com email e password no Firebase e, se resultar,
      * vai ao backend buscar o cargo para montar a [Session].
      *
@@ -57,7 +64,7 @@ class FirebaseAuthRepositoryIos(
      */
     override suspend fun loginGoogle(idToken: String): AuthResult<Session> {
         return try {
-            val credential = GoogleAuthProvider.credential(idToken, null)
+            val credential = GoogleAuthProvider.credential(idToken, googleAccessToken)
             val user = auth.signInWithCredential(credential).user
             buildSession(user)
         } catch (e: Exception) {

@@ -1,5 +1,6 @@
 import SwiftUI
-import FirebaseCore 
+import FirebaseCore
+import GoogleSignIn
 
 @main
 struct iOSApp: App {
@@ -11,8 +12,12 @@ struct iOSApp: App {
     }
 
     var body: some Scene {
-        WindowGroup {
-            ContentView()
+            WindowGroup {
+                ContentView()
+                    .onOpenURL { url in
+                        // Deixa o GoogleSignIn processar o link de retorno do login.
+                        GIDSignIn.sharedInstance.handle(url)
+                    }
+            }
         }
-    }
 }
