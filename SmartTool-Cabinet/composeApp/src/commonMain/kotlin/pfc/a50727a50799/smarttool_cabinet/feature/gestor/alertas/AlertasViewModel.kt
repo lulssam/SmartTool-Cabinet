@@ -11,7 +11,14 @@ import pfc.a50727a50799.smarttool_cabinet.core.alerta.AlertaRemoteDataSource
 import pfc.a50727a50799.smarttool_cabinet.core.alerta.toUi
 import pfc.a50727a50799.smarttool_cabinet.core.network.ApiError
 import pfc.a50727a50799.smarttool_cabinet.core.network.ApiResult
-
+/**
+ * ViewModel responsável por gerir os alertas do gestor.
+ *
+ * Obtém os alertas através da camada de dados e atualiza o estado
+ * utilizado pelo ecrã de alertas.
+ *
+ * @param alertas Fonte de dados responsável por obter os alertas.
+ */
 class AlertasViewModel(
     private val alertas: AlertaRemoteDataSource
 ) : ViewModel() {
@@ -24,7 +31,12 @@ class AlertasViewModel(
     init {
         carregar()
     }
-
+    /**
+     * Carrega a lista de alertas.
+     *
+     * Obtém os alertas da API, converte-os para o modelo da interface
+     * e atualiza o estado do ecrã.
+     */
     fun carregar() {
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }

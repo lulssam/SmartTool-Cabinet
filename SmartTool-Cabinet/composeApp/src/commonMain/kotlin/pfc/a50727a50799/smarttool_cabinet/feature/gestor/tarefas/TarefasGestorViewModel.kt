@@ -93,7 +93,12 @@ class TarefasGestorViewModel(
         }
         _state.update { it.copy(tarefas = visiveis) }
     }
-
+    /**
+     * Abre o diálogo para criar uma nova tarefa.
+     *
+     * Além de mostrar o formulário, carrega do backend as ferramentas disponíveis
+     * e a lista de técnicos para que possam ser selecionados.
+     */
     fun abrirNovaTarefa() {
         _state.update { it.copy(mostrarNovaTarefa = true) }
         viewModelScope.launch {
@@ -117,28 +122,58 @@ class TarefasGestorViewModel(
             _state.update { it.copy(ferramentasDisponiveis = ferrs, tecnicos = tecs) }
         }
     }
-
+    /**
+     * Fecha o diálogo de criação de tarefa.
+     */
     fun fecharNovaTarefa() {
         _state.update { it.copy(mostrarNovaTarefa = false) }
     }
-
+    /**
+     * Atualiza o título da nova tarefa.
+     */
     fun onTituloChange(newTitulo: String) = _state.update { it.copy(titulo = newTitulo) }
+    /**
+     * Atualiza a descrição da nova tarefa.
+     */
     fun onDescricaoChange(newDescricao: String) =
         _state.update { it.copy(descricao = newDescricao) }
+    /**
+     * Guarda o técnico atualmente selecionado.
+     */
 
     fun onTecnicoSelecionado(newTecnico: Int?) =
         _state.update { it.copy(tecnicoSelecionado = newTecnico) }
-
+    /**
+     * Atualiza a prioridade escolhida para a nova tarefa.
+     */
     fun onNovaPrioridade(p: PrioridadeTarefa) = _state.update { it.copy(novaPrioridade = p) }
+
+    /**
+     * Atualiza o texto de pesquisa das ferramentas.
+     *
+     * O ecrã utiliza este valor para filtrar a lista apresentada ao utilizador.
+     */
     fun onQueryFerramentasChange(newQuery: String) =
         _state.update { it.copy(queryFerramentas = newQuery) }
+    /**
+     * Adiciona ou remove uma ferramenta da seleção.
+     *
+     * Se a ferramenta já estiver selecionada é removida; caso contrário,
+     * passa a fazer parte da nova tarefa.
+     */
 
     fun onToggleFerramenta(id: Int) = _state.update {
         val novo = if (id in it.ferramentasSelecionadas) it.ferramentasSelecionadas - id
         else it.ferramentasSelecionadas + id
         it.copy(ferramentasSelecionadas = novo)
     }
-
+    /**
+     * Cria uma nova tarefa no backend.
+     *
+     * Valida os dados obrigatórios, constrói o DTO com a informação do formulário
+     * e envia o pedido ao servidor. Em caso de sucesso, fecha o diálogo e
+     * recarrega a lista de tarefas.
+     */
     fun onAdicionarTarefa() {
         val s = _state.value
         val idTecnico = s.tecnicoSelecionado ?: return

@@ -131,7 +131,14 @@ private fun HistoricoGestorScreenContent(
         }
     }
 }
-
+/**
+ * Mostra um movimento do histórico num cartão.
+ *
+ * Adapta automaticamente o ícone, as cores e o texto apresentados
+ * consoante o tipo de movimento realizado sobre a ferramenta.
+ *
+ * @param item Informação do movimento a apresentar.
+ */
 @Composable
 private fun HistoricoItemCardGestor(item: HistoricoItemUi) {
     // estilo por tipo: ícone, cor da ação, fundo do ícone, texto
