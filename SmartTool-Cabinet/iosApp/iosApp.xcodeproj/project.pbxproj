@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		B761A94C3001357A009AA2A5 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = B761A94B3001357A009AA2A5 /* FirebaseAuth */; };
+		B761A94E3001357A009AA2A5 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = B761A94D3001357A009AA2A5 /* FirebaseCore */; };
+		B761A95130013597009AA2A5 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = B761A95030013597009AA2A5 /* GoogleSignIn */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		FEC64565BA7FA3C9B47C0D42 /* SmartToolCabinet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SmartToolCabinet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -41,6 +47,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B761A94E3001357A009AA2A5 /* FirebaseCore in Frameworks */,
+				B761A94C3001357A009AA2A5 /* FirebaseAuth in Frameworks */,
+				B761A95130013597009AA2A5 /* GoogleSignIn in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -52,6 +61,7 @@
 			children = (
 				C3C6BCA0B21B72D4BEF39506 /* Configuration */,
 				FCDE5F4702C05EDA6C1F3F22 /* iosApp */,
+				B748F47E3001277C0096113C /* Frameworks */,
 				5FF1E2ED1C14929651C26935 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -62,6 +72,13 @@
 				FEC64565BA7FA3C9B47C0D42 /* SmartToolCabinet.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		B748F47E3001277C0096113C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -85,6 +102,9 @@
 			);
 			name = iosApp;
 			packageProductDependencies = (
+				B761A94B3001357A009AA2A5 /* FirebaseAuth */,
+				B761A94D3001357A009AA2A5 /* FirebaseCore */,
+				B761A95030013597009AA2A5 /* GoogleSignIn */,
 			);
 			productName = iosApp;
 			productReference = FEC64565BA7FA3C9B47C0D42 /* SmartToolCabinet.app */;
@@ -114,6 +134,10 @@
 			);
 			mainGroup = 03FA3BD7CD93A0C551BE386E;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B761A94A3001357A009AA2A5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				B761A94F30013596009AA2A5 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 5FF1E2ED1C14929651C26935 /* Products */;
 			projectDirPath = "";
@@ -370,6 +394,43 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B761A94A3001357A009AA2A5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.16.0;
+			};
+		};
+		B761A94F30013596009AA2A5 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.2.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B761A94B3001357A009AA2A5 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B761A94A3001357A009AA2A5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		B761A94D3001357A009AA2A5 /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B761A94A3001357A009AA2A5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		B761A95030013597009AA2A5 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B761A94F30013596009AA2A5 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 94626142176F7AC7E2EAD7F7 /* Project object */;
 }

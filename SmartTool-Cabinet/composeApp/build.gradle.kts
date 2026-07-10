@@ -37,6 +37,7 @@ kotlin {
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
+            implementation(libs.gitlive.firebase.auth)
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)

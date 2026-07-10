@@ -1,8 +1,8 @@
 package pfc.a50727a50799.smarttool_cabinet.di
 
 import pfc.a50727a50799.smarttool_cabinet.core.auth.AuthRepository
+import pfc.a50727a50799.smarttool_cabinet.core.auth.FirebaseAuthRepositoryIos
 import pfc.a50727a50799.smarttool_cabinet.core.auth.data.funcionario.FuncionarioRemoteDataSource
-import pfc.a50727a50799.smarttool_cabinet.core.auth.iOSAuthRepository
 
 /**
  * No iOS o backend é alcançado pelo IP da máquina de desenvolvimento na rede local.
@@ -18,4 +18,4 @@ actual val baseUrl: String = "http://192.168.0.212:8080" // ip do computador a c
  * @return O repositório de autenticação usado no iOS.
  */
 actual fun provideAuthRepository(dataSource: FuncionarioRemoteDataSource): AuthRepository =
-    iOSAuthRepository(dataSource)
+    FirebaseAuthRepositoryIos(dataSource)
