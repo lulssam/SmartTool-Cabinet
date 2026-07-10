@@ -199,8 +199,10 @@ private fun AppNavHost(
                 onBackClick = { navController.popBackStack() },
                 onGoogleClick = {
                     scope.launch {
-                        val idToken = googleSignIn()
-                        viewModel.onGoogleToken(idToken)
+                        try {
+                            val idToken = googleSignIn()
+                            viewModel.onGoogleToken(idToken)
+                        } catch (e: Exception) {}
                     }
                 }
             )

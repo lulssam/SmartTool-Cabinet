@@ -20,3 +20,5 @@ node_modules/
 
 composeApp/google-services.json
 bin/
+
+iosApp/iosApp/GoogleService-Info.plist
