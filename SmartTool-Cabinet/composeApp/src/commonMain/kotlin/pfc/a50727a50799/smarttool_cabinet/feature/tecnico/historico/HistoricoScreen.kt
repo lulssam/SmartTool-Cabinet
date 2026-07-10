@@ -39,7 +39,15 @@ import smarttoolcabinet.composeapp.generated.resources.Res
 import smarttoolcabinet.composeapp.generated.resources.alert_triangle
 import smarttoolcabinet.composeapp.generated.resources.check
 import smarttoolcabinet.composeapp.generated.resources.tool
-
+/**
+ * Mostra o conteúdo do histórico de movimentos do técnico.
+ *
+ * Dependendo do estado atual, apresenta um indicador de carregamento,
+ * uma mensagem de erro ou a lista de movimentos agrupados por data.
+ *
+ * @param state Informação necessária para mostrar o estado atual do ecrã.
+ * @param onMenuClick Função chamada quando o utilizador abre o menu lateral.
+ */
 @Composable
 private fun HistoricoScreenContent(
     state: HistoricoUiState,
@@ -119,7 +127,14 @@ private fun HistoricoScreenContent(
         }
     }
 }
-
+/**
+ * Mostra um cartão correspondente a um movimento do histórico.
+ *
+ * O cartão apresenta a ferramenta envolvida, o tipo de movimento,
+ * o respetivo detalhe e a hora em que ocorreu.
+ *
+ * @param item Informação do movimento apresentada no cartão.
+ */
 @Composable
 private fun HistoricoItemCardTecnico(item: HistoricoItemUi) {
     data class Estilo(
@@ -148,7 +163,15 @@ private fun HistoricoItemCardTecnico(item: HistoricoItemUi) {
         hora = item.hora
     )
 }
-
+/**
+ * Ecrã principal do histórico do técnico.
+ *
+ * Obtém o estado atual através do ViewModel e entrega os dados
+ * ao conteúdo visual do ecrã.
+ *
+ * @param viewModel ViewModel responsável por fornecer os dados do histórico.
+ * @param onMenuClick Função chamada quando o utilizador abre o menu lateral.
+ */
 @Composable
 fun HistoricoScreen(
     viewModel: HistoricoViewModel = viewModel(),
