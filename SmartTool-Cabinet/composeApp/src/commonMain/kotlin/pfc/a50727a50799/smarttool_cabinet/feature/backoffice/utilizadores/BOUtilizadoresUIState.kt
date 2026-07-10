@@ -11,6 +11,14 @@ enum class FiltroUtilizador(val label: String) {
     TECNICO("Técnico"),
     BACK_OFFICE("Back Office")
 }
+
+
+enum class PerfilOpcao(val label: String, val valor: String) {
+    TECNICO("Técnico", "TECNICO"), GESTOR("Gestor", "GESTOR"), BACKOFFICE("Back Office", "BACKOFFICE")
+}
+enum class TurnoOpcao(val label: String, val valor: String) {
+    MANHA("Manhã", "MANHA"), TARDE("Tarde", "TARDE"), NOITE("Noite", "NOITE")
+}
 /**
  * Representa um utilizador apresentado na lista de gestão de utilizadores.
  *
@@ -22,14 +30,6 @@ enum class FiltroUtilizador(val label: String) {
  * @property turno Turno associado ao utilizador.
  * @property isAtivo Indica se a conta do utilizador está ativa.
  */
-
-enum class PerfilOpcao(val label: String, val valor: String) {
-    TECNICO("Técnico", "TECNICO"), GESTOR("Gestor", "GESTOR"), BACKOFFICE("Back Office", "BACKOFFICE")
-}
-enum class TurnoOpcao(val label: String, val valor: String) {
-    MANHA("Manhã", "MANHA"), TARDE("Tarde", "TARDE"), NOITE("Noite", "NOITE")
-}
-
 data class UtilizadorListaUi(
     val id: Int,
     val nome: String,

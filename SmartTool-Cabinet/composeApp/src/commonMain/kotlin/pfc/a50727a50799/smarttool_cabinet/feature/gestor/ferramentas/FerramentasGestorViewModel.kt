@@ -126,7 +126,22 @@ class FerramentasGestorViewModel(
         _state.update { it.copy(filtroAtual = filtro) }
         recomputarSeccoes()
     }
-
+    /**
+     * Cria uma nova ferramenta no sistema.
+     *
+     * Envia os dados introduzidos pelo utilizador para o backend e,
+     * caso a operação seja concluída com sucesso, volta a carregar
+     * a lista de ferramentas para atualizar o ecrã.
+     *
+     * Enquanto o pedido está em execução, o estado de carregamento é ativado.
+     * Se ocorrer um erro, este é convertido numa mensagem legível e
+     * apresentado ao utilizador.
+     *
+     * @param nome Nome da ferramenta.
+     * @param categoria Categoria a que a ferramenta pertence.
+     * @param nArmario Identificador do armário onde a ferramenta ficará armazenada.
+     * @param disponibilidade Estado inicial da ferramenta.
+     */
     fun criarFerramenta(
         nome: String,
         categoria: String,
