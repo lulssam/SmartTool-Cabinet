@@ -67,6 +67,7 @@ import smarttoolcabinet.composeapp.generated.resources.lock
 import smarttoolcabinet.composeapp.generated.resources.mail
 import smarttoolcabinet.composeapp.generated.resources.tap_logo
 
+
 /**
  * Apresenta o ecrã de autenticação por email.
  *
