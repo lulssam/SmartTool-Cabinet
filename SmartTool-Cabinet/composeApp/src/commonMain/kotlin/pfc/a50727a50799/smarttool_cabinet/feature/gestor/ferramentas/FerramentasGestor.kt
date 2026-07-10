@@ -368,6 +368,7 @@ private fun FerramentaGestorCard(
     }
 }
 
+// #my_code
 /**
  * O cabeçalho de cada categoria. Clicável para abrir/fechar a secção;
  * a setinha muda entre ▾ (aberta) e ▸ (fechada).
@@ -410,6 +411,7 @@ private fun CategoriaHeader(
         )
     }
 }
+
 /**
  * Mostra o diálogo para adicionar uma nova ferramenta.
  *
@@ -532,6 +534,8 @@ private fun AdicionarFerramentaDialog(
         }
     }
 }
+
+// #my_code end
 /**
  * Mostra um campo para introdução de texto.
  *
@@ -696,6 +700,7 @@ private fun EstadoInicialSelector(selecionado: EstadoInicial, onSelect: (EstadoI
     }
 }
 
+// #my_code
 /**
  * Ecrã principal de gestão de ferramentas.
  *
@@ -719,6 +724,8 @@ fun FerramentasGestorScreen(
         onCriarFerramenta = viewModel::criarFerramenta
     )
 }
+
+// #my_code
 /**
  * Preview do ecrã Ferramentas para visualização no Android Studio.
  */

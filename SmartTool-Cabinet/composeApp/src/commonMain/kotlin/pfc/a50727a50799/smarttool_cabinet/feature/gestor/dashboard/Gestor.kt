@@ -29,6 +29,7 @@ import pfc.a50727a50799.smarttool_cabinet.ui.theme.AppTheme
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.ScreenBg
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapBrandDark
 
+// #my_code
 /**
  * Mostra o conteúdo do dashboard do gestor.
  *
@@ -124,6 +125,8 @@ fun GestorScreen(
         onMenuClick = onMenuClick
     )
 }
+
+// #my_code end
 
 /**
  * Preview do ecrã Gestor para visualização no Android Studio.
