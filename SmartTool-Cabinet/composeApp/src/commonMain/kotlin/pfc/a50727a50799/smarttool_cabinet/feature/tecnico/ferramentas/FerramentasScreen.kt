@@ -60,7 +60,21 @@ import pfc.a50727a50799.smarttool_cabinet.ui.theme.TextSecondary
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TextTitle
 import smarttoolcabinet.composeapp.generated.resources.Res
 import smarttoolcabinet.composeapp.generated.resources.tool
-
+/**
+ * Esta é a parte visual do ecrã de ferramentas.
+ * Não sabe nada sobre a lógica da aplicação — apenas mostra o que recebe e avisa-nos
+ * quando o utilizador faz alguma coisa, como pesquisar ou tocar num botão.
+ *
+ * @param state Toda a informação atual que o ecrã precisa para se desenhar (lista de ferramentas, se está a carregar, erros, etc.).
+ * @param onMenuClick Chamado quando o utilizador toca no botão do menu principal.
+ * @param onSearchChange Chamado sempre que o utilizador escreve uma letra na barra de pesquisa.
+ * @param onFiltroChange Chamado quando o utilizador escolhe uma categoria diferente para filtrar as ferramentas.
+ * @param onTemplateClick Chamado quando o utilizador toca num conjunto de ferramentas (template) para ver ou esconder os detalhes.
+ * @param onDevolverClick Chamado quando o utilizador toca no botão para devolver uma ferramenta.
+ * @param onMauEstadoClick Chamado quando o utilizador avisa que uma ferramenta está estragada.
+ * @param onRequisitarClick Chamado quando o utilizador pede para começar a usar uma ferramenta.
+ * @param onClearError Chamado quando o utilizador fecha a janela de erro.
+ */
 @Composable
 private fun FerramentasScreenContent(
     state: FerramentasUiState,
@@ -205,7 +219,13 @@ private fun FerramentasScreenContent(
         }
     }
 }
-
+/**
+* Liga o ecrã visual das ferramentas à lógica da aplicação (ViewModel).
+* Mantém o ecrã sempre atualizado com as últimas informações e passa as ações do utilizador para o gestor.
+*
+* @param viewModel O gestor que guarda as ferramentas, pesquisa a informação e comunica com o servidor.
+* @param onMenuClick Chamado quando o utilizador quer abrir o menu lateral da aplicação.
+*/
 @Composable
 fun FerramentasScreen(
     viewModel: FerramentasViewModel = viewModel(),
@@ -230,7 +250,16 @@ fun FerramentasScreen(
         onClearError = viewModel::limparErro
     )
 }
-
+/**
+ * O cartão visual que mostra os detalhes de uma única ferramenta na lista principal.
+ * Ele muda a sua aparência para mostrar se a ferramenta está livre, ocupada ou estragada,
+ * e mostra apenas os botões que fazem sentido naquele momento.
+ *
+ * @param ferramenta Toda a informação da ferramenta que queremos mostrar (nome, estado, etc.).
+ * @param onDevolverClick Chamado quando o utilizador toca no botão de "Devolver".
+ * @param onMauEstadoClick Chamado quando o utilizador toca no botão para reportar que a ferramenta tem defeitos.
+ * @param onRequisitarClick Chamado quando o utilizador toca no botão para pedir a ferramenta.
+ */
 @Composable
 fun FerramentaItemCard(
     ferramenta: FerramentaListaUi,
@@ -348,7 +377,14 @@ fun FerramentaItemCard(
         }
     }
 }
-
+/**
+ * Mostra um conjunto pré-definido de ferramentas que costumam ser usadas juntas (template).
+ * O utilizador pode clicar neste cartão para expandir a lista e ver exatamente que
+ * ferramentas estão incluídas neste pacote antes de as pedir todas de uma vez.
+ *
+ * @param template A informação deste conjunto (como o nome e a lista de ferramentas que inclui).
+ * @param onClick Chamado quando o utilizador toca em qualquer parte do cartão para o abrir ou fechar.
+ */
 @Composable
 fun TemplateCard(template: TemplateDiarioUi, onClick: () -> Unit) {
     Card(
@@ -428,7 +464,9 @@ fun TemplateCard(template: TemplateDiarioUi, onClick: () -> Unit) {
     }
 }
 
-// O Preview injeta os dados mock no Content, deixando o ViewModel totalmente isolado!
+/**
+ * Preview do ecrã para visualização no Android Studio.
+ */
 @Preview(showBackground = true)
 @Composable
 private fun PreviewFerramentas() {
