@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "994738477318",
+    "project_id": "tap-ferramentas",
+    "storage_bucket": "tap-ferramentas.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:994738477318:android:330c0044f455ff1a866687",
+        "android_client_info": {
+          "package_name": "pfc.a50727a50799.smarttool_cabinet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "994738477318-bdkhkpi251das0p8f8k0sr0us6v97ntk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "pfc.a50727a50799.smarttool_cabinet",
+            "certificate_hash": "f4eabfb08f6ef253cc08192864737598aa901de4"
+          }
+        },
+        {
+          "client_id": "994738477318-tur4unh2ed1r5pe48tkekq21oh63hc2q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "pfc.a50727a50799.smarttool_cabinet",
+            "certificate_hash": "5277eaec617c561ff5de1d7001d5fccd613d5961"
+          }
+        },
+        {
+          "client_id": "994738477318-gbhe1a47gn4dkto9brtrnrt55i2g3s64.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAUzLZQbsVFzUHy30UKCDplKUqnfiIQW6A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "994738477318-gbhe1a47gn4dkto9brtrnrt55i2g3s64.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
