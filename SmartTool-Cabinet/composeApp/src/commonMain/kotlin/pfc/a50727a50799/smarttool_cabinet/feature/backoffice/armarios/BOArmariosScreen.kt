@@ -23,7 +23,18 @@ import pfc.a50727a50799.smarttool_cabinet.ui.FilterChip
 import pfc.a50727a50799.smarttool_cabinet.ui.TopBar
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.ScreenBg
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TextSecondary
-
+/**
+ * Parte visual do ecrã de gestão de armários do Backoffice.
+ *
+ * Apenas apresenta a informação recebida através do estado e encaminha
+ * as ações do utilizador, como a pesquisa, alteração de filtros e abertura
+ * do menu lateral.
+ *
+ * @param state Estado atual do ecrã.
+ * @param onSearchChange Chamado quando o texto da pesquisa é alterado.
+ * @param onFiltroChange Chamado quando o filtro selecionado muda.
+ * @param onMenuClick Chamado quando o utilizador abre o menu lateral.
+ */
 @Composable
 private fun BOArmariosScreenContent(
     state: BOArmariosUiState,
@@ -106,7 +117,15 @@ private fun BOArmariosScreenContent(
             }
     }
 }
-
+/**
+ * Liga o [BOArmariosViewModel] ao [BOArmariosScreenContent].
+ *
+ * Observa o estado do ViewModel e encaminha os eventos da interface,
+ * como a pesquisa de armários e a alteração dos filtros.
+ *
+ * @param viewModel ViewModel responsável pela gestão do estado do ecrã.
+ * @param onMenuClick Chamado quando o utilizador abre o menu lateral.
+ */
 @Composable
 fun BOArmariosScreen(
     viewModel: BOArmariosViewModel = viewModel(),

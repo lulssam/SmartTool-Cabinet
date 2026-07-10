@@ -73,12 +73,18 @@ import smarttoolcabinet.composeapp.generated.resources.tool
 import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.tarefas.FiltroTarefa
 
 /**
- * Parte visual do ecrã TarefasTecnico.
+ * Mostra o conteúdo do ecrã de tarefas do técnico.
  *
- * Não sabe nada sobre a lógica da aplicação — apenas mostra o que recebe
- * e avisa quando o utilizador faz algo. Fácil de testar e de pré-visualizar.
+ * Dependendo do estado atual, apresenta um indicador de carregamento,
+ * uma mensagem de erro ou a lista de tarefas do técnico, permitindo
+ * filtrar, expandir e concluir tarefas.
  *
- * @param state Tudo o que o ecrã precisa para se mostrar corretamente.
+ * @param state Informação necessária para apresentar o estado atual do ecrã.
+ * @param onMenuClick Função chamada quando o utilizador abre o menu lateral.
+ * @param onFiltroChange Função chamada quando o filtro de tarefas é alterado.
+ * @param onToggleExpandir Função chamada quando uma tarefa é expandida ou recolhida.
+ * @param onConcluir Função chamada quando uma tarefa é marcada como concluída.
+ * @param onMensagemMostrada Função chamada após a apresentação de uma mensagem.
  */
 @Composable
 private fun TarefasTecnicoScreenContent(
@@ -190,7 +196,16 @@ private fun TarefasTecnicoScreenContent(
 }
 
 /**
- * Cartão de contagem responsivo*/
+ * Mostra um cartão com a contagem de tarefas.
+ *
+ * O cartão apresenta o número de tarefas de uma determinada categoria
+ * e a respetiva descrição.
+ *
+ * @param modifier Modificador utilizado para personalizar o cartão.
+ * @param valor Valor apresentado no cartão.
+ * @param label Descrição da contagem apresentada.
+ * @param cor Cor utilizada para destacar o valor.
+ */
 @Composable
 private fun CartaoContagem(modifier: Modifier, valor: Int, label: String, cor: Color) {
     Column(
@@ -206,7 +221,17 @@ private fun CartaoContagem(modifier: Modifier, valor: Int, label: String, cor: C
         Text(label, fontSize = 13.sp, color = TextSecondary)
     }
 }
-
+/**
+ * Mostra um cartão com a informação de uma tarefa.
+ *
+ * O cartão apresenta o estado da tarefa, a prioridade, a descrição
+ * e permite expandir o conteúdo ou marcar a tarefa como concluída.
+ *
+ * @param tarefa Informação da tarefa apresentada.
+ * @param expandida Indica se o cartão se encontra expandido.
+ * @param onToggle Função chamada para expandir ou recolher o cartão.
+ * @param onConcluir Função chamada quando a tarefa é concluída.
+ */
 @Composable
 private fun TarefaCardTecnico(
     tarefa: TarefaUi,
@@ -297,7 +322,13 @@ private fun TarefaCardTecnico(
         }
     }
 }
-
+/**
+ * Mostra uma linha correspondente a uma ferramenta necessária para a tarefa.
+ *
+ * Apresenta o nome da ferramenta acompanhado do respetivo ícone.
+ *
+ * @param nome Nome da ferramenta.
+ */
 @Composable
 private fun LinhaFerramenta(nome: String) {
     Row(

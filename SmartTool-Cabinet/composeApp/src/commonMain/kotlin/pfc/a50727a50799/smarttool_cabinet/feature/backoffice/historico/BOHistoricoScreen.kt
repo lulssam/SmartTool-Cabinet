@@ -38,6 +38,15 @@ import smarttoolcabinet.composeapp.generated.resources.alert_triangle
 import smarttoolcabinet.composeapp.generated.resources.check
 import smarttoolcabinet.composeapp.generated.resources.tool
 
+/**
+ * Mostra o conteúdo do ecrã de histórico do BackOffice.
+ *
+ * Dependendo do estado atual, apresenta um indicador de carregamento,
+ * uma mensagem de erro ou a lista dos movimentos organizados por data.
+ *
+ * @param state Informação necessária para mostrar o estado atual do ecrã.
+ * @param onMenuClick Função chamada quando o utilizador abre o menu lateral.
+ */
 @Composable
 private fun BOHistoricoScreenContent(
     state: BOHistoricoUiState,
@@ -114,9 +123,25 @@ private fun BOHistoricoScreenContent(
         }
     }
 }
-
+/**
+ * Mostra um cartão com a informação de um movimento do histórico.
+ *
+ * O aspeto do cartão muda automaticamente consoante o tipo de movimento,
+ * mostrando o ícone, as cores e o texto mais adequados.
+ *
+ * @param item Movimento que será apresentado no cartão.
+ */
 @Composable
 private fun BOHistoricoItemCard(item: BOHistoricoItemUi) {
+    /**
+     * Guarda toda a informação visual utilizada para representar
+     * um determinado tipo de movimento.
+     *
+     * @property icone Ícone apresentado no cartão.
+     * @property cor Cor utilizada no ícone e na ação.
+     * @property fundo Cor de fundo do ícone.
+     * @property label Texto que identifica o tipo de movimento.
+     */
     data class Estilo(
         val icone: DrawableResource,
         val cor: Color,
@@ -145,7 +170,15 @@ private fun BOHistoricoItemCard(item: BOHistoricoItemUi) {
         hora = item.hora
     )
 }
-
+/**
+ * Ecrã principal do histórico do BackOffice.
+ *
+ * Obtém o estado atual através do ViewModel e entrega essa informação
+ * ao conteúdo visual do ecrã.
+ *
+ * @param viewModel ViewModel responsável por fornecer os dados do histórico.
+ * @param onMenuClick Função chamada quando o utilizador abre o menu lateral.
+ */
 @Composable
 fun BOHistoricoScreen(
     viewModel: BOHistoricoViewModel = viewModel(),

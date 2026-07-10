@@ -9,7 +9,15 @@ import smarttoolcabinet.composeapp.generated.resources.clock
 import smarttoolcabinet.composeapp.generated.resources.dashboard_icon
 import smarttoolcabinet.composeapp.generated.resources.tool
 import smarttoolcabinet.composeapp.generated.resources.users
-
+/**
+ * Devolve a lista de opções apresentadas no menu do BackOffice.
+ *
+ * Cada opção representa uma funcionalidade disponível e inclui
+ * o identificador da navegação, o texto apresentado ao utilizador
+ * e o respetivo ícone.
+ *
+ * @return Lista de opções que serão apresentadas no menu do BackOffice.
+ */
 fun opcoesBackOffice(): List<MenuOpcao> = listOf(
     MenuOpcao("dashboard", "Dashboard", Res.drawable.dashboard_icon),
     MenuOpcao("armarios", "Armários", Res.drawable.armarios_icon),

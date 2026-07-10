@@ -54,6 +54,12 @@ import pfc.a50727a50799.smarttool_cabinet.ui.theme.TextSecondary
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TextTitle
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapAlmostGreen
 
+/**
+ * Parte visual do dashboard do Back Office.
+ *
+ * Apenas apresenta a informação recebida no estado e comunica
+ * as ações do utilizador através dos callbacks recebidos.
+ */
 @Composable
 private fun BODashboardScreenContent(
     state: BODashboardUiState,
@@ -159,7 +165,12 @@ private fun BODashboardScreenContent(
             }
     }
 }
-
+/**
+ * Liga o [BODashboardViewModel] ao ecrã do dashboard.
+ *
+ * Observa o estado exposto pelo ViewModel e encaminha
+ * os eventos da interface para o conteúdo visual.
+ */
 @Composable
 fun BODashboardScreen(
     viewModel: BODashboardViewModel = viewModel(),
@@ -176,7 +187,10 @@ fun BODashboardScreen(
         onVerTodosArmarios = onVerTodosArmarios
     )
 }
-
+/**
+ * Cartão utilizado para apresentar uma estatística simples
+ * do dashboard, composta por um título e o respetivo valor.
+ */
 @Composable
 fun EstatisticaBOSimples(titulo: String, valor: String, modifier: Modifier = Modifier) {
     Card(
@@ -200,7 +214,12 @@ fun EstatisticaBOSimples(titulo: String, valor: String, modifier: Modifier = Mod
         }
     }
 }
-
+/**
+ * Cartão que apresenta um utilizador recente do sistema.
+ *
+ * Mostra as iniciais, nome, cargo e uma etiqueta colorida
+ * correspondente ao tipo de utilizador.
+ */
 @Composable
 fun UtilizadorRecenteCard(user: UtilizadorRecenteUi) {
     Card(
@@ -264,7 +283,12 @@ fun UtilizadorRecenteCard(user: UtilizadorRecenteUi) {
         }
     }
 }
-
+/**
+ * Cartão que apresenta um resumo do estado de um armário.
+ *
+ * Mostra o nome do armário e uma etiqueta com o respetivo
+ * estado de funcionamento.
+ */
 @Composable
 fun ArmarioResumoCard(armario: ArmarioResumoUi) {
     Card(
@@ -307,7 +331,12 @@ fun ArmarioResumoCard(armario: ArmarioResumoUi) {
         }
     }
 }
-
+/**
+ * Pré-visualização do dashboard do Back Office.
+ *
+ * Utiliza dados fictícios para facilitar o desenvolvimento
+ * da interface sem ligação ao backend.
+ */
 @Preview(showBackground = true)
 @Composable
 private fun PreviewBODashboard() {

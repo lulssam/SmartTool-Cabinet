@@ -11,7 +11,12 @@ import kotlinx.coroutines.launch
 import pfc.a50727a50799.smarttool_cabinet.core.auth.data.SessionManager
 import pfc.a50727a50799.smarttool_cabinet.core.backoffice.BackOfficeRemoteDataSource
 import pfc.a50727a50799.smarttool_cabinet.core.network.ApiResult
-
+/**
+ * Responsável pela lógica do dashboard do Back Office.
+ *
+ * Obtém os dados necessários ao dashboard, calcula as
+ * estatísticas e atualiza o estado observado pela interface.
+ */
 class BODashboardViewModel(
     private val backOfficeDataSource: BackOfficeRemoteDataSource
 ) : ViewModel() {
@@ -22,7 +27,12 @@ class BODashboardViewModel(
     init {
         carregar()
     }
-
+    /**
+     * Carrega os dados do dashboard.
+     *
+     * Obtém a sessão atual, os funcionários e os armários,
+     * calcula as estatísticas e atualiza o estado da interface.
+     */
     fun carregar() {
         val sessao = SessionManager.atual
 
@@ -80,19 +90,28 @@ class BODashboardViewModel(
             }
         }
     }
-
+    /**
+     * Gera as iniciais de um utilizador a partir do nome.
+     */
     private fun getIniciais(nome: String): String {
         val partes = nome.trim().split(" ")
         return if (partes.size >= 2) "${partes.first().first()}${partes.last().first()}".uppercase()
         else nome.take(2).uppercase()
     }
-
+    /**
+     * Converte o cargo recebido da base de dados
+     * para um formato legível pela interface.
+     */
     private fun formatarCargo(cargoDB: String?): String = when (cargoDB?.uppercase()) {
         "GESTOR" -> "Gestor"
         "TECNICO" -> "Técnico"
         "BACKOFFICE" -> "Back Office"
         else -> "Sem Cargo"
     }
+    /**
+     * Formata o nome do turno para apresentação
+     * na interface.
+     */
 
     private fun formatarTurno(turnoDB: String?): String {
         if (turnoDB == null) return "Sem Turno"

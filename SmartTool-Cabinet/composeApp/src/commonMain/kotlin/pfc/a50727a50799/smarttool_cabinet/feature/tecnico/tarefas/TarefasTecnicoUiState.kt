@@ -26,12 +26,15 @@ data class TarefasTecnicoUiState(
     val nEmCurso: Int = 0,
     val nConcluidas: Int = 0,
 )
-
+/**
+ * Representa os filtros disponíveis para a lista de tarefas.
+ *
+ * Cada valor corresponde a um estado pelo qual as tarefas
+ * podem ser filtradas no ecrã.
+ */
 enum class FiltroTarefa(val label: String) {
     TODAS("Todas"),
     PENDENTES("Pendentes"),
     EM_CURSO("Em Curso"),
     CONCLUIDAS("Concluídas")
 }
-
-//#my_code end
