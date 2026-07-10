@@ -52,10 +52,22 @@ import pfc.a50727a50799.smarttool_cabinet.ui.theme.CardBorder
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.PillShape
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.ScreenBg
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapAlert
+import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapBrandDark
 import pfc.a50727a50799.smarttool_cabinet.ui.theme.TapGreenishBlue
 import smarttoolcabinet.composeapp.generated.resources.Res
 import smarttoolcabinet.composeapp.generated.resources.tool
 
+/**
+ * Mostra o conteúdo do dashboard do técnico.
+ *
+ * Dependendo do estado atual, apresenta um indicador de carregamento,
+ * uma mensagem de erro ou a informação principal do técnico, incluindo
+ * estatísticas e a lista das ferramentas atualmente em utilização.
+ *
+ * @param state Informação necessária para mostrar o estado atual do ecrã.
+ * @param onVerTodosClick Função chamada quando o utilizador escolhe ver todas as ferramentas.
+ * @param onMenuClick Função chamada quando o utilizador abre o menu lateral.
+ */
 @Composable
 private fun TecnicoScreenContent(
     state: TecnicoUiState,
@@ -131,7 +143,16 @@ private fun TecnicoScreenContent(
             }
     }
 }
-
+/**
+ * Ecrã principal do dashboard do técnico.
+ *
+ * Obtém o estado atual através do ViewModel, carrega a informação
+ * necessária e entrega os dados ao conteúdo visual do ecrã.
+ *
+ * @param viewModel ViewModel responsável por fornecer os dados do dashboard.
+ * @param onVerTodosClick Função chamada quando o utilizador escolhe ver todas as ferramentas.
+ * @param onMenuClick Função chamada quando o utilizador abre o menu lateral.
+ */
 @Composable
 fun TecnicoScreen(
     viewModel: TecnicoViewModel = viewModel(),
@@ -150,7 +171,19 @@ fun TecnicoScreen(
     )
 }
 
-
+/**
+ * Mostra um cartão com uma estatística do dashboard.
+ *
+ * Cada cartão apresenta um valor principal e um pequeno texto
+ * que ajuda a identificar o significado dessa informação.
+ *
+ * @param titulo Título da estatística apresentada.
+ * @param valor Valor principal apresentado no cartão.
+ * @param rodapeTexto Texto apresentado na parte inferior do cartão.
+ * @param rodapeBgColor Cor de fundo do texto do rodapé.
+ * @param rodapeTextColor Cor do texto apresentado no rodapé.
+ * @param modifier Modificador utilizado para personalizar o cartão.
+ */
 @Composable
 fun EstatisticaCard(
     titulo: String, valor: String, rodapeTexto: String,
@@ -189,7 +222,14 @@ fun EstatisticaCard(
         }
     }
 }
-
+/**
+ * Mostra um cartão com a informação de uma ferramenta do técnico.
+ *
+ * O cartão apresenta o nome da ferramenta, a sua localização
+ * e o estado em que se encontra.
+ *
+ * @param ferramenta Informação da ferramenta apresentada no cartão.
+ */
 @Composable
 fun FerramentaTecnicoCard(ferramenta: FerramentaTecnicoUi) {
 

@@ -13,7 +13,15 @@ import pfc.a50727a50799.smarttool_cabinet.core.historico.HistoricoDto
 import pfc.a50727a50799.smarttool_cabinet.core.historico.HistoricoRemoteDataSource
 import pfc.a50727a50799.smarttool_cabinet.core.network.ApiError
 import pfc.a50727a50799.smarttool_cabinet.core.network.ApiResult
-
+/**
+ * ViewModel responsável por gerir o histórico de movimentos do técnico.
+ *
+ * Carrega os movimentos do técnico autenticado, organiza-os por data
+ * e atualiza o estado utilizado pelo ecrã de histórico.
+ *
+ * @param historicoDataSource Fonte de dados responsável por obter o histórico.
+ * @param idTecnico Identificador do técnico autenticado.
+ */
 class HistoricoViewModel(
     private val historicoDataSource: HistoricoRemoteDataSource,
     private val idTecnico: Int
@@ -25,7 +33,12 @@ class HistoricoViewModel(
     init {
         carregar()
     }
-
+    /**
+     * Carrega o histórico do técnico.
+     *
+     * Obtém os movimentos a partir da API, converte-os para o modelo da interface,
+     * organiza-os por data e atualiza o estado do ecrã.
+     */
     fun carregar() {
         if (idTecnico == -1) {
             _state.update { it.copy(isLoading = false, error = "Sessão inválida") }
@@ -73,14 +86,27 @@ class HistoricoViewModel(
             }
         }
     }
-
+    /**
+     * Devolve a etiqueta correspondente a uma determinada data.
+     *
+     * Apresenta "HOJE", "ONTEM" ou a data formatada em português.
+     *
+     * @param dia Data a apresentar.
+     * @param hoje Data atual utilizada para comparação.
+     * @return Texto correspondente à data.
+     */
     private fun etiqueta(dia: LocalDate, hoje: LocalDate): String = when (dia) {
         hoje -> "HOJE"
         hoje.minus(1, DateTimeUnit.DAY) -> "ONTEM"
         // 3. Trocado 'dayOfMonth' por 'day' a pedido do compilador
         else -> "${dia.day} ${mesPt(dia.month)}"
     }
-
+    /**
+     * Converte um mês para a respetiva designação em português.
+     *
+     * @param mes Mês a converter.
+     * @return Nome do mês em português.
+     */
     private fun mesPt(mes: Month): String = when (mes) {
         Month.JANUARY -> "JANEIRO"; Month.FEBRUARY -> "FEVEREIRO"
         Month.MARCH -> "MARÇO"; Month.APRIL -> "ABRIL"
@@ -89,7 +115,18 @@ class HistoricoViewModel(
         Month.SEPTEMBER -> "SETEMBRO"; Month.OCTOBER -> "OUTUBRO"
         Month.NOVEMBER -> "NOVEMBRO"; Month.DECEMBER -> "DEZEMBRO"
     }
-
+    /**
+     * Converte um registo do histórico num movimento apresentado na interface.
+     *
+     * Cria um objeto contendo a informação do movimento e a respetiva
+     * data para posterior agrupamento.
+     *
+     * @param dto Registo obtido da API.
+     * @param raw Data e hora do movimento.
+     * @param tipo Tipo de movimento realizado.
+     * @param idSufixo Sufixo utilizado para garantir um identificador único.
+     * @return Movimento convertido para a interface.
+     */
     private fun movimento(
         dto: HistoricoDto,
         raw: String,
@@ -108,12 +145,20 @@ class HistoricoViewModel(
             )
         )
     }
-
+    /**
+     * Estrutura auxiliar utilizada para associar um movimento
+     * à respetiva data e hora.
+     */
     private data class MovimentoComData(
         val dataHora: LocalDateTime,
         val item: HistoricoItemUi
     )
-
+    /**
+     * Converte um erro da API numa mensagem apresentada ao utilizador.
+     *
+     * @param erro Erro devolvido pela camada de rede.
+     * @return Mensagem correspondente ao erro.
+     */
     private fun mensagem(erro: ApiError): String = when (erro) {
         ApiError.NetworkError -> "Não foi possível contactar o servidor"
         is ApiError.Unknown -> erro.message ?: "Erro desconhecido"
