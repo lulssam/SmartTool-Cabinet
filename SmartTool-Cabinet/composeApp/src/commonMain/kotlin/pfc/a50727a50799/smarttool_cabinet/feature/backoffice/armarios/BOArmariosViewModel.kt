@@ -12,7 +12,16 @@ import pfc.a50727a50799.smarttool_cabinet.core.armario.toUi
 import pfc.a50727a50799.smarttool_cabinet.core.ferramenta.FerramentaRemoteDataSource
 import pfc.a50727a50799.smarttool_cabinet.core.network.ApiError
 import pfc.a50727a50799.smarttool_cabinet.core.network.ApiResult
-
+/**
+ * Gere a lógica do ecrã de armários do Backoffice.
+ *
+ * Obtém os armários e as ferramentas do backend, calcula a ocupação
+ * de cada armário e disponibiliza toda a informação necessária para
+ * a interface através do estado.
+ *
+ * @param ferramentas Fonte de dados das ferramentas.
+ * @param armarios Fonte de dados dos armários.
+ */
 class BOArmariosViewModel(
     private val ferramentas: FerramentaRemoteDataSource,
     private val armarios: ArmarioRemoteDataSource,
@@ -25,7 +34,13 @@ class BOArmariosViewModel(
     init {
         carregar()
     }
-
+    /**
+     * Carrega os dados necessários para o ecrã.
+     *
+     * Obtém a lista de ferramentas e de armários, calcula o número de
+     * posições ocupadas e de ferramentas em falta em cada armário e
+     * atualiza o estado apresentado pela interface.
+     */
     fun carregar() {
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }
@@ -61,15 +76,29 @@ class BOArmariosViewModel(
             _state.update { it.copy(isLoading = false) }
         }
     }
-
+    /**
+     * Atualiza o texto utilizado na pesquisa de armários.
+     *
+     * @param query Novo texto introduzido pelo utilizador.
+     */
     fun onSearchChange(query: String) {
         _state.update { it.copy(searchQuery = query) }
     }
-
+    /**
+     * Atualiza o filtro atualmente selecionado.
+     *
+     * @param filtro Novo filtro escolhido pelo utilizador.
+     */
     fun onFiltroChange(filtro: FiltroBOArmario) {
         _state.update { it.copy(filtroAtual = filtro) }
     }
-
+    /**
+     * Converte um erro da camada de rede numa mensagem legível
+     * para apresentar ao utilizador.
+     *
+     * @param erro Erro devolvido pela API.
+     * @return Mensagem correspondente ao erro.
+     */
     private fun mensagem(erro: ApiError): String = when (erro) {
         ApiError.NetworkError -> "Não foi possível contactar o servidor"
         is ApiError.Unknown -> erro.message ?: "Erro desconhecido"
