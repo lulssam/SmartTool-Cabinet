@@ -27,7 +27,22 @@ import pfc.a50727a50799.smarttool_cabinet.ui.theme.*
 import smarttoolcabinet.composeapp.generated.resources.Res
 import smarttoolcabinet.composeapp.generated.resources.delete
 import smarttoolcabinet.composeapp.generated.resources.editable
-
+/**
+ * Mostra o ecrã de gestão de utilizadores do BackOffice.
+ *
+ * Permite pesquisar utilizadores, aplicar filtros, criar novas contas,
+ * alterar cargos e turnos, bem como desativar acessos.
+ *
+ * @param state Informação necessária para mostrar o estado atual do ecrã.
+ * @param onMenuClick Função chamada quando o utilizador abre o menu lateral.
+ * @param onSearchChange Função chamada quando o texto da pesquisa é alterado.
+ * @param onFiltroChange Função chamada quando o utilizador seleciona um filtro.
+ * @param onNovoClick Função chamada para criar um novo utilizador.
+ * @param onAlterarCargo Função chamada para alterar o cargo de um utilizador.
+ * @param onAlterarTurno Função chamada para alterar o turno de um utilizador.
+ * @param onDesativar Função chamada para desativar um utilizador.
+ * @param onClearError Função chamada para limpar a mensagem de erro apresentada.
+ */
 @Composable
 private fun BOUtilizadoresScreenContent(
     state: BOUtilizadoresUiState,
@@ -214,7 +229,15 @@ private fun BOUtilizadoresScreenContent(
         }
     }
 }
-
+/**
+ * Ecrã principal da gestão de utilizadores.
+ *
+ * Obtém o estado atual através do ViewModel e liga as ações do ecrã
+ * às funções responsáveis por tratar cada operação.
+ *
+ * @param viewModel ViewModel responsável por gerir os dados dos utilizadores.
+ * @param onMenuClick Função chamada quando o utilizador abre o menu lateral.
+ */
 @Composable
 fun BOUtilizadoresScreen(
     viewModel: BOUtilizadoresViewModel = viewModel(),
@@ -234,7 +257,16 @@ fun BOUtilizadoresScreen(
         onClearError = viewModel::limparErro
     )
 }
-
+/**
+ * Mostra um cartão com a informação de um utilizador.
+ *
+ * O cartão apresenta os dados principais do utilizador e, quando a conta
+ * está ativa, permite editar as suas informações ou desativar o acesso.
+ *
+ * @param user Informação do utilizador apresentada no cartão.
+ * @param onEditClick Função chamada quando o utilizador escolhe editar a conta.
+ * @param onDeleteClick Função chamada quando o utilizador escolhe desativar a conta.
+ */
 @Composable
 fun UtilizadorDetalheCard(
     user: UtilizadorListaUi,
@@ -332,7 +364,16 @@ fun UtilizadorDetalheCard(
         }
     }
 }
-
+/**
+ * Mostra um diálogo para selecionar uma opção de uma lista.
+ *
+ * É utilizado para escolher um novo cargo ou um novo turno.
+ *
+ * @param titulo Texto apresentado no topo do diálogo.
+ * @param opcoes Lista de opções que o utilizador pode escolher.
+ * @param onDismiss Função chamada quando o diálogo é fechado sem selecionar uma opção.
+ * @param onSelect Função chamada quando o utilizador escolhe uma opção.
+ */
 @Composable
 fun SelecaoDialog(
     titulo: String,
@@ -359,7 +400,15 @@ fun SelecaoDialog(
         containerColor = Color.White
     )
 }
-
+/**
+ * Mostra o diálogo utilizado para criar um novo utilizador.
+ *
+ * Permite introduzir os dados necessários e escolher o cargo e o turno
+ * antes de criar a conta.
+ *
+ * @param onDismiss Função chamada quando o diálogo é fechado sem criar o utilizador.
+ * @param onConfirm Função chamada quando o utilizador confirma a criação da nova conta.
+ */
 @Composable
 fun CriarUtilizadorDialog(
     onDismiss: () -> Unit,
