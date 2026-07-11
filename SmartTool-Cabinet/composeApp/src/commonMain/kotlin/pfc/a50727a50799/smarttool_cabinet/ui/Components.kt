@@ -103,11 +103,23 @@ import smarttoolcabinet.composeapp.generated.resources.unlock
 import kotlin.math.roundToInt
 
 //#my_code
+/**
+ * Barra que aparece no topo do ecrã.
+ * Mostra um botão de menu à esquerda, o título do ecrã no meio e, se quisermos,
+ * uma etiqueta à direita com o número de alertas por resolver.
+ *
+ * @param titulo O texto que aparece no meio da barra (ex: "Dashboard").
+ * @param alertasAtivos Quantos alertas estão neste momento por resolver. Se for
+ *                      0, a etiqueta diz que não há nenhum.
+ * @param mostrarAlertas Se for true, mostra a etiqueta dos alertas à direita; se
+ *                       for false, esconde-a por completo.
+ * @param onMenu Chamada quando o utilizador carrega no botão de menu.
+ */
 @Composable
 fun TopBar(
     titulo: String,
     alertasAtivos: Int = 0,
-    mostrarAlertas: Boolean = true, //mostra os alertas
+    mostrarAlertas: Boolean = true,
     onMenu: () -> Unit
 ) {
     Surface(
@@ -176,6 +188,16 @@ fun TopBar(
     }
 }
 
+/**
+ * Cartão de boas-vindas que aparece no topo do ecrã principal.
+ * Cumprimenta o funcionário pelo nome e mostra o cargo e o turno em que está.
+ *
+ * @param nomeFuncionario O nome do funcionário que iniciou sessão.
+ * @param turno O turno em que o funcionário está (ex: "Manhã", "Tarde").
+ * @param cargo A função do funcionário (ex: "Técnico"). Se estiver vazio, essa
+ *              parte não aparece.
+ * @param color A cor de fundo do cartão.
+ */
 @Composable
 fun WelcomeCard(
     nomeFuncionario: String,
@@ -204,12 +226,27 @@ fun WelcomeCard(
 }
 
 //#my_code end
+/**
+ * Uma fatia do gráfico circular (donut) do estado das ferramentas.
+ * Cada fatia junta um nome, um número e a cor com que vai ser desenhada.
+ *
+ * @property label O nome da fatia (ex: "Disponíveis", "Em Uso").
+ * @property valor Quantas ferramentas estão neste estado.
+ * @property cor A cor com que esta fatia é pintada no gráfico.
+ */
 private data class Segmento(
     val label: String,
     val valor: Int,
     val cor: Color
 )
 
+/**
+ * Cartão que mostra, num gráfico circular (donut) com legenda ao lado, quantas
+ * ferramentas estão disponíveis, em uso, indisponíveis ou em manutenção.
+ *
+ * @param estatisticas Os números de ferramentas em cada estado, usados para
+ *                     desenhar as fatias do gráfico e a legenda.
+ */
 @Composable
 fun EstadoFerramentasCard(
     estatisticas: EstatisticasFerramentas
@@ -269,6 +306,14 @@ fun EstadoFerramentasCard(
 }
 
 //#my_code
+/**
+ * Uma linha da legenda que aparece ao lado do gráfico circular.
+ * Mostra um quadradinho colorido, o nome da fatia, o número de ferramentas e a
+ * percentagem que essa fatia representa do total.
+ *
+ * @param segmento A fatia do gráfico que esta linha descreve (nome, valor e cor).
+ * @param total O número total de ferramentas, usado para calcular a percentagem.
+ */
 @Composable
 private fun LegendaRow(
     segmento: Segmento,
@@ -311,6 +356,16 @@ private fun LegendaRow(
 }
 
 //#my_code end
+/**
+ * Desenha o gráfico circular (o aro colorido) com o total no meio.
+ * Cada fatia ocupa uma parte do aro conforme o seu valor. Quando o ecrã abre, o
+ * aro cresce com uma pequena animação; se ainda não houver dados, mostra só um
+ * aro cinzento vazio.
+ *
+ * @param segmentos As fatias a desenhar, cada uma com o seu valor e cor.
+ * @param total A soma de todas as fatias. É o número que aparece no centro.
+ * @param tamanho A largura e altura do gráfico.
+ */
 @Composable
 private fun Donut(
     segmentos: List<Segmento>,
@@ -374,6 +429,14 @@ private fun Donut(
 }
 
 //#my_code
+/**
+ * Cabeçalho de uma secção do ecrã.
+ * Mostra o título à esquerda e um atalho "Ver todos" à direita que leva o
+ * utilizador à lista completa dessa secção.
+ *
+ * @param titulo O título da secção (ex: "Estado dos Armários").
+ * @param onVerTodos Chamada quando o utilizador carrega em "Ver todos".
+ */
 @Composable
 fun SectionHeader(
     titulo: String,
@@ -422,6 +485,14 @@ fun SectionHeader(
 }
 
 //#my_code end
+/**
+ * Cartão que mostra o estado de um armário de ferramentas.
+ * Apresenta o nome do armário, uma etiqueta com o estado (online, alerta ou
+ * offline) e três caixas com: quantos lugares estão ocupados, se está trancado
+ * e quantas ferramentas estão em falta.
+ *
+ * @param armario Os dados do armário a mostrar (nome, estado, lugares, etc.).
+ */
 @Composable
 fun ArmarioCard(
     armario: ArmarioUi
@@ -523,6 +594,16 @@ fun ArmarioCard(
 }
 
 //#my_code
+/**
+ * Cartão que mostra um alerta ao gestor.
+ * A cor da borda, do fundo e do texto mudam conforme a gravidade: vermelho para
+ * alertas críticos e laranja para avisos.
+ *
+ * @param gravidade O grau do alerta (crítico ou aviso), que decide as cores.
+ * @param titulo O título curto do alerta (ex: "Ferramenta 1 em falta").
+ * @param descricao Uma explicação mais longa do que se passou.
+ * @param horas A que horas o alerta aconteceu (ex: "16:32").
+ */
 @Composable
 fun AlertaCard(
     gravidade: Gravidade,
@@ -595,6 +676,16 @@ fun AlertaCard(
 }
 //#my_code end
 
+/**
+ * Campo de pesquisa com uma lupa à esquerda.
+ * O texto escrito não fica guardado aqui — é enviado para fora através de
+ * onQueryChange, e quem chama esta função decide o que fazer com ele.
+ *
+ * @param label O texto de ajuda que aparece quando o campo está vazio
+ *              (ex: "Pesquisar armários...").
+ * @param query O texto que está neste momento escrito no campo.
+ * @param onQueryChange Chamada de cada vez que o utilizador escreve ou apaga uma letra.
+ */
 @Composable
 fun BarraPesquisa(
     label: String,
@@ -626,6 +717,15 @@ fun BarraPesquisa(
 }
 
 //#my_code
+/**
+ * Botão em forma de etiqueta (chip) usado para filtrar listas.
+ * Quando está selecionado fica com as cores da marca; quando não está, fica
+ * apagado. As cores mudam com uma pequena animação ao ligar/desligar.
+ *
+ * @param label O texto do filtro (ex: "Todos", "Offline").
+ * @param isSelected True se este filtro está neste momento escolhido.
+ * @param onClick Chamada quando o utilizador carrega no chip.
+ */
 @Composable
 fun FilterChip(label: String, isSelected: Boolean, onClick: () -> Unit) {
     val bgColor by animateColorAsState(
@@ -658,6 +758,15 @@ fun FilterChip(label: String, isSelected: Boolean, onClick: () -> Unit) {
     }
 }
 
+/**
+ * Etiqueta pequena e arredondada com texto lá dentro.
+ * É a base reutilizada pelas outras etiquetas (estado, prioridade), por isso
+ * recebe já as cores prontas em vez de as decidir sozinha.
+ *
+ * @param fundo A cor de fundo da etiqueta.
+ * @param texto A cor do texto.
+ * @param label O texto a mostrar dentro da etiqueta.
+ */
 @Composable
 fun Pill(fundo: Color, texto: Color, label: String) {
     Text(
@@ -670,6 +779,12 @@ fun Pill(fundo: Color, texto: Color, label: String) {
     )
 }
 
+/**
+ * Etiqueta que mostra em que ponto está uma tarefa.
+ * Traduz o estado da tarefa nas cores e no texto certos e desenha uma [Pill].
+ *
+ * @param estado O estado da tarefa (em curso, pendente ou concluída).
+ */
 @Composable
 fun PillEstado(estado: EstadoTarefa) {
     val (fundo, texto, label) = when (estado) {
@@ -684,6 +799,12 @@ fun PillEstado(estado: EstadoTarefa) {
     Pill(fundo, texto, label)
 }
 
+/**
+ * Etiqueta que mostra a prioridade de uma tarefa.
+ * Traduz a prioridade nas cores e no texto certos e desenha uma [Pill].
+ *
+ * @param prioridade A prioridade da tarefa (alta, normal ou baixa).
+ */
 @Composable
 fun PillPrioridade(prioridade: PrioridadeTarefa) {
     val (fundo, texto, label) = when (prioridade) {
@@ -792,21 +913,17 @@ fun MovimentoCard(
 }
 
 /**
- * Moldura partilhada das 3 caixas. O conteúdo vem de fora.
+ * Moldura partilhada das três caixas de informação do [ArmarioCard] (lugares,
+ * trancado e em falta). Só desenha a caixa cinzenta arredondada; o que aparece
+ * lá dentro é decidido por quem a chama.
  *
- * 'RowScope' é uma função de extensão, só pode ser chaamda
- * dentro de um Row.
+ * É uma extensão de 'RowScope', ou seja, só pode ser usada dentro de um Row.
+ * Assim garante-se que as três caixas ficam lado a lado e dividem o espaço por
+ * igual.
  *
- * () -> Unit = é uma função que não recebe nada e não devolve nada.
- *
- * '@Composable' = ... mas que desenha a UI,
- *
- * ColumnScope = ... e que vai correr dentro de uma Coluna
- *
- * @param content Parâmetro que em vez de ser um número ou um texto, é
- * um bocado da UI.
- *
- * */
+ * @param content O bocado de interface a mostrar dentro da caixa (por exemplo um
+ *                número e a sua legenda), desenhado numa coluna centrada.
+ */
 @Composable
 private fun RowScope.InfoBox(
     content: @Composable ColumnScope.() -> Unit
@@ -822,7 +939,12 @@ private fun RowScope.InfoBox(
     )
 }
 //#my_code
-/** pill de estados: verde -> Online ou laranja -> Alerta, cinzento -> Offline*/
+/**
+ * Etiqueta com o estado de funcionamento de um armário.
+ * Verde diz "Online", laranja diz "Alerta" e cinzento diz "Offline".
+ *
+ * @param estado O estado do armário, que decide a cor e o texto da etiqueta.
+ */
 @Composable
 private fun StatusPill(
     estado: EstadoArmario
@@ -859,6 +981,16 @@ private fun StatusPill(
 }
 //#my_code end
 
+/**
+ * Torna um elemento clicável e, enquanto está a ser pressionado, encolhe-o um
+ * pouco para dar a sensação de que foi carregado, voltando ao tamanho normal a
+ * seguir.
+ *
+ * @param escalaAoPressionar Quão pequeno o elemento fica enquanto está a ser
+ *                           pressionado (0.97 = encolhe 3%; 1 = não encolhe).
+ * @param onClick Chamada quando o utilizador carrega no elemento.
+ * @return O mesmo Modifier, agora com o comportamento de clique e de encolher.
+ */
 fun Modifier.clicavelComEscala(
     escalaAoPressionar: Float = 0.97f,
     onClick: () -> Unit
@@ -870,7 +1002,7 @@ fun Modifier.clicavelComEscala(
         animationSpec = tween(120),
         label = "escala"
     )
-    graphicsLayer { scaleX = escala; scaleX = escala }
+    graphicsLayer { scaleX = escala; scaleY = escala }
         .clickable(
             interactionSource = interacao,
             indication = LocalIndication.current,
@@ -1028,6 +1160,7 @@ private fun PreviewFiltroChipsOff() {
     }
 }*/
 
+/*
 @Preview(showBackground = true)
 @Composable
 private fun PreviewMovimentoCard() {
@@ -1049,4 +1182,4 @@ private fun PreviewMovimentoCard() {
             )
         }
     }
-}
+}*/
