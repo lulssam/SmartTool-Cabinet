@@ -9,8 +9,19 @@ import io.ktor.server.routing.*
 import java.sql.DriverManager
 import java.sql.Statement
 
+/**
+ * Liga todos os caminhos (rotas) da API ao servidor.
+ * É aqui que se decide o que acontece quando a app faz um pedido — por exemplo,
+ * pedir a lista de ferramentas, criar uma tarefa ou devolver uma requisição.
+ *
+ * Primeiro vai buscar os dados de ligação à base de dados (endereço, utilizador
+ * e password) ao ficheiro de configuração; a seguir define cada rota, agrupadas
+ * por tipo: GET (ler dados), POST (criar coisas novas) e PATCH (alterar coisas
+ * que já existem).
+ */
 fun Application.configureRouting() {
 
+    // Dados de ligação à base de dados, lidos do ficheiro de configuração.
     val URL = environment.config.property("storage.jdbcUrl").getString()
     val USER = environment.config.property("storage.user").getString()
     val PASSWORD = environment.config.property("storage.password").getString()
@@ -18,6 +29,9 @@ fun Application.configureRouting() {
     routing {
 //#my_code
         // ====== GETS ======
+
+        // GET /api/ferramentas → lista todas as ferramentas do inventário, já
+        // com o tipo, a categoria, o estado, a disponibilidade e o armário.
         get("/api/ferramentas") {
             val lista = mutableListOf<FerramentaDTO>()
 
@@ -53,6 +67,7 @@ fun Application.configureRouting() {
             }
         }
 
+        // GET /api/funcionarios → devolve a lista de todos os funcionários.
         get("/api/funcionarios") {
             val lista = mutableListOf<FuncionariosDTO>()
             try {
@@ -88,6 +103,8 @@ fun Application.configureRouting() {
             }
         }
 
+        // GET /api/funcionarios/{email} → procura um funcionário pelo seu email.
+        // Se não existir nenhum com esse email, responde 404 (não encontrado).
         get("/api/funcionarios/{email}") {
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver")
@@ -126,6 +143,8 @@ fun Application.configureRouting() {
         }
 
 
+        // GET /api/historico/tecnico/{id} → histórico de requisições de um
+        // técnico nos últimos 30 dias (o que levantou e quando devolveu).
         get("/api/historico/tecnico/{id}") {
             val idTecnico = call.parameters["id"]?.toIntOrNull()
             if (idTecnico == null) {
@@ -187,6 +206,8 @@ fun Application.configureRouting() {
             }
         }
 
+        // GET /api/armarios → lista todos os armários e o seu estado
+        // (capacidade, estado de funcionamento e se estão trancados).
         get("/api/armarios") {
 
             val listaArmarios = mutableListOf<ArmariosDTO>()
@@ -219,6 +240,8 @@ fun Application.configureRouting() {
             }
         }
 
+        // GET /api/armarios/{id}/ferramentas → lista as ferramentas que estão
+        // dentro de um armário específico.
         get("/api/armarios/{id}/ferramentas") {
 
             val listaFerramentasArmarios = mutableListOf<FerramentaDTO>()
@@ -262,6 +285,8 @@ fun Application.configureRouting() {
             }
         }
 
+        // GET /api/historico → histórico geral de empréstimos dos últimos 30
+        // dias, de todos os técnicos.
         get("/api/historico") {
 
             val listaHistorico = mutableListOf<HistoricoDTO>()
@@ -300,6 +325,8 @@ fun Application.configureRouting() {
             }
         }
 
+        // GET /api/alertas → junta os avisos ativos: ferramentas que não foram
+        // devolvidas e armários que ficaram destrancados.
         get("/api/alertas") {
 
             val listaAlertas = mutableListOf<AlertasDTO>()
@@ -347,6 +374,8 @@ fun Application.configureRouting() {
             }
         }
 
+        // GET /api/tecnicos/{id}/ferramentas → ferramentas que um técnico tem
+        // neste momento em mão (já levantadas).
         get("/api/tecnicos/{id}/ferramentas") {
             val idTecnico = call.parameters["id"]?.toIntOrNull()
             if (idTecnico == null) {
@@ -388,6 +417,9 @@ fun Application.configureRouting() {
             }
         }
 
+        // GET /api/tarefas → lista todas as tarefas. Como cada tarefa pode ter
+        // várias ferramentas, juntam-se as linhas repetidas numa só tarefa com
+        // a sua lista de ferramentas.
         get("/api/tarefas") {
             val porTarefa = LinkedHashMap<Int, TarefaDTO>()
 
@@ -433,6 +465,7 @@ fun Application.configureRouting() {
             }
         }
 
+        // GET /api/tecnicos → lista os técnicos e diz se cada um está disponível.
         get("/api/tecnicos") {
             val listaTecnicos = mutableListOf<TecnicoDTO>()
             try {
@@ -462,6 +495,8 @@ fun Application.configureRouting() {
             }
         }
 
+        // GET /api/tecnicos/{id}/reservadas → ferramentas que foram reservadas
+        // para um técnico (por causa de uma tarefa) mas que ele ainda não levantou.
         get("/api/tecnicos/{id}/reservadas") {
             val idTecnico = call.parameters["id"]?.toIntOrNull()
             if (idTecnico == null) {
@@ -503,6 +538,8 @@ fun Application.configureRouting() {
             }
         }
 
+        // GET /api/ferramentas/em-falta → ferramentas que saíram e ainda não
+        // voltaram (não têm data de devolução), e quem as tem.
         get("/api/ferramentas/em-falta") {
 
             val listaEmFalta = mutableListOf<FerramentaEmFaltaDTO>()
@@ -547,6 +584,8 @@ fun Application.configureRouting() {
             }
         }
 
+        // GET /api/tarefas/tecnico/{id} → tarefas atribuídas a um técnico
+        // específico, cada uma com a sua lista de ferramentas.
         get("/api/tarefas/tecnico/{id}") {
             val idTecnico = call.parameters["id"]?.toIntOrNull()
             if (idTecnico == null) {
@@ -599,6 +638,11 @@ fun Application.configureRouting() {
         //#my_code end
 
         // ====== POSTS ======
+
+        // POST /api/requisicoes → um técnico levanta uma ferramenta.
+        // Primeiro confirma que ele tem uma tarefa ativa que lhe permite usá-la;
+        // só depois cria a requisição e marca a ferramenta como 'Requisitada'.
+        // Corre tudo dentro de uma transação: se algo falhar, desfaz-se tudo.
         post("/api/requisicoes") {
 
             try {
@@ -678,6 +722,9 @@ fun Application.configureRouting() {
             }
         }
 
+        // POST /api/tarefas → o gestor cria uma tarefa nova e reserva para ela
+        // as ferramentas necessárias. Se alguma já não estiver disponível,
+        // cancela tudo (rollback) e avisa qual foi.
         post("/api/tarefas") {
 
             try {
@@ -759,6 +806,8 @@ fun Application.configureRouting() {
             }
         }
 
+        // POST /api/funcionarios → cria um funcionário novo e regista o seu
+        // cargo (gestor, técnico ou backoffice) na tabela certa.
         post("/api/funcionarios") {
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver")
@@ -814,6 +863,8 @@ fun Application.configureRouting() {
             }
         }
 
+        // POST /api/ferramentas → cria uma ferramenta nova. Se o tipo ainda não
+        // existir, cria-o primeiro; depois acrescenta a próxima unidade desse tipo.
         post("/api/ferramentas") {
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver")
@@ -894,6 +945,10 @@ fun Application.configureRouting() {
         }
 
         // ====== PATCH ======
+
+        // PATCH /api/requisicoes/{id}/devolver → marca uma requisição como
+        // devolvida e põe as ferramentas outra vez disponíveis (ou em
+        // manutenção, se estiverem danificadas).
         patch("/api/requisicoes/{id}/devolver") {
 
             try {
@@ -952,6 +1007,8 @@ fun Application.configureRouting() {
             }
         }
 
+        // PATCH /api/ferramentas/{id}/estado → muda o estado de uma ferramenta
+        // (ex: marcar avaria). Só é permitido se a ferramenta estiver requisitada.
         patch("/api/ferramentas/{id}/estado") {
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver")
@@ -1004,6 +1061,8 @@ fun Application.configureRouting() {
             }
         }
 
+        // PATCH /api/funcionarios/{id}/cargo → muda o cargo de um funcionário:
+        // apaga o cargo antigo (das três tabelas) e insere o novo.
         patch("/api/funcionarios/{id}/cargo") {
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver")
@@ -1078,6 +1137,8 @@ fun Application.configureRouting() {
             }
         }
 
+        // PATCH /api/funcionarios/{id}/turno → muda o turno de um funcionário
+        // (manhã, tarde ou noite).
         patch("/api/funcionarios/{id}/turno") {
 
             try {
@@ -1125,6 +1186,8 @@ fun Application.configureRouting() {
             }
         }
 
+        // PATCH /api/funcionarios/{id}/desativar → desativa um funcionário sem
+        // o apagar, para que continue a aparecer no histórico.
         patch("/api/funcionarios/{id}/desativar") {
 
             try {
@@ -1164,6 +1227,9 @@ fun Application.configureRouting() {
             }
         }
 
+        // PATCH /api/tarefas/{id}/concluir → conclui uma tarefa. Só deixa
+        // concluir se já não houver ferramentas por devolver; as que só estavam
+        // reservadas ficam outra vez disponíveis.
         patch("/api/tarefas/{id}/concluir") {
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver")
