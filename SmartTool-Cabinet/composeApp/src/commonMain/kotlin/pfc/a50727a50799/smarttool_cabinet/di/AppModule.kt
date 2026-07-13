@@ -12,6 +12,7 @@ import pfc.a50727a50799.smarttool_cabinet.core.auth.data.funcionario.Funcionario
 import pfc.a50727a50799.smarttool_cabinet.core.backoffice.BackOfficeRemoteDataSource
 import pfc.a50727a50799.smarttool_cabinet.core.ferramenta.FerramentaRemoteDataSource
 import pfc.a50727a50799.smarttool_cabinet.core.historico.HistoricoRemoteDataSource
+import pfc.a50727a50799.smarttool_cabinet.core.network.ServerConfig
 import pfc.a50727a50799.smarttool_cabinet.core.tarefa.TarefaRemoteDataSource
 import pfc.a50727a50799.smarttool_cabinet.core.tecnico.TecnicoRemoteDataSource
 import kotlin.getValue
@@ -22,7 +23,7 @@ import kotlin.getValue
  * Cada plataforma define o seu, porque o servidor é alcançado de forma diferente
  * num emulador Android, num simulador iOS ou num telemóvel real.
  */
-expect val baseUrl: String
+expect val defaultBaseUrl: String
 
 /**
  * Diz qual é a implementação real da autenticação em cada plataforma:
@@ -43,7 +44,7 @@ object AppModule {
 
     /**
      * O cliente que faz os pedidos ao backend, já configurado para trocar dados em JSON
-     * e para apontar para o [baseUrl]. Criado só na primeira vez que é preciso.
+     * e para apontar para o [defaultBaseUrl]. Criado só na primeira vez que é preciso.
      */
     private val httpClient: HttpClient by lazy { // by lazy garante que cada coisa é criada uma unica vez, na primeira vez que for pedida
         HttpClient {
@@ -52,7 +53,7 @@ object AppModule {
                     ignoreUnknownKeys = true; encodeDefaults = true
                 })
             }
-            defaultRequest { url(baseUrl) }
+            defaultRequest { url(ServerConfig.baseUrl) }
         }
     }
 
