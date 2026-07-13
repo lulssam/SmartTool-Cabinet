@@ -47,7 +47,11 @@ object AppModule {
      */
     private val httpClient: HttpClient by lazy { // by lazy garante que cada coisa é criada uma unica vez, na primeira vez que for pedida
         HttpClient {
-            install(ContentNegotiation) { json(Json { ignoreUnknownKeys = true }) }
+            install(ContentNegotiation) {
+                json(Json {
+                    ignoreUnknownKeys = true; encodeDefaults = true
+                })
+            }
             defaultRequest { url(baseUrl) }
         }
     }
@@ -69,6 +73,7 @@ object AppModule {
 
     /** A fonte que vai ao backend buscar o histórico (usa o [httpClient]). */
     val historicoRemoteDataSource by lazy { HistoricoRemoteDataSource(httpClient) }
+
     /** A fonte que vai ao backend buscar os dados do backOffice necessaários (usa o [httpClient]). */
     val backOfficeRemoteDataSource by lazy { BackOfficeRemoteDataSource(httpClient) }
 
