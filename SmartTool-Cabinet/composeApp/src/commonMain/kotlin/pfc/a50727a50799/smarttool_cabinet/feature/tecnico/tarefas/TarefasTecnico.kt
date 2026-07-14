@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,13 +25,14 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -70,14 +70,13 @@ import smarttoolcabinet.composeapp.generated.resources.Res
 import smarttoolcabinet.composeapp.generated.resources.check
 import smarttoolcabinet.composeapp.generated.resources.chevron_down
 import smarttoolcabinet.composeapp.generated.resources.tool
-import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.tarefas.FiltroTarefa
 
 /**
  * Mostra o conteúdo do ecrã de tarefas do técnico.
  *
  * Dependendo do estado atual, apresenta um indicador de carregamento,
  * uma mensagem de erro ou a lista de tarefas do técnico, permitindo
- * filtrar, expandir e concluir tarefas.
+ * filtrar, expandir, concluir e atualizar as tarefas.
  *
  * @param state Informação necessária para apresentar o estado atual do ecrã.
  * @param onMenuClick Função chamada quando o utilizador abre o menu lateral.
@@ -85,7 +84,9 @@ import pfc.a50727a50799.smarttool_cabinet.feature.tecnico.tarefas.FiltroTarefa
  * @param onToggleExpandir Função chamada quando uma tarefa é expandida ou recolhida.
  * @param onConcluir Função chamada quando uma tarefa é marcada como concluída.
  * @param onMensagemMostrada Função chamada após a apresentação de uma mensagem.
+ * @param onRefresh Função chamada quando o utilizador "puxa para atualizar" a lista.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TarefasTecnicoScreenContent(
     state: TarefasTecnicoUiState,
@@ -94,6 +95,7 @@ private fun TarefasTecnicoScreenContent(
     onToggleExpandir: (String) -> Unit = {},
     onConcluir: (String) -> Unit = {},
     onMensagemMostrada: () -> Unit = {},
+    onRefresh: () -> Unit = {},
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -118,70 +120,76 @@ private fun TarefasTecnicoScreenContent(
                     Text(state.error, color = MaterialTheme.colorScheme.error)
                 }
 
-                else -> LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                else -> PullToRefreshBox(
+                    isRefreshing = state.isRefreshing,
+                    onRefresh = onRefresh,
+                    modifier = Modifier.fillMaxSize()
                 ) {
-                    // cabeçalho
-                    item {
-                        Column {
-                            Text(
-                                "As minhas tarefas",
-                                fontSize = 28.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.Black
-                            )
-                            Text(
-                                "Turno ${state.turno} - Hoje",
-                                fontSize = 14.sp,
-                                color = TextSecondary
-                            )
-                        }
-                    }
-
-                    // cartões de contagem
-                    item {
-                        Row(
-                            Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            CartaoContagem(Modifier.weight(1f), state.nPendentes, "Pendentes", AlertOrangeText)
-                            CartaoContagem(Modifier.weight(1f), state.nEmCurso, "Em curso", TapGreenishBlue)
-                            CartaoContagem(Modifier.weight(1f), state.nConcluidas, "Concluídas", TextSecondary)
-                        }
-                    }
-
-                    // chips de filtro
-                    item {
-                        Row(
-                            Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            FiltroTarefa.entries.forEach { f ->
-                                FilterChip(f.label, state.filtroAtual == f) { onFiltroChange(f) }
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        // cabeçalho
+                        item {
+                            Column {
+                                Text(
+                                    "As minhas tarefas",
+                                    fontSize = 28.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.Black
+                                )
+                                Text(
+                                    "Turno ${state.turno} - Hoje",
+                                    fontSize = 14.sp,
+                                    color = TextSecondary
+                                )
                             }
                         }
-                    }
 
-                    // lista de tarefas
-                    if (state.tarefas.isEmpty()) {
+                        // cartões de contagem
                         item {
-                            Text(
-                                "Sem tarefas para mostrar.",
-                                fontSize = 14.sp,
-                                color = TextSecondary,
-                                modifier = Modifier.padding(top = 16.dp)
-                            )
+                            Row(
+                                Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                CartaoContagem(Modifier.weight(1f), state.nPendentes, "Pendentes", AlertOrangeText)
+                                CartaoContagem(Modifier.weight(1f), state.nEmCurso, "Em curso", TapGreenishBlue)
+                                CartaoContagem(Modifier.weight(1f), state.nConcluidas, "Concluídas", TextSecondary)
+                            }
                         }
-                    } else {
-                        items(state.tarefas, key = { it.id }) { tarefa ->
-                            TarefaCardTecnico(
-                                tarefa = tarefa,
-                                expandida = tarefa.id in state.expandidas,
-                                onToggle = { onToggleExpandir(tarefa.id) },
-                                onConcluir = { onConcluir(tarefa.id) }
-                            )
+
+                        // chips de filtro
+                        item {
+                            Row(
+                                Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                FiltroTarefa.entries.forEach { f ->
+                                    FilterChip(f.label, state.filtroAtual == f) { onFiltroChange(f) }
+                                }
+                            }
+                        }
+
+                        // lista de tarefas
+                        if (state.tarefas.isEmpty()) {
+                            item {
+                                Text(
+                                    "Sem tarefas para mostrar.",
+                                    fontSize = 14.sp,
+                                    color = TextSecondary,
+                                    modifier = Modifier.padding(top = 16.dp)
+                                )
+                            }
+                        } else {
+                            items(state.tarefas, key = { it.id }) { tarefa ->
+                                TarefaCardTecnico(
+                                    tarefa = tarefa,
+                                    expandida = tarefa.id in state.expandidas,
+                                    onToggle = { onToggleExpandir(tarefa.id) },
+                                    onConcluir = { onConcluir(tarefa.id) }
+                                )
+                            }
                         }
                     }
                 }
@@ -221,6 +229,7 @@ private fun CartaoContagem(modifier: Modifier, valor: Int, label: String, cor: C
         Text(label, fontSize = 13.sp, color = TextSecondary)
     }
 }
+
 /**
  * Mostra um cartão com a informação de uma tarefa.
  *
@@ -322,6 +331,7 @@ private fun TarefaCardTecnico(
         }
     }
 }
+
 /**
  * Mostra uma linha correspondente a uma ferramenta necessária para a tarefa.
  *
@@ -355,6 +365,7 @@ private fun LinhaFerramenta(nome: String) {
  *
  * @param viewModel O ViewModel que gere o estado deste ecrã.
  *                  É criado automaticamente pelo Compose se não for fornecido.
+ * @param onMenuClick Função chamada quando o utilizador abre o menu lateral.
  */
 @Composable
 fun TarefasTecnicoScreen(
@@ -368,7 +379,8 @@ fun TarefasTecnicoScreen(
         onFiltroChange = viewModel::onFiltroChange,
         onToggleExpandir = viewModel::onToggleExpandir,
         onConcluir = viewModel::concluir,
-        onMensagemMostrada = viewModel::limparMensagem
+        onMensagemMostrada = viewModel::limparMensagem,
+        onRefresh = viewModel::refresh
     )
 }
 
@@ -403,4 +415,3 @@ private fun TarefasTecnicoPreview() {
         )
     }
 }
-

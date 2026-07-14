@@ -36,10 +36,16 @@ class AlertasViewModel(
      *
      * Obtém os alertas da API, converte-os para o modelo da interface
      * e atualiza o estado do ecrã.
+     *
+     * @param isRefresh Verdadeiro quando o pedido vem do gesto "puxar para atualizar".
+     *                  Nesse caso mantém a lista visível (usa isRefreshing em vez de isLoading).
      */
-    fun carregar() {
+    fun carregar(isRefresh: Boolean = false) {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true, error = null) }
+            _state.update {
+                if (isRefresh) it.copy(isRefreshing = true, error = null)
+                else it.copy(isLoading = true, error = null)
+            }
 
             // alertas
             val lista = when (val r = alertas.getAlertas()) {
@@ -47,16 +53,22 @@ class AlertasViewModel(
                     _state.update { it.copy(alertas = r.data.map { dto -> dto.toUi() }) }
 
                 is ApiResult.Error -> {
-                    _state.update { it.copy(isLoading = false, error = mensagem(r.error)) }
+                    _state.update { it.copy(isLoading = false, isRefreshing = false, error = mensagem(r.error)) }
                     return@launch
                 }
             }
 
-            _state.update { it.copy(isLoading = false, error = null) }
+            _state.update { it.copy(isLoading = false, isRefreshing = false, error = null) }
 
         }
 
     }
+
+    /**
+     * Recarrega os alertas em resposta ao gesto de "puxar para atualizar".
+     * Mantém a lista visível e mostra o indicador do gesto no topo.
+     */
+    fun refresh() = carregar(isRefresh = true)
 
     /** Transforma o erro tipado numa frase legível para o utilizador. */
     private fun mensagem(erro: ApiError): String = when (erro) {
