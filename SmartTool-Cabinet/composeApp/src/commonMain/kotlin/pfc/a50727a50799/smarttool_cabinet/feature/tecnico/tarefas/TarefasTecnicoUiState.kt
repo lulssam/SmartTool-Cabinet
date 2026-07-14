@@ -25,6 +25,7 @@ data class TarefasTecnicoUiState(
     val nPendentes: Int = 0,
     val nEmCurso: Int = 0,
     val nConcluidas: Int = 0,
+    val isRefreshing: Boolean = false
 )
 /**
  * Representa os filtros disponíveis para a lista de tarefas.
