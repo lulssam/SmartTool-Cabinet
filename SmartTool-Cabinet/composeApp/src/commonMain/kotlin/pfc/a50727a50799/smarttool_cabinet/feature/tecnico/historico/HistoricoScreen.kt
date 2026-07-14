@@ -10,8 +10,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -47,11 +49,14 @@ import smarttoolcabinet.composeapp.generated.resources.tool
  *
  * @param state Informação necessária para mostrar o estado atual do ecrã.
  * @param onMenuClick Função chamada quando o utilizador abre o menu lateral.
+ * @param onRefresh Função chamada quando o utilizador "puxa para atualizar" a lista.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HistoricoScreenContent(
     state: HistoricoUiState,
-    onMenuClick: () -> Unit
+    onMenuClick: () -> Unit,
+    onRefresh: () -> Unit = {}
 ) {
     when {
         state.isLoading ->
@@ -75,11 +80,16 @@ private fun HistoricoScreenContent(
                     onMenu = onMenuClick
                 )
 
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                PullToRefreshBox(
+                    isRefreshing = state.isRefreshing,
+                    onRefresh = onRefresh,
+                    modifier = Modifier.fillMaxSize()
                 ) {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
                     item {
                         Column {
                             Text(
@@ -122,6 +132,7 @@ private fun HistoricoScreenContent(
                             }
                         }
                     }
+                }
                 }
             }
         }
@@ -181,7 +192,8 @@ fun HistoricoScreen(
 
     HistoricoScreenContent(
         state = state,
-        onMenuClick = onMenuClick
+        onMenuClick = onMenuClick,
+        onRefresh = viewModel::refresh
     )
 }
 

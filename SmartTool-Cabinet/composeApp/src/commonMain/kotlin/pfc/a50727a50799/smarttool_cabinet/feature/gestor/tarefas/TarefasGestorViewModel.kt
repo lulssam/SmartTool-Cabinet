@@ -46,16 +46,24 @@ class TarefasGestorViewModel(
         carregar()
     }
 
-    /** Vai buscar os dados ao backend e atualiza o estado do ecrã. */
-    fun carregar() {
+    /**
+     * Vai buscar os dados ao backend e atualiza o estado do ecrã.
+     *
+     * @param isRefresh Verdadeiro quando o pedido vem do gesto "puxar para atualizar".
+     *                  Nesse caso mantém a lista visível (usa isRefreshing em vez de isLoading).
+     */
+    fun carregar(isRefresh: Boolean = false) {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true, error = null) }
+            _state.update {
+                if (isRefresh) it.copy(isRefreshing = true, error = null)
+                else it.copy(isLoading = true, error = null)
+            }
 
             todas = when (val r = tarefas.getTarefas()) {
                 is ApiResult.Success -> r.data.map { it.toGestorUi() }
                 is ApiResult.Error -> {
                     _state.update {
-                        it.copy(isLoading = false, error = "Não foi possível carregar as tarefas")
+                        it.copy(isLoading = false, isRefreshing = false, error = "Não foi possível carregar as tarefas")
                     }
                     return@launch
                 }
@@ -66,10 +74,16 @@ class TarefasGestorViewModel(
                 is ApiResult.Error -> 0
             }
 
-            _state.update { it.copy(isLoading = false, alertasAtivos = nAlertas) }
+            _state.update { it.copy(isLoading = false, isRefreshing = false, alertasAtivos = nAlertas) }
             recomputar()
         }
     }
+
+    /**
+     * Recarrega as tarefas em resposta ao gesto de "puxar para atualizar".
+     * Mantém a lista visível e mostra o indicador do gesto no topo.
+     */
+    fun refresh() = carregar(isRefresh = true)
 
     /** Troca o chip de filtro e recalcula a lista visível. */
     fun onFiltroChange(filtro: FiltroTarefa) {

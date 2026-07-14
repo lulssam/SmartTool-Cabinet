@@ -37,15 +37,22 @@ class ArmariosViewModel(
         carregar()
     }
 
-    fun carregar() {
+    /**
+     * @param isRefresh Verdadeiro quando vem do gesto "puxar para atualizar";
+     *                  mantém a lista visível (usa isRefreshing em vez de isLoading).
+     */
+    fun carregar(isRefresh: Boolean = false) {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true, error = null) }
+            _state.update {
+                if (isRefresh) it.copy(isRefreshing = true, error = null)
+                else it.copy(isLoading = true, error = null)
+            }
 
             // ferramentas agrupadas por localização
             val lista = when (val r = ferramentas.getFerramentas()) {
                 is ApiResult.Success -> r.data
                 is ApiResult.Error -> {
-                    _state.update { it.copy(isLoading = false, error = mensagem(r.error)) }
+                    _state.update { it.copy(isLoading = false, isRefreshing = false, error = mensagem(r.error)) }
                     return@launch
                 }
             }
@@ -68,7 +75,7 @@ class ArmariosViewModel(
                     }
 
                 is ApiResult.Error -> {
-                    _state.update { it.copy(isLoading = false, error = mensagem(r.error)) }
+                    _state.update { it.copy(isLoading = false, isRefreshing = false, error = mensagem(r.error)) }
                     return@launch
                 }
             }
@@ -78,14 +85,20 @@ class ArmariosViewModel(
                     _state.update { it.copy(alertasAtivos = r.data.size) }
 
                 is ApiResult.Error -> {
-                    _state.update { it.copy(isLoading = false, error = mensagem(r.error)) }
+                    _state.update { it.copy(isLoading = false, isRefreshing = false, error = mensagem(r.error)) }
                     return@launch
                 }
             }
 
-            _state.update { it.copy(isLoading = false) }
+            _state.update { it.copy(isLoading = false, isRefreshing = false) }
         }
     }
+
+    /**
+     * Recarrega os armários em resposta ao gesto de "puxar para atualizar".
+     * Mantém a lista visível e mostra o indicador do gesto no topo.
+     */
+    fun refresh() = carregar(isRefresh = true)
 
     /** Atualiza o texto da pesquisa (o ecrã chama isto a cada tecla).
      * @param query texto introduzido pelo user*/

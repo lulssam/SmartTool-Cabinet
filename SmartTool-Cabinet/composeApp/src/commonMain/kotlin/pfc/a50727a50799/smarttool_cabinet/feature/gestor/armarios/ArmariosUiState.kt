@@ -12,6 +12,7 @@ import pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard.EstadoArmario
 data class ArmariosUiState(
     val armarios: List<ArmarioUi> = emptyList(),
     val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
     val error: String? = null,
     val searchQuery: String = "",
     val alertasAtivos: Int = 0,

@@ -7,6 +7,7 @@ import pfc.a50727a50799.smarttool_cabinet.core.ferramenta.FerramentaDto
  *
  * @property ferramentas A lista de ferramentas vinda do backend.
  * @property isLoading True enquanto esperamos pelos dados.
+ * @property isRefreshing True enquanto o utilizador "puxa para atualizar"; a lista continua visível e mostra-se apenas o indicador do gesto no topo.
  * @property error Mensagem a mostrar se algo correr mal. Null = sem erro.
  */
 
@@ -14,6 +15,7 @@ import pfc.a50727a50799.smarttool_cabinet.core.ferramenta.FerramentaDto
 data class GestorUiState(
     val ferramentas: List<FerramentaDto> = emptyList(),
     val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
     val error: String? = null,
     val estatisticas: EstatisticasFerramentas = EstatisticasFerramentas(
         0, 0, 0, 0

@@ -9,6 +9,7 @@ package pfc.a50727a50799.smarttool_cabinet.feature.gestor.historico
  * @property secoes Lista de todos os movimentos.
  * @property isLoading True enquanto estamos à espera de dados do backend.
  *                     O ecrã mostra um indicador de carregamento durante este tempo.
+ * @property isRefreshing True enquanto o utilizador "puxa para atualizar"; a lista continua visível e mostra-se apenas o indicador do gesto no topo.
  * @property error Mensagem de erro para mostrar ao utilizador.
  *                 Null significa que não há nenhum erro.
  * @property alertasAtivos Número de alertas ativos.
@@ -18,6 +19,7 @@ package pfc.a50727a50799.smarttool_cabinet.feature.gestor.historico
 data class HistoricoGestorUiState(
     val secoes: List<SecaoHistoricoUi> = emptyList(),
     val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
     val error: String? = null,
     val alertasAtivos: Int = 0
 )
