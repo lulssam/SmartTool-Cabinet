@@ -39,10 +39,12 @@ data class GrupoHistoricoUi(
  *
  * @property grupos Lista de movimentos agrupados por data.
  * @property isLoading Indica se os dados estão a ser carregados.
+ * @property isRefreshing Indica se o utilizador puxou a lista para atualizar; a lista continua visível e mostra-se apenas o indicador do gesto no topo.
  * @property error Mensagem de erro apresentada quando ocorre uma falha.
  */
 data class HistoricoUiState(
     val grupos: List<GrupoHistoricoUi> = emptyList(),
     val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
     val error: String? = null
 )

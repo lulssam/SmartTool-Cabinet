@@ -48,16 +48,22 @@ class FerramentasGestorViewModel(
      *
      * Mostra um indicador de carregamento enquanto espera,
      * e um erro se algo correr mal.
+     *
+     * @param isRefresh Verdadeiro quando o pedido vem do gesto "puxar para atualizar".
+     *                  Nesse caso mantém a lista visível (usa isRefreshing em vez de isLoading).
      */
-    fun carregar() {
+    fun carregar(isRefresh: Boolean = false) {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true, error = null) }
+            _state.update {
+                if (isRefresh) it.copy(isRefreshing = true, error = null)
+                else it.copy(isLoading = true, error = null)
+            }
 
             // inventario
             val lista = when (val r = ferramentas.getFerramentas()) {
                 is ApiResult.Success -> r.data
                 is ApiResult.Error -> {
-                    _state.update { it.copy(isLoading = false, error = mensagem(r.error)) }
+                    _state.update { it.copy(isLoading = false, isRefreshing = false, error = mensagem(r.error)) }
                     return@launch
                 }
             }
@@ -96,6 +102,7 @@ class FerramentasGestorViewModel(
             _state.update {
                 it.copy(
                     isLoading = false,
+                    isRefreshing = false,
                     alertasAtivos = nAlertas,
                     categorias = todasFerramentas.map { f -> f.categoria }.distinct().sorted(),
                     armarios = armariosUi
@@ -105,6 +112,12 @@ class FerramentasGestorViewModel(
             recomputarSeccoes()
         }
     }
+
+    /**
+     * Recarrega as ferramentas em resposta ao gesto de "puxar para atualizar".
+     * Mantém a lista visível e mostra o indicador do gesto no topo.
+     */
+    fun refresh() = carregar(isRefresh = true)
 
     /**
      * Atualiza o texto da pesquisa (o ecrã chama isto a cada tecla) e recalcula
@@ -153,7 +166,7 @@ class FerramentasGestorViewModel(
             when (val r = ferramentas.criarFerramenta(nome, categoria, nArmario, disponibilidade)) {
                 is ApiResult.Success -> carregar()
                 is ApiResult.Error -> {
-                    _state.update { it.copy(isLoading = false, error = mensagem(r.error)) }
+                    _state.update { it.copy(isLoading = false, isRefreshing = false, error = mensagem(r.error)) }
                 }
             }
         }

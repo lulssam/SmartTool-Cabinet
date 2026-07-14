@@ -32,6 +32,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
@@ -41,6 +42,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -90,14 +92,15 @@ import smarttoolcabinet.composeapp.generated.resources.tool
  * e avisa quando o utilizador faz algo. O estado que é só de UI (secções
  * fechadas, pop-up aberto, campos do formulário) vive aqui em `remember`.
  */
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun FerramentasGestorScreenContent(
     state: FerramentasUiState,
     onMenuClick: () -> Unit = {},
     onSearchChange: (String) -> Unit = {},
     onFiltroChange: (FiltroFerramenta) -> Unit = {},
-    onCriarFerramenta: (nome: String, categoria: String, nArmario: Int?, disponibilidade: String) -> Unit = { _, _, _, _ -> }
+    onCriarFerramenta: (nome: String, categoria: String, nArmario: Int?, disponibilidade: String) -> Unit = { _, _, _, _ -> },
+    onRefresh: () -> Unit = {}
 ) {
     when {
         state.isLoading ->
@@ -127,11 +130,16 @@ private fun FerramentasGestorScreenContent(
                     onMenu = onMenuClick
                 )
 
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                PullToRefreshBox(
+                    isRefreshing = state.isRefreshing,
+                    onRefresh = onRefresh,
+                    modifier = Modifier.fillMaxSize()
                 ) {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
                     // titulo + subtitulo + botão
                     item {
                         Row(
@@ -236,6 +244,7 @@ private fun FerramentasGestorScreenContent(
                             }
                         }
                     }
+                }
                 }
             }
 
@@ -721,7 +730,8 @@ fun FerramentasGestorScreen(
         onMenuClick = onMenuClick,
         onSearchChange = viewModel::onSearchChange,
         onFiltroChange = viewModel::onFiltroChange,
-        onCriarFerramenta = viewModel::criarFerramenta
+        onCriarFerramenta = viewModel::criarFerramenta,
+        onRefresh = viewModel::refresh
     )
 }
 

@@ -38,15 +38,21 @@ class HistoricoViewModel(
      *
      * Obtém os movimentos a partir da API, converte-os para o modelo da interface,
      * organiza-os por data e atualiza o estado do ecrã.
+     *
+     * @param isRefresh Verdadeiro quando o pedido vem do gesto "puxar para atualizar".
+     *                  Nesse caso mantém a lista visível (usa isRefreshing em vez de isLoading).
      */
-    fun carregar() {
+    fun carregar(isRefresh: Boolean = false) {
         if (idTecnico == -1) {
             _state.update { it.copy(isLoading = false, error = "Sessão inválida") }
             return
         }
 
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true, error = null) }
+            _state.update {
+                if (isRefresh) it.copy(isRefreshing = true, error = null)
+                else it.copy(isLoading = true, error = null)
+            }
 
             val resposta = historicoDataSource.getHistoricoTecnico(idTecnico)
 
@@ -54,7 +60,7 @@ class HistoricoViewModel(
             val dtos: List<HistoricoDto> = if (resposta is ApiResult.Success) {
                 resposta.data
             } else if (resposta is ApiResult.Error) {
-                _state.update { it.copy(isLoading = false, error = mensagem(resposta.error)) }
+                _state.update { it.copy(isLoading = false, isRefreshing = false, error = mensagem(resposta.error)) }
                 return@launch
             } else {
                 return@launch
@@ -81,11 +87,18 @@ class HistoricoViewModel(
             _state.update {
                 it.copy(
                     isLoading = false,
+                    isRefreshing = false,
                     grupos = grupos
                 )
             }
         }
     }
+
+    /**
+     * Recarrega o histórico em resposta ao gesto de "puxar para atualizar".
+     * Mantém a lista visível e mostra o indicador do gesto no topo.
+     */
+    fun refresh() = carregar(isRefresh = true)
     /**
      * Devolve a etiqueta correspondente a uma determinada data.
      *

@@ -51,16 +51,22 @@ class TecnicoViewModel(
      * Enquanto os dados estão a ser carregados, o estado indica
      * que o ecrã deve mostrar um indicador de carregamento.
      * Caso aconteça algum erro, é guardada uma mensagem para apresentar.
+     *
+     * @param isRefresh Verdadeiro quando o pedido vem do gesto "puxar para atualizar".
+     *                  Nesse caso mantém a lista visível (usa isRefreshing em vez de isLoading).
      */
-    fun carregar() {
+    fun carregar(isRefresh: Boolean = false) {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true, error = null) }
+            _state.update {
+                if (isRefresh) it.copy(isRefreshing = true, error = null)
+                else it.copy(isLoading = true, error = null)
+            }
 
             // ferramentas já levantadas
             val listaEmUso = when (val r = ferramentas.getFerramentaTecnico(idTecnico)) {
                 is ApiResult.Success -> r.data.map { it.toTecnicoUi() }
                 is ApiResult.Error -> {
-                    _state.update { it.copy(isLoading = false, error = mensagem(r.error)) }
+                    _state.update { it.copy(isLoading = false, isRefreshing = false, error = mensagem(r.error)) }
                     return@launch
                 }
             }
@@ -71,7 +77,7 @@ class TecnicoViewModel(
                     .filter { it.disponibilidade == "Reservada" } // só as que ainda não foram levantadas
                     .map { it.toTecnicoUi() }
                 is ApiResult.Error -> {
-                    _state.update { it.copy(isLoading = false, error = mensagem(r.error)) }
+                    _state.update { it.copy(isLoading = false, isRefreshing = false, error = mensagem(r.error)) }
                     return@launch
                 }
             }
@@ -79,6 +85,7 @@ class TecnicoViewModel(
             _state.update {
                 it.copy(
                     isLoading = false,
+                    isRefreshing = false,
                     nomeTecnico = nomeTecnico,
                     cargo = "Técnico",
                     turno = turno,
@@ -90,6 +97,12 @@ class TecnicoViewModel(
             }
         }
     }
+
+    /**
+     * Recarrega o dashboard em resposta ao gesto de "puxar para atualizar".
+     * Mantém a lista visível e mostra o indicador do gesto no topo.
+     */
+    fun refresh() = carregar(isRefresh = true)
 
     /**
      * Converte um erro recebido durante a comunicação com o servidor

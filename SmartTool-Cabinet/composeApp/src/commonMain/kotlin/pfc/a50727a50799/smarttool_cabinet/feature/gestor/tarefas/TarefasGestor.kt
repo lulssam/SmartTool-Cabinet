@@ -35,6 +35,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -42,6 +43,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -90,6 +92,7 @@ import pfc.a50727a50799.smarttool_cabinet.ui.PillPrioridade
  * Não sabe nada da lógica — só mostra o `state` que recebe e avisa quando o
  * utilizador interage. Fácil de testar e de pré-visualizar.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TarefasGestorScreenContent(
     state: TarefasGestorUiState,
@@ -103,7 +106,8 @@ private fun TarefasGestorScreenContent(
     onNovaPrioridade: (PrioridadeTarefa) -> Unit = {},
     onQueryFerramentasChange: (String) -> Unit = {},
     onToggleFerramenta: (Int) -> Unit = {},
-    onAdicionarTarefa: () -> Unit = {}
+    onAdicionarTarefa: () -> Unit = {},
+    onRefresh: () -> Unit = {}
 ) {
 
     Crossfade(
@@ -124,11 +128,16 @@ private fun TarefasGestorScreenContent(
                     onMenu = onMenuClick
                 )
 
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                PullToRefreshBox(
+                    isRefreshing = state.isRefreshing,
+                    onRefresh = onRefresh,
+                    modifier = Modifier.fillMaxSize()
                 ) {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
                     // título + subtítulo + botão "+ Nova"
                     item {
                         Row(
@@ -201,6 +210,7 @@ private fun TarefasGestorScreenContent(
                             )
                         }
                     }
+                }
                 }
                 // adicionar nova tarefa
                 if (state.mostrarNovaTarefa) { // TODO: deixar de mostrar as tarefas quando o tecnico as acaba
@@ -679,7 +689,8 @@ fun TarefasGestorScreen(
         onFiltroChange = viewModel::onFiltroChange,
         onNovaClick = viewModel::abrirNovaTarefa,
         onFecharTarefaClick = viewModel::fecharNovaTarefa,
-        onAdicionarTarefa = viewModel::onAdicionarTarefa
+        onAdicionarTarefa = viewModel::onAdicionarTarefa,
+        onRefresh = viewModel::refresh
     )
 }
 

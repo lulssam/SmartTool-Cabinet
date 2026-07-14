@@ -68,6 +68,7 @@ data class FerramentaListaUi(
  * @property ferramentas A lista de ferramentas que vão aparecer no ecrã depois de aplicarmos os filtros e a pesquisa.
  * @property todasAsFerramentas A lista completa com todas as ferramentas, sem esconder nenhuma.
  * @property isLoading Se for verdadeiro, o ecrã deve mostrar uma roda de carregamento enquanto espera pela internet.
+ * @property isRefreshing Se for verdadeiro, o utilizador puxou a lista para atualizar; a lista continua visível e mostra-se apenas o indicador do gesto no topo.
  * @property error Uma mensagem de erro para avisar o utilizador que algo correu mal. Se for nulo, está tudo bem.
  */
 
@@ -78,5 +79,6 @@ data class FerramentasUiState(
     val ferramentas: List<FerramentaListaUi> = emptyList(),
     val todasAsFerramentas: List<FerramentaListaUi> = emptyList(),
     val isLoading: Boolean = true,
+    val isRefreshing: Boolean = false,
     val error: String? = null
 )

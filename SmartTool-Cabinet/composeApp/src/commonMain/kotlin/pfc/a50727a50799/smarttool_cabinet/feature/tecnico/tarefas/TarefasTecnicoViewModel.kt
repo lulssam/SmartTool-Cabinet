@@ -49,19 +49,23 @@ class TarefasTecnicoViewModel(
      * Mostra um indicador de carregamento enquanto espera,
      * e um erro se algo correr mal.
      */
-    fun carregar() {
+    fun carregar(isRefresh: Boolean = false) {
         if (idTecnico == -1) {
             _state.update { it.copy(isLoading = false, error = "Sessão inválida") }
             return
         }
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true, error = null) }
+            _state.update {
+                if (isRefresh) it.copy(isRefreshing = true, error = null)
+                else it.copy(isLoading = true, error = null)
+            }
 
             todasTarefas = when (val r = tarefas.getTarefasTecnico(idTecnico)) {
                 is ApiResult.Success -> r.data.map { it.toTecnicoUi() }
                 is ApiResult.Error -> {
                     _state.update {
-                        it.copy(isLoading = false, error = "Não foi possível carregar as tarefas")
+                        if (isRefresh) it.copy(isRefreshing = false, mensagem = "Não foi possível atualizar")
+                        else it.copy(isLoading = false, error = "Não foi possível carregar as tarefas")
                     }
                     return@launch
                 }
@@ -69,7 +73,6 @@ class TarefasTecnicoViewModel(
 
             _state.update {
                 it.copy(
-                    isLoading = false,
                     nPendentes = todasTarefas.count { t -> t.estado == EstadoTarefa.PENDENTE },
                     nEmCurso = todasTarefas.count { t -> t.estado == EstadoTarefa.EM_CURSO },
                     nConcluidas = todasTarefas.count { t -> t.estado == EstadoTarefa.CONCLUIDA },
@@ -77,7 +80,7 @@ class TarefasTecnicoViewModel(
             }
             recomputar()
 
-            _state.update { it.copy(isLoading = false) }
+            _state.update { it.copy(isLoading = false, isRefreshing = false) }
         }
     }
 
@@ -102,6 +105,8 @@ class TarefasTecnicoViewModel(
         _state.update { it.copy(tarefas = visiveis) }
     }
 
+
+    fun refresh() = carregar(isRefresh = true)
     /**
      * Abre/fecha um card.
      * */

@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -41,11 +43,14 @@ import pfc.a50727a50799.smarttool_cabinet.ui.theme.TextSecondary
  *
  * @param state Informação necessária para apresentar o estado atual do ecrã.
  * @param onMenuClick Função chamada quando o utilizador abre o menu lateral.
+ * @param onRefresh Função chamada quando o utilizador "puxa para atualizar" a lista.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AlertasScreenContent(
     state: AlertasUiState,
-    onMenuClick: () -> Unit
+    onMenuClick: () -> Unit,
+    onRefresh: () -> Unit = {}
 ) {
     when {
         state.isLoading ->
@@ -69,11 +74,16 @@ private fun AlertasScreenContent(
                     onMenu = onMenuClick
                 )
 
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                PullToRefreshBox(
+                    isRefreshing = state.isRefreshing,
+                    onRefresh = onRefresh,
+                    modifier = Modifier.fillMaxSize()
                 ) {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
                     // titulo
                     item {
                         Text(
@@ -101,6 +111,7 @@ private fun AlertasScreenContent(
                         )
                     }
                 }
+                }
             }
 
     }
@@ -122,7 +133,8 @@ fun AlertasScreen(
     val state by viewModel.state.collectAsState()
     AlertasScreenContent(
         state = state,
-        onMenuClick = onMenuClick
+        onMenuClick = onMenuClick,
+        onRefresh = viewModel::refresh
     )
 }
 /**

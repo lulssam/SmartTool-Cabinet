@@ -50,15 +50,21 @@ class HistoricoGestorViewModel(
      *
      * Mostra um indicador de carregamento enquanto espera,
      * e um erro se algo correr mal.
+     *
+     * @param isRefresh Verdadeiro quando o pedido vem do gesto "puxar para atualizar".
+     *                  Nesse caso mantém a lista visível (usa isRefreshing em vez de isLoading).
      */
-    fun carregar() {
+    fun carregar(isRefresh: Boolean = false) {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true, error = null) }
+            _state.update {
+                if (isRefresh) it.copy(isRefreshing = true, error = null)
+                else it.copy(isLoading = true, error = null)
+            }
 
             val dtos = when (val r = historico.getHistorico()) {
                 is ApiResult.Success -> r.data
                 is ApiResult.Error -> {
-                    _state.update { it.copy(isLoading = false, error = mensagem(r.error)) }
+                    _state.update { it.copy(isLoading = false, isRefreshing = false, error = mensagem(r.error)) }
                     return@launch
                 }
             }
@@ -92,12 +98,19 @@ class HistoricoGestorViewModel(
             _state.update {
                 it.copy(
                     isLoading = false,
+                    isRefreshing = false,
                     secoes = secoes,
                     alertasAtivos = nAlertas
                 )
             }
         }
     }
+
+    /**
+     * Recarrega o histórico em resposta ao gesto de "puxar para atualizar".
+     * Mantém a lista visível e mostra o indicador do gesto no topo.
+     */
+    fun refresh() = carregar(isRefresh = true)
 
     /** "HOJE" / "ONTEM" / "15 MAIO" conforme o dia comparado com hoje. */
     private fun etiqueta(dia: LocalDate, hoje: LocalDate): String = when (dia) {

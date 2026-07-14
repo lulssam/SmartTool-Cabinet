@@ -40,9 +40,16 @@ class GestorViewModel(
         carregar()
     }
 
-    fun carregar() {
+    /**
+     * @param isRefresh Verdadeiro quando vem do gesto "puxar para atualizar";
+     *                  mantém a lista visível (usa isRefreshing em vez de isLoading).
+     */
+    fun carregar(isRefresh: Boolean = false) {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true, error = null) }
+            _state.update {
+                if (isRefresh) it.copy(isRefreshing = true, error = null)
+                else it.copy(isLoading = true, error = null)
+            }
             // ferramentas
             val lista = when (val r = ferramentas.getFerramentas()) {
                 is ApiResult.Success -> r.data
@@ -50,6 +57,7 @@ class GestorViewModel(
                     _state.update {
                         it.copy(
                             isLoading = false,
+                            isRefreshing = false,
                             error = mensagem(r.error)
                         )
                     }; return@launch
@@ -77,7 +85,7 @@ class GestorViewModel(
                         ) }) }
 
                 is ApiResult.Error -> {
-                    _state.update { it.copy(isLoading = false, error = mensagem(r.error)) }
+                    _state.update { it.copy(isLoading = false, isRefreshing = false, error = mensagem(r.error)) }
                     return@launch
                 }
             }
@@ -88,14 +96,20 @@ class GestorViewModel(
                     _state.update { it.copy(alertas = r.data.map { dto -> dto.toUi() }) }
 
                 is ApiResult.Error -> {
-                    _state.update { it.copy(isLoading = false, error = mensagem(r.error)) }
+                    _state.update { it.copy(isLoading = false, isRefreshing = false, error = mensagem(r.error)) }
                     return@launch
                 }
             }
 
-            _state.update { it.copy(isLoading = false) }
+            _state.update { it.copy(isLoading = false, isRefreshing = false) }
         }
     }
+
+    /**
+     * Recarrega o dashboard em resposta ao gesto de "puxar para atualizar".
+     * Mantém a lista visível e mostra o indicador do gesto no topo.
+     */
+    fun refresh() = carregar(isRefresh = true)
 
 
     /** Transforma o erro tipado numa frase legível para o utilizador. */
