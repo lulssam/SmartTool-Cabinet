@@ -18,8 +18,8 @@ INSERT INTO funcionario (id_func, nomeCompleto, email, turno) VALUES
 
 -- 2. PAPEIS
 INSERT INTO gestor (id_func) VALUES (1), (2);
-INSERT INTO tecnico (id_func) VALUES (3), (4), (5);
-INSERT INTO backoffice (id_func) VALUES (6), (7), (9), (8);
+INSERT INTO tecnico (id_func) VALUES (3), (4), (5), (8);
+INSERT INTO backoffice (id_func) VALUES (6), (7), (9);
 
 -- 3. ARMAZENS
 INSERT INTO armazem (id_Armazem) VALUES (1), (2);

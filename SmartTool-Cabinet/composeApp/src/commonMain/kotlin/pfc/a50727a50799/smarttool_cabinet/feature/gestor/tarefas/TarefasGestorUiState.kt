@@ -10,6 +10,7 @@ import pfc.a50727a50799.smarttool_cabinet.feature.gestor.ferramentas.FerramentaU
  *
  * @property isLoading True enquanto estamos à espera de dados do backend.
  *                     O ecrã mostra um indicador de carregamento durante este tempo.
+ * @property isRefreshing True enquanto o utilizador "puxa para atualizar"; a lista continua visível e mostra-se apenas o indicador do gesto no topo.
  * @property error Mensagem de erro para mostrar ao utilizador.
  *                 Null significa que não há nenhum erro.
  */
@@ -18,6 +19,7 @@ import pfc.a50727a50799.smarttool_cabinet.feature.gestor.ferramentas.FerramentaU
 data class TarefasGestorUiState(
     val tarefas: List<TarefaUi> = emptyList(),
     val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
     val error: String? = null,
     val filtroAtual: FiltroTarefa = FiltroTarefa.TODAS,
     val alertasAtivos: Int = 0,

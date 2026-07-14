@@ -9,6 +9,7 @@ package pfc.a50727a50799.smarttool_cabinet.feature.gestor.ferramentas
  * @property seccoes Lista já pronta a mostrar: ferramentas agrupadas por categoria
  * @property isLoading True enquanto estamos à espera de dados do backend.
  *                     O ecrã mostra um indicador de carregamento durante este tempo.
+ * @property isRefreshing True enquanto o utilizador "puxa para atualizar"; a lista continua visível e mostra-se apenas o indicador do gesto no topo.
  * @property error Mensagem de erro para mostrar ao utilizador.
  *                 Null significa que não há nenhum erro.
  * @property searchQuery Texto introduzido pelo utilizador na barra de pesquisa.
@@ -20,6 +21,7 @@ package pfc.a50727a50799.smarttool_cabinet.feature.gestor.ferramentas
 data class FerramentasUiState(
     val seccoes: List<SecaoFerramentas> = emptyList(),
     val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
     val error: String? = null,
     val searchQuery: String = "",
     val filtroAtual: FiltroFerramenta = FiltroFerramenta.TODAS,

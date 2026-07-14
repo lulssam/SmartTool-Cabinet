@@ -31,15 +31,22 @@ class FerramentasViewModel(
     /**
      * Pede as informações mais recentes das ferramentas ao servidor e avisa o ecrã quando elas chegarem.
      * Se o técnico não estiver reconhecido no sistema, dá um erro.
+     *
+     * @param isRefresh Verdadeiro quando o pedido vem do gesto "puxar para atualizar".
+     *                  Nesse caso mostra-se o indicador do gesto (isRefreshing) em vez
+     *                  da roda de carregamento, mantendo a lista visível.
      */
-    fun carregar() {
+    fun carregar(isRefresh: Boolean = false) {
         if (idTecnico == -1) {
             _state.update { it.copy(isLoading = false, error = "Sessão inválida") }
             return
         }
 
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true, error = null) }
+            _state.update {
+                if (isRefresh) it.copy(isRefreshing = true, error = null)
+                else it.copy(isLoading = true, error = null)
+            }
 
             val rTodas = ferramentasDataSource.getFerramentas()
             val rMinhas = ferramentasDataSource.getFerramentaTecnico(idTecnico)
@@ -88,15 +95,24 @@ class FerramentasViewModel(
                 _state.update {
                     it.copy(
                         isLoading = false,
+                        isRefreshing = false,
                         todasAsFerramentas = listaMapeada
                     )
                 }
                 aplicarFiltros()
             } else {
-                _state.update { it.copy(isLoading = false, error = "Erro ao carregar ferramentas") }
+                _state.update { it.copy(isLoading = false, isRefreshing = false, error = "Erro ao carregar ferramentas") }
             }
         }
     }
+
+    /**
+     * Recarrega as ferramentas em resposta ao gesto de "puxar para atualizar".
+     * Faz o mesmo que [carregar], mas mantém a lista visível e mostra o
+     * indicador do gesto no topo em vez da roda de carregamento.
+     */
+    fun refresh() = carregar(isRefresh = true)
+
     /**
      * Avisa o sistema de que uma ferramenta está estragada e devolve-a automaticamente.
      *

@@ -25,10 +25,12 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -74,7 +76,9 @@ import smarttoolcabinet.composeapp.generated.resources.tool
  * @param onMauEstadoClick Chamado quando o utilizador avisa que uma ferramenta está estragada.
  * @param onRequisitarClick Chamado quando o utilizador pede para começar a usar uma ferramenta.
  * @param onClearError Chamado quando o utilizador fecha a janela de erro.
+ * @param onRefresh Chamado quando o utilizador "puxa para atualizar" a lista.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun FerramentasScreenContent(
     state: FerramentasUiState,
@@ -86,6 +90,7 @@ private fun FerramentasScreenContent(
     onMauEstadoClick: (Int, Int) -> Unit,
     onRequisitarClick: (Int, Int) -> Unit,
     onClearError: () -> Unit,
+    onRefresh: () -> Unit,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
 
@@ -97,11 +102,16 @@ private fun FerramentasScreenContent(
                 onMenu = onMenuClick
             )
 
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(20.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+            PullToRefreshBox(
+                isRefreshing = state.isRefreshing,
+                onRefresh = onRefresh,
+                modifier = Modifier.fillMaxSize()
             ) {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(20.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
                 item {
                     Column {
                         Text(
@@ -181,6 +191,7 @@ private fun FerramentasScreenContent(
                         }
                     )
                 }
+                }
             }
         }
 
@@ -247,7 +258,8 @@ fun FerramentasScreen(
                 nFerramenta
             )
         },
-        onClearError = viewModel::limparErro
+        onClearError = viewModel::limparErro,
+        onRefresh = viewModel::refresh
     )
 }
 /**
@@ -485,7 +497,8 @@ private fun PreviewFerramentas() {
             onDevolverClick = {},
             onMauEstadoClick = { _, _ -> },
             onRequisitarClick = { _, _ -> },
-            onClearError = {}
+            onClearError = {},
+            onRefresh = {}
         )
     }
 }

@@ -8,6 +8,7 @@ import pfc.a50727a50799.smarttool_cabinet.feature.gestor.dashboard.AlertaUi
 data class AlertasUiState(
     val alertas: List<AlertaUi> = emptyList(),
     val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
     val error: String? = null,
     val alertasAtivos: Int = 0
 ) {

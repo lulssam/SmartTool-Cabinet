@@ -10,8 +10,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -48,11 +50,14 @@ import smarttoolcabinet.composeapp.generated.resources.tool
  * e avisa quando o utilizador faz algo. Fácil de testar e de pré-visualizar.
  *
  * @param state Tudo o que o ecrã precisa para se mostrar corretamente.
+ * @param onRefresh Função chamada quando o utilizador "puxa para atualizar" a lista.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HistoricoGestorScreenContent(
     state: HistoricoGestorUiState,
     onMenuClick: () -> Unit,
+    onRefresh: () -> Unit = {},
 ) {
     when {
         state.isLoading ->
@@ -76,11 +81,16 @@ private fun HistoricoGestorScreenContent(
                     onMenu = onMenuClick
                 )
 
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                PullToRefreshBox(
+                    isRefreshing = state.isRefreshing,
+                    onRefresh = onRefresh,
+                    modifier = Modifier.fillMaxSize()
                 ) {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
                     // titulo
                     item {
                         Column {
@@ -126,6 +136,7 @@ private fun HistoricoGestorScreenContent(
                             }
                         }
                     }
+                }
                 }
             }
         }
@@ -193,7 +204,8 @@ fun HistoricoGestorScreen(
     val state by viewModel.state.collectAsState()
     HistoricoGestorScreenContent(
         state = state,
-        onMenuClick = onMenuClick
+        onMenuClick = onMenuClick,
+        onRefresh = viewModel::refresh
     )
 }
 

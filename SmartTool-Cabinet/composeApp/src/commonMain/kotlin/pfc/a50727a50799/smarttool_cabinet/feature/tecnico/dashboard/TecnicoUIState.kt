@@ -10,6 +10,7 @@ package pfc.a50727a50799.smarttool_cabinet.feature.tecnico.dashboard
  * @property ferramentasParaDevolver Quantidade de ferramentas que precisam de ser devolvidas.
  * @property minhasFerramentas Lista das ferramentas associadas ao técnico.
  * @property isLoading Indica se os dados ainda estão a ser carregados.
+ * @property isRefreshing Indica se o utilizador puxou para atualizar; a lista continua visível e mostra-se apenas o indicador do gesto no topo.
  * @property error Mensagem de erro apresentada ao utilizador.
  * É nula quando não existe nenhum erro.
  */
@@ -22,6 +23,7 @@ data class TecnicoUiState(
     val ferramentasReservadas: Int = 0,
     val minhasFerramentas: List<FerramentaTecnicoUi> = emptyList(),
     val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
     val error: String? = null
 )
 
