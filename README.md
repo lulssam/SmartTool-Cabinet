@@ -3,7 +3,7 @@
 Sistema de gestão de ferramentas para um cenário de manutenção aeronáutica: uma app móvel (Android e iOS) em Kotlin Multiplatform, um backend em Ktor e uma base de dados MySQL.
 
 > Projeto Final de Curso da Licenciatura em Engenharia Informática e Multimédia (LEIM), ISEL.
-> Os requisitos, os perfis e os dados são fictícios e foram definidos por nós. O projeto não tem qualquer ligação a uma empresa.
+> Os requisitos, os perfis e os dados são fictícios e foram definidos por nós.
 
 <p align="center">
   <img src="docs/screenshots/login-page.png" width="180" alt="Login">
