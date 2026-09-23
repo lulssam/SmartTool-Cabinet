@@ -135,4 +135,4 @@ No emulador Android, a app chega ao backend em `http://10.0.2.2:8080`, que é o 
 
 ## Autores
 
-Projeto desenvolvido em dupla por [Luísa Sampaio](https://github.com/lulssam) e Gonçalo Charneca.
+Projeto desenvolvido em dupla por [Luísa Sampaio](https://github.com/lulssam) e [Gonçalo Charneca](https://github.com/gonka2004).
