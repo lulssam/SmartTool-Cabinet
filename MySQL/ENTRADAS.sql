@@ -6,15 +6,15 @@ USE smarttool;
 
 -- 1. FUNCIONARIOS
 INSERT INTO funcionario (id_func, nomeCompleto, email, turno) VALUES
-  (1, 'Joao Silva',      'joao.silva@empresa.example', 'MANHA'),
-  (2, 'Maria Santos',    'maria.santos@empresa.example', 'TARDE'),
-  (3, 'Pedro Costa',     'pedro.costa@empresa.example', 'MANHA'),
-  (4, 'Ana Ferreira',    'ana.ferreira@empresa.example', 'TARDE'),
-  (5, 'Rui Almeida',     'rui.almeida@empresa.example', 'NOITE'),
-  (6, 'Carlos Mendes',   'carlos.mendes@empresa.example', 'MANHA'),
-  (7, 'Sofia Rodrigues', 'sofia.rodrigues@empresa.example', 'TARDE'),
-  (8, 'Luísa Sampaio',   'aluno1@example.com', 'NOITE'),
-  (9, 'Gonçalo Charneca', 'aluno2@example.com', 'MANHA');
+  (1, 'Joao Silva',      'joao.silva@tap.pt', 'MANHA'),
+  (2, 'Maria Santos',    'maria.santos@tap.pt', 'TARDE'),
+  (3, 'Pedro Costa',     'pedro.costa@tap.pt', 'MANHA'),
+  (4, 'Ana Ferreira',    'ana.ferreira@tap.pt', 'TARDE'),
+  (5, 'Rui Almeida',     'rui.almeida@tap.pt', 'NOITE'),
+  (6, 'Carlos Mendes',   'carlos.mendes@tap.pt', 'MANHA'),
+  (7, 'Sofia Rodrigues', 'sofia.rodrigues@tap.pt', 'TARDE'),
+  (8, 'Luísa Sampaio',   'luisa@gmail.com', 'NOITE'),
+  (9, 'Gonçalo Charneca', 'gonka2004@gmail.com', 'MANHA');
 
 -- 2. PAPEIS
 INSERT INTO gestor (id_func) VALUES (1), (2);
