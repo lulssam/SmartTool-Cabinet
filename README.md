@@ -5,7 +5,28 @@ Sistema de gestão de ferramentas para um cenário de manutenção aeronáutica:
 > Projeto Final de Curso da Licenciatura em Engenharia Informática e Multimédia (LEIM), ISEL.
 > Os requisitos, os perfis e os dados são fictícios e foram definidos por nós. O projeto não tem qualquer ligação a uma empresa.
 
-> **TODO:** adicionar screenshots reais da app em `docs/screenshots/` e mostrá-los aqui.
+<p align="center">
+  <img src="docs/screenshots/login-page.png" width="180" alt="Login">
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/gestor-dashboard.png" width="180" alt="Gestor: dashboard">
+  <img src="docs/screenshots/gestor-ferramentas.png" width="180" alt="Gestor: ferramentas">
+  <img src="docs/screenshots/gestor-menu.png" width="180" alt="Gestor: menu">
+  <img src="docs/screenshots/gestor-tarefa.png" width="180" alt="Gestor: tarefa">
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/tecnico-dashboard.png" width="180" alt="Técnico: dashboard">
+  <img src="docs/screenshots/tecnico-ferramenta.png" width="180" alt="Técnico: ferramenta">
+  <img src="docs/screenshots/tecnico-tarefa.png" width="180" alt="Técnico: tarefa">
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/bo-dashboard.png" width="180" alt="Back Office: dashboard">
+  <img src="docs/screenshots/bo-historico.png" width="180" alt="Back Office: histórico">
+  <img src="docs/screenshots/bo-users.png" width="180" alt="Back Office: utilizadores">
+</p>
 
 ## O problema
 
@@ -33,6 +54,11 @@ flowchart LR
 | **Back Office** | Gere utilizadores (cargo, turno, ativar/desativar), armários e consulta o histórico. |
 
 **Alertas** do gestor: ferramentas requisitadas e ainda não devolvidas, e armários destrancados.
+
+## Relatório
+O relatório desenvolvido ao longo do projeto está disponível no repositório: ## Documentação
+
+- [Relatório final (PDF)](docs/P72_STC_SM_Mobile__LEIM_.pdf)
 
 ## Stack
 
