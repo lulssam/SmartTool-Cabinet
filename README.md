@@ -125,7 +125,7 @@ cd SmartTool-Cabinet
 ./gradlew :composeApp:assembleDebug
 ```
 
-No emulador Android, a app chega ao backend em `http://10.0.2.2:8080`, que é o valor por omissão. Num telemóvel real ou no iOS, o backend tem de estar acessível pela rede local: altera o endereço no ecrã inicial da app (campo do servidor) ou o valor por omissão em `AppModule.ios.kt`. Para iOS, abre `SmartTool-Cabinet/iosApp/iosApp.xcodeproj` no Xcode.
+No emulador Android, a app chega ao backend em `http://10.0.2.2:8080`, que é o valor por omissão. Num telemóvel real ou no iOS, o backend tem de estar acessível pela rede local: altera o endereço no ecrã inicial da app (campo do servidor) ou o valor por omissão em `AppModule.ios.kt`. Para iOS, abre `SmartTool-Cabinet/iosApp/iosApp.xcodeproj` no Xcode ou, diretamente na aplicação.
 
 ## Limitações conhecidas
 
