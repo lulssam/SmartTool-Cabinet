@@ -64,3 +64,7 @@ captures
 **/xcshareddata/WorkspaceSettings.xcsettings
 node_modules/
 .env
+
+google-services.json
+GoogleService-Info.plist
+bin/
