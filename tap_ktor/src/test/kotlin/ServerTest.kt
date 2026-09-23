@@ -10,7 +10,9 @@ class ServerTest {
     @Test
     fun `test root endpoint`() = testApplication {
         // loads default configuration
-        configure()
+        application {
+            module()
+        }
         // verify server root returns 200
         assertEquals(HttpStatusCode.OK, client.get("/").status)
     }
